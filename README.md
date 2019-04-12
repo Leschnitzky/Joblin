@@ -1,7 +1,7 @@
 # 2019b-Joblin
 ## Connect. Hire. Get Hired.
-Joblin is an effective way for finding a job or an employee.
-Are you an employer? 
+Joblin is an useful and easy app.
+Are you an employer?
 Use the Swipe Right feature to be interested in an employee, and Swipe Left to pass.
 Are you applying for a job? 
 use the Swipe Right feature to be interested in a position, and Swipe Left to pass.
