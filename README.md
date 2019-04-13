@@ -2,7 +2,7 @@
 ## Connect. Hire. Get Hired.
 Joblin is an useful and easy app.
 The app helps recruiters and candidates for jobs to connect. 
-It provides them the interface to comfortably look for an approproates match.
+It provides them the interface to comfortably look for an approproate match.
 
 Are you a recruiters?
 Use the Swipe Right feature to be interested in an employee, and Swipe Left to pass.
