@@ -4,7 +4,7 @@ Joblin is an useful and easy app.
 The app helps recruiters and candidates for jobs to connect. 
 It provides them the interface to comfortably look for an approproate match.
 
-Are you a recruiters?
+Are you a recruiter?
 Use the Swipe Right feature to be interested in an employee, and Swipe Left to pass.
 Are you applying for a job?
 use the Swipe Right feature to be interested in a position, and Swipe Left to pass.
