@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Joblin</string>
+    <string name="title_activity_recr_edit">RecrEditActivity</string>
+    <string name="title_activity_cand_edit">CandEditActivity</string>
 </resources>
