@@ -40,11 +40,14 @@
         android:gravity="center"
         >
 
-        <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_marginBottom="100dp"
-            android:src="@drawable/logojoblin_64x64_green" />
+            android:src="@drawable/logojoblin_64x64_green"
+            app:civ_border_width="5dp"
+            app:civ_border_color="@color/colorTextOrIcons"
+            />
 
         <TextView
             android:layout_width="wrap_content"
