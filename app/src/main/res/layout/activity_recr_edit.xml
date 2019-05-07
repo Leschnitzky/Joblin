@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".RecrEditActivity">
 
-    <Toolbar
+    <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_recr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
             android:layout_marginRight="20dp"
             android:src="@drawable/logojoblin_64x64_green"
             />
-    </Toolbar>
+    </android.support.v7.widget.Toolbar>
 
     <LinearLayout
         android:layout_width="match_parent"
