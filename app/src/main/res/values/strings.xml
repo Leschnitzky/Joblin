@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Joblin</string>
+    <string name="more_details">More Details</string>
+    <string name="less_details">Less Details</string>
 </resources>
