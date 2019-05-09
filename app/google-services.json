@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "599503618186",
+    "firebase_url": "https://joblin-f260a.firebaseio.com",
+    "project_id": "joblin-f260a",
+    "storage_bucket": "joblin-f260a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599503618186:android:c0a3b147ae0352f0",
+        "android_client_info": {
+          "package_name": "com.technion.android.joblin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599503618186-mc5db10k2vcbva4ag1bd11546bhqlq86.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.technion.android.joblin",
+            "certificate_hash": "1f6da00bab59cb7b9d7bdd779faff568fb9e7392"
+          }
+        },
+        {
+          "client_id": "599503618186-rksui3hlt23c21fc3rbhoo0ilu5p6gan.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVwE_LPLkooKxHzRbd-S01b83UwptElV0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "599503618186-rksui3hlt23c21fc3rbhoo0ilu5p6gan.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
