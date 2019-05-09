@@ -1,5 +1,6 @@
 package com.technion.android.joblin;
 
+import java.util.List;
 import java.util.Set;
 
 public class Candidate extends User {
@@ -7,27 +8,27 @@ public class Candidate extends User {
     private String jobLocation;
     private int scope;
     private String education;
-    private Set<String> skillsSet;
+    private List<String> skillsList;
     private String moreInfo;
     private String jobCategory;
 
-    public Candidate(String mail,
+    public Candidate(String email,
                      String name,
                      String lastName,
                      int age,
                      String jobLocation,
                      int scope,
                      String education,
-                     Set<String> skillsSet,
+                     List<String> skillsList,
                      String moreInfo,
                      String jobCategory) {
 
-        super(mail, name, lastName);
+        super(email, name, lastName);
         this.age = age;
         this.jobLocation = jobLocation;
         this.scope = scope;
         this.education = education;
-        this.skillsSet = skillsSet;
+        this.skillsList = skillsList;
         this.moreInfo = moreInfo;
         this.jobCategory = jobCategory;
     }
@@ -64,12 +65,12 @@ public class Candidate extends User {
         this.education = education;
     }
 
-    public Set<String> getSkillsSet() {
-        return skillsSet;
+    public List<String> getSkillsList() {
+        return skillsList;
     }
 
-    public void setSkillsSet(Set<String> skillsSet) {
-        this.skillsSet = skillsSet;
+    public void setSkillsList(List<String> skillsList) {
+        this.skillsList = skillsList;
     }
 
     public String getMoreInfo() {

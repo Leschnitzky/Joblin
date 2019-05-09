@@ -1,24 +1,24 @@
 package com.technion.android.joblin;
 
 public class User {
-    private String mail;
+    private String email;
     private String name;
     private String lastName;
     static private int totalNumberOfSwipes = 10;
     private int numberOfSwipes = 10;
 
-    User(String mail, String name, String lastName) {
-        this.mail = mail;
+    User(String email, String name, String lastName) {
+        this.email = email;
         this.name = name;
         this.lastName = lastName;
     }
 
-    public String getMail() {
-        return mail;
+    public String getEmail() {
+        return email;
     }
 
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setEmail(String mail) {
+        this.email = mail;
     }
 
     public String getName() {

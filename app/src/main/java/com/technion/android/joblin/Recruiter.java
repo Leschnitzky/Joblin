@@ -7,7 +7,7 @@ public class Recruiter extends User {
     private String jobLocation;
     private String jobDescription;
 
-    public Recruiter(String mail,
+    public Recruiter(String email,
                      String name,
                      String lastName,
                      String jobCategory,
@@ -16,7 +16,7 @@ public class Recruiter extends User {
                      String jobLocation,
                      String jobDescription) {
 
-        super(mail, name, lastName);
+        super(email, name, lastName);
         this.jobCategory = jobCategory;
         this.requiredAge = requiredAge;
         this.requiredScope = requiredScope;
