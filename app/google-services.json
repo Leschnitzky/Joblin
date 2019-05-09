@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "599503618186-mc5db10k2vcbva4ag1bd11546bhqlq86.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.technion.android.joblin",
+            "certificate_hash": "1f6da00bab59cb7b9d7bdd779faff568fb9e7392"
+          }
+        },
+        {
           "client_id": "599503618186-rksui3hlt23c21fc3rbhoo0ilu5p6gan.apps.googleusercontent.com",
           "client_type": 3
         }
