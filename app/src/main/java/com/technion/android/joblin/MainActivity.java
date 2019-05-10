@@ -12,7 +12,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             DatabaseAPI db = new DatabaseAPI();
-            db.addSwipeDataForRecruiter("levi.weiss3@gmail.com", "some_mail", DatabaseAPI.Side.RIGHT);
+            db.addSwipeDataForCandidate("some_mail", "levi.weiss3@gmail.com", DatabaseAPI.Side.LEFT);
         } catch (DatabaseAPI.communicationExceptionWithDB e) {
             Log.e("error: ", "Error general error.");
         }

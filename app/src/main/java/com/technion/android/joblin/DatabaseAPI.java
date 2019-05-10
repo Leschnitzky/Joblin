@@ -79,19 +79,19 @@ class DatabaseAPI {
         candidatesCollection.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.d(TAG, document.getId() + " => " + document.getData());
-                        String currentEmail = (String) document.get("email");
-                        if(currentEmail.equals(email)) {
-                            isUserInDatabase = true;
-                            return;
-                        }
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    Log.d(TAG, document.getId() + " => " + document.getData());
+                    String currentEmail = (String) document.get("email");
+                    if(currentEmail.equals(email)) {
+                        isUserInDatabase = true;
+                        return;
                     }
-                } else {
-                    Log.e(TAG, "Error getting documents.", task.getException());
-                    communicationProblem = true;
                 }
+            } else {
+                Log.e(TAG, "Error getting documents.", task.getException());
+                communicationProblem = true;
+            }
             }
         });
 
@@ -112,19 +112,19 @@ class DatabaseAPI {
         recruitersCollection.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.d(TAG, document.getId() + " => " + document.getData());
-                        String currentEmail = (String) document.get("email");
-                        if(currentEmail.equals(email)) {
-                            isUserInDatabase = true;
-                            return;
-                        }
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    Log.d(TAG, document.getId() + " => " + document.getData());
+                    String currentEmail = (String) document.get("email");
+                    if(currentEmail.equals(email)) {
+                        isUserInDatabase = true;
+                        return;
                     }
-                } else {
-                    Log.e(TAG, "Error getting documents.", task.getException());
-                    communicationProblem = true;
                 }
+            } else {
+                Log.e(TAG, "Error getting documents.", task.getException());
+                communicationProblem = true;
+            }
             }
         });
 
@@ -155,20 +155,20 @@ class DatabaseAPI {
         candidateMapData.put(EDUCATION_KEY, candidate.getEducation());
 
         candidatesCollection.document(candidate.getEmail())
-                .set(candidateMapData)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e(TAG, "Error writing document", e);
-                        communicationProblem = true;
-                    }
-                });
+        .set(candidateMapData)
+        .addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+            Log.d(TAG, "DocumentSnapshot successfully written!");
+            }
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+            Log.e(TAG, "Error writing document", e);
+            communicationProblem = true;
+            }
+        });
 
         if(communicationProblem) {
             communicationProblem = false;
@@ -188,20 +188,20 @@ class DatabaseAPI {
         recruiterMapData.put(JOB_DESCRIPTION_KEY, recruiter.getJobDescription());
 
         recruitersCollection.document(recruiter.getEmail())
-                .set(recruiterMapData)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e(TAG, "Error writing document", e);
-                        communicationProblem = true;
-                    }
-                });
+        .set(recruiterMapData)
+        .addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "DocumentSnapshot successfully written!");
+            }
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e(TAG, "Error writing document", e);
+                communicationProblem = true;
+            }
+        });
 
         if(communicationProblem) {
             communicationProblem = false;
@@ -228,14 +228,14 @@ class DatabaseAPI {
             .addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    Log.d(TAG, "DocumentSnapshot successfully written!");
+                Log.d(TAG, "DocumentSnapshot successfully written!");
                 }
             })
             .addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Log.e(TAG, "Error writing document", e);
-                    communicationProblem = true;
+                Log.e(TAG, "Error writing document", e);
+                communicationProblem = true;
                 }
             });
 
@@ -298,14 +298,14 @@ class DatabaseAPI {
         .addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Log.d(TAG, "DocumentSnapshot successfully updated!");
+            Log.d(TAG, "DocumentSnapshot successfully updated!");
             }
         })
         .addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.w(TAG, "Error updating document", e);
-                communicationProblem = true;
+            Log.w(TAG, "Error updating document", e);
+            communicationProblem = true;
             }
         });
 
@@ -313,6 +313,122 @@ class DatabaseAPI {
             communicationProblem = false;
             throw new communicationExceptionWithDB();
         }
+    }
+
+    void addSwipeDataForCandidate(String candidateMail, String recruiterMail, Side side)
+            throws communicationExceptionWithDB {
+
+        String sideString;
+        if(side == Side.RIGHT) {
+            sideString = "right";
+        } else {
+            sideString = "left";
+        }
+
+        Map<String, Object> candidateSwipesMapData = new HashMap<>();
+        candidateSwipesMapData.put(EMAIL_KEY, candidateMail);
+        candidateSwipesMapData.put(SIDE_KEY, sideString);
+
+        candidatesCollection.document(candidateMail).collection(SWIPES_KEY).document(recruiterMail)
+        .set(candidateSwipesMapData)
+        .addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+            Log.d(TAG, "DocumentSnapshot successfully updated!");
+            }
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+            Log.w(TAG, "Error updating document", e);
+            communicationProblem = true;
+            }
+        });
+
+        if(communicationProblem) {
+            communicationProblem = false;
+            throw new communicationExceptionWithDB();
+        }
+    }
+
+    public void initializeDBWithSomeData() throws communicationExceptionWithDB {
+        initializeDBWithRecruiters();
+        initializeDBWithCandidates();
+        initializeDBWithSwipes();
+        insertJobCategories();
+    }
+
+    public void initializeDBWithRecruiters() throws communicationExceptionWithDB {
+        Recruiter recruiter;
+
+        recruiter = new Recruiter("gre4f@gmail.com","Gregory", "Weiss",
+                "Computer Science", 36, 60,
+                "Tel Aviv", "Building apps for android");
+
+        insertRecruiter(recruiter);
+
+        recruiter = new Recruiter("si7s@gmail.com","Simha", "Golan",
+                "Media", 16, 100,
+                "Ramat Gan", "Speaking with people about arts");
+
+        insertRecruiter(recruiter);
+
+        recruiter = new Recruiter("john3@gmail.com","John", "Buka",
+                "IT", 20, 50,
+                "Eilat", "Configuration of IT services in windows");
+
+        insertRecruiter(recruiter);
+
+        recruiter = new Recruiter("bar@gmail.com","Bar", "Jim",
+                "Accountant", 40, 100,
+                "Ashdod", "Accounting for a big company");
+
+        insertRecruiter(recruiter);
+    }
+
+    public void initializeDBWithCandidates() throws communicationExceptionWithDB {
+        Candidate candidate;
+        List<String> skillsList;
+
+        skillsList = new ArrayList<>(Arrays.asList("Java", "C++"));
+        candidate = new Candidate(
+                "levi.weiss3@gmail.com",  "Levi",  "Weiss",
+                25, "Haifa",  40, "Technion",
+                skillsList, "I like building Android apps",
+                "Computer Science");
+
+        insertCandidate(candidate);
+
+        skillsList = new ArrayList<>(Arrays.asList("Bash", "TCSH"));
+        candidate = new Candidate(
+                "diego@gmail.com",  "Diego",  "Maradona",
+                33, "Eilat",  40, "Tel Aviv University",
+                skillsList, "I am best person for cyber security",
+                "IT");
+
+        insertCandidate(candidate);
+
+        skillsList = new ArrayList<>(Arrays.asList("Bash", "Windows"));
+        candidate = new Candidate(
+                "macho@gmail.com",  "Macho",  "Pacho",
+                33, "Jaffa",  40, "Ben Gurion University",
+                skillsList, "I am friendly personal",
+                "IT");
+
+        insertCandidate(candidate);
+
+        skillsList = new ArrayList<>(Arrays.asList("Team work", "Tax professional"));
+        candidate = new Candidate(
+                "asaf@gmail.com",  "Asaf",  "Granit",
+                39, "Jaffa",  100, "IDC",
+                skillsList, "I am looking to work in dynamic place with good people",
+                "Accounting");
+
+        insertCandidate(candidate);
+
+    }
+
+    public void initializeDBWithSwipes() throws communicationExceptionWithDB {
 
     }
 
