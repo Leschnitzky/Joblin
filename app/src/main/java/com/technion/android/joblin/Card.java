@@ -29,52 +29,58 @@ import com.mindorks.placeholderview.annotations.swipe.SwipeIn;
 import com.mindorks.placeholderview.annotations.swipe.SwipeInState;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOut;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOutState;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 @Layout(R.layout.card_view)
 public class Card {
     @View(R.id.profileImageView)
-    private ImageView profileImageView;
+    ImageView profileImageView;
 
     @View(R.id.nameTxt)
-    private TextView nameTxt;
+    TextView nameTxt;
 
     @View(R.id.locationNameTxt)
-    private TextView locationNameTxt;
+    TextView locationNameTxt;
 
     @View(R.id.positionScopeTxt)
-    private TextView positionScopeTxt;
+    TextView positionScopeTxt;
 
     @View(R.id.EducationTxt)
-    private TextView EducationTxt;
+    TextView EducationTxt;
 
     @View(R.id.fullEducationTxt)
-    private TextView fullEducationTxt;
+    TextView fullEducationTxt;
 
     @View(R.id.SkillsTxt)
-    private TextView SkillsTxt;
+    TextView SkillsTxt;
 
     @View(R.id.fullSkillsTxt)
-    private TextView fullSkillsTxt;
+    TextView fullSkillsTxt;
 
     @View(R.id.descriptionTxt)
-    private TextView descTxt;
+    TextView descTxt;
 
     @View(R.id.moreButtonLayout)
-    private LinearLayout moreButtonLayout;
+    LinearLayout moreButtonLayout;
+
+    @View(R.id.detailsLayout)
+    GridLayout detailsLayout;
 
     @View(R.id.moreDescLayout)
-    private LinearLayout descLayout;
+    LinearLayout descLayout;
 
-    @View(R.id.detailsButton)
-    private ImageButton detailsButton;
+    @View(R.id.detailsImage)
+    ImageView detailsImage;
 
     @View(R.id.moreDetailsTxtView)
-    private TextView moreDetailsTxtView;
+    TextView moreDetailsTxtView;
+
+    @View(R.id.slidingpanel)
+    SlidingUpPanelLayout slidingPanel;
 
     private Profile mProfile;
     private Context mContext;
     private SwipePlaceHolderView mSwipeView;
-    private boolean opened = false;
 
     public Card(Context context, Profile profile, SwipePlaceHolderView swipeView) {
         mContext = context;
@@ -83,7 +89,7 @@ public class Card {
     }
 
     @Resolve
-    private void onResolved(){
+    public void onResolved(){
         Glide.with(mContext).load(mProfile.getImageUrl()).into(profileImageView);
         nameTxt.setText(mProfile.getName());
         positionScopeTxt.setText(mProfile.getScope());
@@ -93,62 +99,49 @@ public class Card {
         fullSkillsTxt.setText(mProfile.getSkills());
         locationNameTxt.setText(mProfile.getLocation());
         descTxt.setText(mProfile.getDesc());
-    }
 
-    @Click(R.id.detailsButton)
-    public void OnClick()
-    {
-        if(!opened){
-            descLayout.animate().translationYBy(-1600).start();
-            moreButtonLayout.animate().translationYBy(-800).setListener((new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    if(descLayout.getVisibility()==LinearLayout.GONE) {
-                        descLayout.setVisibility(LinearLayout.VISIBLE);
-                        moreDetailsTxtView.setVisibility(TextView.GONE);
-                    }
+        slidingPanel.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(android.view.View panel, float slideOffset) {
+                if(slideOffset>0) {
+                    detailsImage.setRotation(180);
+                    moreDetailsTxtView.setVisibility(TextView.GONE);
                 }
-            })).start();
-            detailsButton.setRotation(180);
-        } else {
-            descLayout.animate().translationYBy(1600).start();
-            moreButtonLayout.animate().translationYBy(800).setListener((new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    if(descLayout.getVisibility()==LinearLayout.VISIBLE) {
-                        descLayout.setVisibility(LinearLayout.GONE);
-                        moreDetailsTxtView.setVisibility(TextView.VISIBLE);
-                    }
+                else {
+                    detailsImage.setRotation(0);
+                    moreDetailsTxtView.setVisibility(TextView.VISIBLE);
                 }
-            })).start();
-            detailsButton.setRotation(0);
-        }
-        opened = !opened;
+            }
+
+            @Override
+            public void onPanelStateChanged(android.view.View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
+            }
+        });
     }
 
     @SwipeOut
-    private void onSwipedOut(){
+    public void onSwipedOut(){
         Log.d("EVENT", "onSwipedOut");
         mSwipeView.addView(this);
     }
 
     @SwipeCancelState
-    private void onSwipeCancelState(){
+    public void onSwipeCancelState(){
         Log.d("EVENT", "onSwipeCancelState");
     }
 
     @SwipeIn
-    private void onSwipeIn(){
+    public void onSwipeIn(){
         Log.d("EVENT", "onSwipedIn");
     }
 
     @SwipeInState
-    private void onSwipeInState(){
+    public void onSwipeInState(){
         Log.d("EVENT", "onSwipeInState");
     }
 
     @SwipeOutState
-    private void onSwipeOutState(){
+    public void onSwipeOutState(){
         Log.d("EVENT", "onSwipeOutState");
     }
 

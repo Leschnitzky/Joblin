@@ -13,7 +13,7 @@ import android.widget.Toolbar;
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
 
-public class MainActivity extends AppCompatActivity {
+public class RecMainActivity extends AppCompatActivity {
 
     private SwipePlaceHolderView mSwipeView;
     private Context mContext;
