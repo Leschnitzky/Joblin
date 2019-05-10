@@ -8,18 +8,28 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 class DatabaseAPI {
 
     class communicationExceptionWithDB extends Exception {}
+    class recruiterDoesNotExists extends Exception {}
+    class candidateDoesNotExists extends Exception {}
+
+    enum Side {
+        LEFT, RIGHT;
+    }
 
     private final String AGE_KEY = "age";
     private final String EMAIL_KEY = "email";
@@ -31,11 +41,18 @@ class DatabaseAPI {
     private final String SCOPE_KEY = "scope";
     private final String SKILLS_KEY = "skills";
     private final String EDUCATION_KEY = "education";
+    private final String REQUIRED_AGE_KEY = "required age";
+    private final String REQUIRED_SCOPE_KEY = "required scope";
+    private final String JOB_DESCRIPTION_KEY = "job description";
+
+    private final String SWIPES_KEY = "swipes";
+    private final String SIDE_KEY = "side";
 
     private FirebaseFirestore db;
     private static final String TAG = "DatabaseAPI";
     private CollectionReference candidatesCollection;
     private CollectionReference recruitersCollection;
+    private CollectionReference jobCategoriesCollection;
 
     private boolean isUserInDatabase = false;
     private boolean communicationProblem = false;
@@ -44,8 +61,10 @@ class DatabaseAPI {
         db = FirebaseFirestore.getInstance();
         String candidatesCollectionName = "candidates";
         String recruitersCollectionName = "recruiters";
+        String jobCategoriesCollectionName = "job categories";
         candidatesCollection = db.collection(candidatesCollectionName);
         recruitersCollection = db.collection(recruitersCollectionName);
+        jobCategoriesCollection = db.collection(jobCategoriesCollectionName);
     }
 
     boolean isUserInTheDB(String email) throws communicationExceptionWithDB {
@@ -56,7 +75,7 @@ class DatabaseAPI {
         return isRecruiterInDB(email);
     }
 
-    private boolean isCandidateInDB(final String email) throws communicationExceptionWithDB {
+    boolean isCandidateInDB(final String email) throws communicationExceptionWithDB {
         candidatesCollection.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -70,7 +89,7 @@ class DatabaseAPI {
                         }
                     }
                 } else {
-                    Log.w(TAG, "Error getting documents.", task.getException());
+                    Log.e(TAG, "Error getting documents.", task.getException());
                     communicationProblem = true;
                 }
             }
@@ -89,7 +108,7 @@ class DatabaseAPI {
         return false;
     }
 
-    private boolean isRecruiterInDB(final String email) throws communicationExceptionWithDB {
+    boolean isRecruiterInDB(final String email) throws communicationExceptionWithDB {
         recruitersCollection.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -103,7 +122,7 @@ class DatabaseAPI {
                         }
                     }
                 } else {
-                    Log.w(TAG, "Error getting documents.", task.getException());
+                    Log.e(TAG, "Error getting documents.", task.getException());
                     communicationProblem = true;
                 }
             }
@@ -146,7 +165,7 @@ class DatabaseAPI {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error writing document", e);
+                        Log.e(TAG, "Error writing document", e);
                         communicationProblem = true;
                     }
                 });
@@ -157,5 +176,144 @@ class DatabaseAPI {
         }
     }
 
+    void insertRecruiter(Recruiter recruiter) throws communicationExceptionWithDB {
+        Map<String, Object> recruiterMapData = new HashMap<>();
+        recruiterMapData.put(EMAIL_KEY, recruiter.getEmail());
+        recruiterMapData.put(NAME_KEY, recruiter.getName());
+        recruiterMapData.put(LAST_NAME_KEY, recruiter.getLastName());
+        recruiterMapData.put(JOB_CATEGORY_KEY, recruiter.getJobCategory());
+        recruiterMapData.put(JOB_LOCATION_KEY, recruiter.getJobLocation());
+        recruiterMapData.put(REQUIRED_AGE_KEY, recruiter.getRequiredAge());
+        recruiterMapData.put(REQUIRED_SCOPE_KEY, recruiter.getRequiredScope());
+        recruiterMapData.put(JOB_DESCRIPTION_KEY, recruiter.getJobDescription());
+
+        recruitersCollection.document(recruiter.getEmail())
+                .set(recruiterMapData)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "Error writing document", e);
+                        communicationProblem = true;
+                    }
+                });
+
+        if(communicationProblem) {
+            communicationProblem = false;
+            throw new communicationExceptionWithDB();
+        }
+    }
+
+    void insertJobCategories() throws communicationExceptionWithDB {
+        List<String> jobCategories = new ArrayList<>();
+        jobCategories.add("Accounting");
+        jobCategories.add("Computer Science");
+        jobCategories.add("Education");
+        jobCategories.add("Finance");
+        jobCategories.add("IT");
+        jobCategories.add("Media");
+        jobCategories.add("Sales");
+
+        Map<String, Object> jobCategoryMapData = new HashMap<>();
+        for(String category : jobCategories) {
+            jobCategoryMapData.clear();
+            jobCategoryMapData.put(JOB_CATEGORY_KEY, category);
+            jobCategoriesCollection.document(category)
+            .set(jobCategoryMapData)
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d(TAG, "DocumentSnapshot successfully written!");
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e(TAG, "Error writing document", e);
+                    communicationProblem = true;
+                }
+            });
+
+            if(communicationProblem) {
+                communicationProblem = false;
+                throw new communicationExceptionWithDB();
+            }
+        }
+    }
+
+    void insertSampleCandidate() throws communicationExceptionWithDB {
+        List<String> skillsList = new ArrayList<>(Arrays.asList("Java", "C++"));
+
+        Candidate candidate = new Candidate(
+                "levi.weis3@gmail.com",
+                "Levi",
+                "Weiss",
+                25,
+                "Haifa",
+                40,
+                "Technion",
+                skillsList,
+                "I like building Android apps",
+                "Computer Science");
+
+        insertCandidate(candidate);
+    }
+
+    void insertSampleRecruiter() throws communicationExceptionWithDB {
+
+        Recruiter recruiter = new Recruiter(
+                "levi.weiss@gmail.com",
+                "Levi",
+                "Weiss",
+                "Computer Science",
+                26,
+                60,
+                "Tel Aviv",
+                "Building apps for android");
+
+        insertRecruiter(recruiter);
+    }
+
+    void addSwipeDataForRecruiter(String recruiterMail, String candidateMail, Side side)
+            throws communicationExceptionWithDB {
+
+        String sideString;
+        if(side == Side.RIGHT) {
+            sideString = "right";
+        } else {
+            sideString = "left";
+        }
+
+        Map<String, Object> recruiterSwipesMapData = new HashMap<>();
+        recruiterSwipesMapData.put(EMAIL_KEY, candidateMail);
+        recruiterSwipesMapData.put(SIDE_KEY, sideString);
+
+        recruitersCollection.document(recruiterMail).collection(SWIPES_KEY).document(candidateMail)
+        .set(recruiterSwipesMapData)
+        .addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "DocumentSnapshot successfully updated!");
+            }
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w(TAG, "Error updating document", e);
+                communicationProblem = true;
+            }
+        });
+
+        if(communicationProblem) {
+            communicationProblem = false;
+            throw new communicationExceptionWithDB();
+        }
+
+    }
 
 }
