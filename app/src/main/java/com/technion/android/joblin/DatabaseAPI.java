@@ -343,56 +343,7 @@ class DatabaseAPI {
         }
 
     }
-
-    void checkIfCandidateSwipedRightForRecruiter(String candidateMail, String recruiterMail) {
-
-        candidatesCollection.document(candidateMail).collection(SWIPES_KEY).document(recruiterMail).
-                get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        String side = (String) document.get(SIDE_KEY);
-                        if(side.equals("right")) {
-
-                        }
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-
-                }
-            }
-        });
-    }
-
-    void checkIfRecruiterSwipedRightForCandidate(String recruiterMail, String candidateMail) {
-
-        candidatesCollection.document(recruiterMail).collection(SWIPES_KEY).document(candidateMail).
-                get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        String side = (String) document.get(SIDE_KEY);
-                        if(side.equals("right")) {
-
-                        }
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
-    }
-
+    
     public void initializeDBWithSomeData() {
         initializeDBWithRecruiters();
         initializeDBWithCandidates();
