@@ -10,13 +10,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        try {
-            DatabaseAPI db = new DatabaseAPI();
-            db.addSwipeDataForCandidate("some_mail", "levi.weiss3@gmail.com", DatabaseAPI.Side.LEFT);
-        } catch (DatabaseAPI.communicationExceptionWithDB e) {
-            Log.e("error: ", "Error general error.");
-        }
-
+        DatabaseAPI db = new DatabaseAPI();
+//        db.addSwipeDataForRecruiter("bar@gmail.com", "asaf@gmail.com", DatabaseAPI.Side.RIGHT);
+        db.initializeDBWithSomeData();
         setContentView(R.layout.activity_main);
     }
 
