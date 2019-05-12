@@ -29,7 +29,7 @@ public class RecMainActivity extends AppCompatActivity {
         int bottomMargin = Utils.dpToPx(180);
         Point windowSize = Utils.getDisplaySize(getWindowManager());
         mSwipeView.getBuilder()
-                .setSwipeType(SwipePlaceHolderView.SWIPE_TYPE_HORIZONTAL)
+
                 .setDisplayViewCount(3)
                 .setSwipeDecor(new SwipeDecor()
                         .setViewWidth(windowSize.x)
