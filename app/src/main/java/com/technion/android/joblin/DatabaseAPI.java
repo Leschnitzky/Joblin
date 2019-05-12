@@ -65,9 +65,8 @@ class DatabaseAPI {
     private static final String usersCollectionName = "users";
     private CollectionReference usersCollection = db.collection(usersCollectionName);
 
-    DatabaseAPI() {
 
-    }
+
 
     void isUserInTheDB(final String email) {
         DocumentReference docRef = usersCollection.document(email);
