@@ -2,6 +2,7 @@ package com.technion.android.joblin;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -30,44 +31,42 @@ class DatabaseAPI {
         LEFT, RIGHT
     }
 
-    private final String AGE_KEY = "age";
-    private final String EMAIL_KEY = "email";
-    private final String JOB_CATEGORY_KEY = "job category";
-    private final String JOB_LOCATION_KEY = "job location";
-    private final String LAST_NAME_KEY = "last name";
-    private final String MORE_INFO_KEY = "more info";
-    private final String NAME_KEY = "name";
-    private final String SCOPE_KEY = "scope";
-    private final String SKILLS_KEY = "skills";
-    private final String EDUCATION_KEY = "education";
-    private final String REQUIRED_AGE_KEY = "required age";
-    private final String REQUIRED_SCOPE_KEY = "required scope";
-    private final String JOB_DESCRIPTION_KEY = "job description";
+    private static final String AGE_KEY = "age";
+    private static final String EMAIL_KEY = "email";
+    private static final String JOB_CATEGORY_KEY = "job category";
+    private static final String JOB_LOCATION_KEY = "job location";
+    private static final String LAST_NAME_KEY = "last name";
+    private static final String MORE_INFO_KEY = "more info";
+    private static final String NAME_KEY = "name";
+    private static final String SCOPE_KEY = "scope";
+    private static final String SKILLS_KEY = "skills";
+    private static final String EDUCATION_KEY = "education";
+    private static final String REQUIRED_EDUCATION = "required education";
+    private static final String REQUIRED_SCOPE_KEY = "required scope";
+    private static final String REQUIRED_SKILLS_KEY = "required skills";
+    private static final String JOB_DESCRIPTION_KEY = "job description";
 
-    private final String SWIPES_KEY = "swipes";
-    private final String SIDE_KEY = "side";
-    private final String MATCHES_KEY = "matches";
-    private final String MATCH_KEY = "match";
+    private static final String SWIPES_KEY = "swipes";
+    private static final String SIDE_KEY = "side";
+    private static final String MATCHES_KEY = "matches";
 
-    private FirebaseFirestore db;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "DatabaseAPI";
-    private CollectionReference candidatesCollection;
-    private CollectionReference recruitersCollection;
-    private CollectionReference jobCategoriesCollection;
-    private CollectionReference usersCollection;
 
-    int some_number = 0;
+    private static final String candidatesCollectionName = "candidates";
+    private CollectionReference candidatesCollection = db.collection(candidatesCollectionName);
+
+    private static final String recruitersCollectionName = "recruiters";
+    private CollectionReference recruitersCollection = db.collection(recruitersCollectionName);
+
+    private static final String jobCategoriesCollectionName = "job categories";
+    private CollectionReference jobCategoriesCollection = db.collection(jobCategoriesCollectionName);
+
+    private static final String usersCollectionName = "users";
+    private CollectionReference usersCollection = db.collection(usersCollectionName);
 
     DatabaseAPI() {
-        db = FirebaseFirestore.getInstance();
-        String candidatesCollectionName = "candidates";
-        String recruitersCollectionName = "recruiters";
-        String jobCategoriesCollectionName = "job categories";
-        String usersCollectionName = "users";
-        candidatesCollection = db.collection(candidatesCollectionName);
-        recruitersCollection = db.collection(recruitersCollectionName);
-        jobCategoriesCollection = db.collection(jobCategoriesCollectionName);
-        usersCollection = db.collection(usersCollectionName);
+
     }
 
     void isUserInTheDB(final String email) {
@@ -166,8 +165,9 @@ class DatabaseAPI {
         recruiterMapData.put(LAST_NAME_KEY, recruiter.getLastName());
         recruiterMapData.put(JOB_CATEGORY_KEY, recruiter.getJobCategory());
         recruiterMapData.put(JOB_LOCATION_KEY, recruiter.getJobLocation());
-        recruiterMapData.put(REQUIRED_AGE_KEY, recruiter.getRequiredAge());
         recruiterMapData.put(REQUIRED_SCOPE_KEY, recruiter.getRequiredScope());
+        recruiterMapData.put(REQUIRED_SKILLS_KEY, recruiter.getRequiredSkillsList());
+        recruiterMapData.put(REQUIRED_EDUCATION, recruiter.getRequiredEducation());
         recruiterMapData.put(JOB_DESCRIPTION_KEY, recruiter.getJobDescription());
 
         WriteBatch batch = db.batch();
@@ -228,7 +228,7 @@ class DatabaseAPI {
                 "Weiss",
                 25,
                 "Haifa",
-                40,
+                "twice a week",
                 "Technion",
                 skillsList,
                 "I like building Android apps",
@@ -238,16 +238,18 @@ class DatabaseAPI {
     }
 
     void insertSampleRecruiter() {
+        List<String> skillsList = new ArrayList<>(Arrays.asList("Java", "C++"));
 
         Recruiter recruiter = new Recruiter(
                 "levi.weiss@gmail.com",
                 "Levi",
                 "Weiss",
                 "Computer Science",
-                26,
-                60,
+                "twice a week",
                 "Tel Aviv",
-                "Building apps for android");
+                "Building apps for android",
+                "CS",
+                skillsList);
 
         insertRecruiter(recruiter);
     }
@@ -317,6 +319,7 @@ class DatabaseAPI {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Log.d(TAG, "Transaction success!");
+
                 }
             })
             .addOnFailureListener(new OnFailureListener() {
@@ -343,7 +346,7 @@ class DatabaseAPI {
         }
 
     }
-    
+
     public void initializeDBWithSomeData() {
         initializeDBWithRecruiters();
         initializeDBWithCandidates();
@@ -364,28 +367,54 @@ class DatabaseAPI {
 
     public void initializeDBWithRecruiters() {
         Recruiter recruiter;
+        List<String> skillsList;
 
-        recruiter = new Recruiter("gre4f@gmail.com","Gregory", "Weiss",
-                "Computer Science", 36, 60,
-                "Tel Aviv", "Building apps for android");
-
-        insertRecruiter(recruiter);
-
-        recruiter = new Recruiter("si7s@gmail.com","Simha", "Golan",
-                "Media", 16, 100,
-                "Ramat Gan", "Speaking with people about arts");
-
-        insertRecruiter(recruiter);
-
-        recruiter = new Recruiter("john3@gmail.com","John", "Buka",
-                "IT", 20, 50,
-                "Eilat", "Configuration of IT services in windows");
+        skillsList = new ArrayList<>(Arrays.asList("Java", "C++"));
+        recruiter = new Recruiter("gre4f@gmail.com",
+                "Gregory",
+                "Weiss",
+                "Computer Science",
+                "Three times a week",
+                "Tel Aviv",
+                "Building apps for android",
+                "High School graduate",
+                skillsList);
 
         insertRecruiter(recruiter);
 
-        recruiter = new Recruiter("bar@gmail.com","Bar", "Jim",
-                "Accountant", 40, 100,
-                "Ashdod", "Accounting for a big company");
+        recruiter = new Recruiter("si7s@gmail.com",
+                "Simha",
+                "Golan",
+                "Media",
+                "Three times a week",
+                "Ramat Gan",
+                "Speaking with people about arts",
+                "PHD",
+                skillsList);
+
+        insertRecruiter(recruiter);
+
+        recruiter = new Recruiter("john3@gmail.com",
+                "John",
+                "Buka",
+                "IT",
+                "Three times a week",
+                "Eilat",
+                "Configuration of IT services in windows",
+                "None",
+                skillsList);
+
+        insertRecruiter(recruiter);
+
+        recruiter = new Recruiter("bar@gmail.com",
+                "Bar",
+                "Jim",
+                "Accountant",
+                "Three times a week",
+                "Ashdod",
+                "Accounting for a big company",
+                "Graduate in Accounting",
+                skillsList);
 
         insertRecruiter(recruiter);
     }
@@ -397,7 +426,7 @@ class DatabaseAPI {
         skillsList = new ArrayList<>(Arrays.asList("Java", "C++"));
         candidate = new Candidate(
                 "levi.weiss3@gmail.com",  "Levi",  "Weiss",
-                25, "Haifa",  40, "Technion",
+                25, "Haifa",  "40%", "Technion",
                 skillsList, "I like building Android apps",
                 "Computer Science");
 
@@ -406,7 +435,7 @@ class DatabaseAPI {
         skillsList = new ArrayList<>(Arrays.asList("Bash", "TCSH"));
         candidate = new Candidate(
                 "diego@gmail.com",  "Diego",  "Maradona",
-                33, "Eilat",  40, "Tel Aviv University",
+                33, "Eilat",  "Three times a week", "Tel Aviv University",
                 skillsList, "I am best person for cyber security",
                 "IT");
 
@@ -415,7 +444,7 @@ class DatabaseAPI {
         skillsList = new ArrayList<>(Arrays.asList("Bash", "Windows"));
         candidate = new Candidate(
                 "macho@gmail.com",  "Macho",  "Pacho",
-                33, "Jaffa",  40, "Ben Gurion University",
+                33, "Jaffa",  "Three times a week", "Ben Gurion University",
                 skillsList, "I am friendly personal",
                 "IT");
 
@@ -424,7 +453,7 @@ class DatabaseAPI {
         skillsList = new ArrayList<>(Arrays.asList("Team work", "Tax professional"));
         candidate = new Candidate(
                 "asaf@gmail.com",  "Asaf",  "Granit",
-                39, "Jaffa",  100, "IDC",
+                39, "Jaffa",  "Three times a week", "IDC",
                 skillsList, "I am looking to work in dynamic place with good people",
                 "Accounting");
 

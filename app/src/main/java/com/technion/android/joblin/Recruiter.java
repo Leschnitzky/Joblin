@@ -1,27 +1,32 @@
 package com.technion.android.joblin;
 
+import java.util.List;
+
 public class Recruiter extends User {
     private String jobCategory;
-    private int requiredAge;
-    private int requiredScope;
+    private String requiredScope;
+    private String requiredEducation;
     private String jobLocation;
     private String jobDescription;
+    private List<String> requiredSkillsList;
 
     public Recruiter(String email,
                      String name,
                      String lastName,
                      String jobCategory,
-                     int requiredAge,
-                     int requiredScope,
+                     String requiredScope,
                      String jobLocation,
-                     String jobDescription) {
+                     String jobDescription,
+                     String requiredEducation,
+                     List<String> requiredSkillsList) {
 
         super(email, name, lastName);
         this.jobCategory = jobCategory;
-        this.requiredAge = requiredAge;
         this.requiredScope = requiredScope;
         this.jobLocation = jobLocation;
         this.jobDescription = jobDescription;
+        this.requiredEducation = requiredEducation;
+        this.requiredSkillsList = requiredSkillsList;
     }
 
     public String getJobCategory() {
@@ -32,19 +37,11 @@ public class Recruiter extends User {
         this.jobCategory = jobCategory;
     }
 
-    public int getRequiredAge() {
-        return requiredAge;
-    }
-
-    public void setRequiredAge(int requiredAge) {
-        this.requiredAge = requiredAge;
-    }
-
-    public int getRequiredScope() {
+    public String getRequiredScope() {
         return requiredScope;
     }
 
-    public void setRequiredScope(int requiredScope) {
+    public void setRequiredScope(String requiredScope) {
         this.requiredScope = requiredScope;
     }
 
@@ -62,5 +59,21 @@ public class Recruiter extends User {
 
     public void setJobDescription(String jobDescription) {
         this.jobDescription = jobDescription;
+    }
+
+    public String getRequiredEducation() {
+        return requiredEducation;
+    }
+
+    public void setRequiredEducation(String requiredEducation) {
+        this.requiredEducation = requiredEducation;
+    }
+
+    public List<String> getRequiredSkillsList() {
+        return requiredSkillsList;
+    }
+
+    public void setRequiredSkillsList(List<String> requiredSkillsList) {
+        this.requiredSkillsList = requiredSkillsList;
     }
 }

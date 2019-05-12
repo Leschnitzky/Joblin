@@ -6,7 +6,7 @@ import java.util.Set;
 public class Candidate extends User {
     private int age;
     private String jobLocation;
-    private int scope;
+    private String scope;
     private String education;
     private List<String> skillsList;
     private String moreInfo;
@@ -17,7 +17,7 @@ public class Candidate extends User {
                      String lastName,
                      int age,
                      String jobLocation,
-                     int scope,
+                     String scope,
                      String education,
                      List<String> skillsList,
                      String moreInfo,
@@ -49,11 +49,11 @@ public class Candidate extends User {
         this.jobLocation = jobLocation;
     }
 
-    public int getScope() {
+    public String getScope() {
         return scope;
     }
 
-    public void setScope(int scope) {
+    public void setScope(String scope) {
         this.scope = scope;
     }
 
