@@ -9,9 +9,10 @@
     <string name="last_name" >Enter your Last Name</string>
     <string name="age">Age: </string>
     <string name="education">Please write your education level </string>
-    <string name="skills">Please list your job skills (delimited by space) </string>
-    <string name="location_cand">Please choose your preferred work location: </string>
-    <string name="scope_cand">Please choose your preferred scope of work: </string>
+    <string name="skills">Please list your job skills </string>
+    <string name="skill">Skill</string>
+    <string name="location_cand">Please write your preferred work location: </string>
+    <string name="job_scope">Please write your preferred job scope: </string>
     <string name="category">Please choose the field you wish to work in: </string>
     <string name="description">Please write a short description about yourself</string>
     <string name="pref_button">Proceed</string>

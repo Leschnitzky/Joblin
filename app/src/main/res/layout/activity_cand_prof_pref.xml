@@ -2,7 +2,6 @@
 
 <ScrollView
     android:layout_height="match_parent"
-    android:background="@color/colorDivider"
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <LinearLayout
@@ -11,17 +10,23 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
 
+
         <EditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/first_name"/>
+            android:layout_height="40dp"
+            android:hint="@string/first_name"
+            android:maxLength="20"/>
+
         <EditText
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/last_name"/>
+            android:hint="@string/last_name"
+            android:maxLength="20"/>
         <LinearLayout
+
             android:layout_width="match_parent"
-            android:layout_height="50dp" android:orientation="horizontal">
+            android:layout_height="40dp" android:orientation="horizontal">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -38,45 +43,32 @@
                 android:layout_marginRight="200dp"
                 android:layout_weight="1"
                 android:layout_gravity="center"
-                android:prompt="@string/age"></Spinner>
+                android:prompt="@string/age">
+
+            </Spinner>
         </LinearLayout>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:textColor="@color/colorPrimaryText"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dip"
-            android:text="@string/location_cand"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="5dp"/>
-
-        <Spinner
-            android:id="@+id/loc_spinner"
-            android:layout_width="fill_parent"
+        <EditText
+            android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:prompt="@string/app_name" />
+            android:hint="@string/location_cand"
+            android:maxLength="30"/>
 
-        <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dip"
-        android:text="@string/scope_cand"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="5dp"
-            android:textColor="@color/colorPrimaryText"/>
-
-        <Spinner
-            android:id="@+id/scope_spinner"
-            android:layout_width="fill_parent"
+        <EditText
+            android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:prompt="@string/app_name" />
+            android:hint="@string/job_scope"
+            android:maxLength="10"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary"/>
 
         <TextView
             android:textColor="@color/colorPrimaryText"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
             android:layout_marginTop="10dip"
             android:text="@string/category"
             android:textSize="18sp"
@@ -86,25 +78,63 @@
         <Spinner
             android:id="@+id/category_spinner"
             android:layout_width="fill_parent"
-            android:layout_height="40dp"
+            android:layout_height="20dp"
             android:prompt="@string/app_name" />
 
-        <EditText
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/education"/>
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary"/>
 
         <EditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/skills"/>
+            android:layout_height="40dp"
+            android:hint="@string/education"
+            android:maxLength="20"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="@string/skills"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimaryText"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:hint="@string/skill"
+                android:maxLength="10"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:hint="@string/skill"
+                android:maxLength="10"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:hint="@string/skill"
+                android:maxLength="10"/>
+        </LinearLayout>
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="400dp"
             android:gravity="top"
-            android:hint="@string/description"/>
-
+            android:hint="@string/description"
+            android:maxLength="150"/>
         <Button
             android:layout_width="120dp"
             android:layout_height="50dp"
@@ -113,6 +143,5 @@
             android:textStyle="bold"
             android:layout_gravity="center"
             android:text="@string/pref_button"/>
-
     </LinearLayout>
 </ScrollView>
