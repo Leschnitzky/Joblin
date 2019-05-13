@@ -10,6 +10,8 @@ public class Recruiter extends User {
     private String jobDescription;
     private List<String> requiredSkillsList;
 
+    Recruiter () {}
+
     public Recruiter(String email,
                      String name,
                      String lastName,
@@ -27,6 +29,16 @@ public class Recruiter extends User {
         this.jobDescription = jobDescription;
         this.requiredEducation = requiredEducation;
         this.requiredSkillsList = requiredSkillsList;
+    }
+
+    public Recruiter(Recruiter other) {
+        super(other);
+        this.jobCategory = other.jobCategory;
+        this.requiredScope = other.requiredScope;
+        this.requiredEducation = other.requiredEducation;
+        this.jobLocation = other.jobLocation;
+        this.jobDescription = other.jobDescription;
+        this.requiredSkillsList = other.requiredSkillsList;
     }
 
     public String getJobCategory() {

@@ -1,16 +1,26 @@
 package com.technion.android.joblin;
 
 public class User {
+
     private String email;
     private String name;
     private String lastName;
-    static private int totalNumberOfSwipes = 10;
-    private int numberOfSwipesLeft = 10;
+    static private long totalNumberOfSwipes = 10;
+    private long numberOfSwipesLeft = 10;
+
+    User() {}
 
     User(String email, String name, String lastName) {
         this.email = email;
         this.name = name;
         this.lastName = lastName;
+    }
+
+    public User(User other) {
+        this.email = other.email;
+        this.name = other.name;
+        this.lastName = other.lastName;
+        this.numberOfSwipesLeft = other.numberOfSwipesLeft;
     }
 
     public String getEmail() {
@@ -49,19 +59,19 @@ public class User {
         numberOfSwipesLeft = totalNumberOfSwipes;
     }
 
-    public static int getTotalNumberOfSwipes() {
+    public static long getTotalNumberOfSwipes() {
         return totalNumberOfSwipes;
     }
 
-    public static void setTotalNumberOfSwipes(int totalNumberOfSwipes) {
+    public static void setTotalNumberOfSwipes(long totalNumberOfSwipes) {
         User.totalNumberOfSwipes = totalNumberOfSwipes;
     }
 
-    public int getNumberOfSwipesLeft() {
+    public long getNumberOfSwipesLeft() {
         return numberOfSwipesLeft;
     }
 
-    public void setNumberOfSwipesLeft(int numberOfSwipesLeft) {
+    public void setNumberOfSwipesLeft(long  numberOfSwipesLeft) {
         this.numberOfSwipesLeft = numberOfSwipesLeft;
     }
 }
