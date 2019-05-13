@@ -25,7 +25,12 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private static final String FIRST_NAME_KEY = "firstName";
+    private static final String LAST_NAME_KEY = "lastName";
+
     private final int RC_SIGN_IN = 530;
+    private String mUserFirstName;
+    private String mUserLastName;
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
 
@@ -41,6 +46,8 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
                             Intent intent = new Intent(LoginActivity.this,CandProfPrefActivity.class);
+                            intent.putExtra(FIRST_NAME_KEY,mUserFirstName);
+                            intent.putExtra(LAST_NAME_KEY,mUserLastName);
                             startActivity(intent);
 
                             Toast.makeText(LoginActivity.this, "Hello "+ user.getEmail()+" !", Toast.LENGTH_SHORT).show();
@@ -101,6 +108,9 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
+                mUserFirstName = account.getGivenName();
+                mUserLastName = account.getFamilyName();
+
                 firebaseAuthWithGoogle(account);
 
             } catch (ApiException e) {
