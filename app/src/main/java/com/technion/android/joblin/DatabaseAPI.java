@@ -31,41 +31,40 @@ class DatabaseAPI {
         LEFT, RIGHT
     }
 
-    private static final String AGE_KEY = "age";
-    private static final String EMAIL_KEY = "email";
-    private static final String JOB_CATEGORY_KEY = "job category";
-    private static final String JOB_LOCATION_KEY = "job location";
-    private static final String LAST_NAME_KEY = "last name";
-    private static final String MORE_INFO_KEY = "more info";
-    private static final String NAME_KEY = "name";
-    private static final String SCOPE_KEY = "scope";
-    private static final String SKILLS_KEY = "skills";
-    private static final String EDUCATION_KEY = "education";
-    private static final String REQUIRED_EDUCATION = "required education";
-    private static final String REQUIRED_SCOPE_KEY = "required scope";
-    private static final String REQUIRED_SKILLS_KEY = "required skills";
-    private static final String JOB_DESCRIPTION_KEY = "job description";
+    static final String AGE_KEY = "age";
+    static final String EMAIL_KEY = "email";
+    static final String JOB_CATEGORY_KEY = "jobCategory";
+    static final String JOB_LOCATION_KEY = "jobLocation";
+    static final String LAST_NAME_KEY = "lastName";
+    static final String MORE_INFO_KEY = "moreInfo";
+    static final String NAME_KEY = "name";
+    static final String SCOPE_KEY = "scope";
+    static final String SKILLS_KEY = "skillList";
+    static final String EDUCATION_KEY = "education";
+    static final String NUMBER_OF_SWIPES_LEFT_KEY = "numberOfSwipesLeft";
+    static final String REQUIRED_EDUCATION = "requiredEducation";
+    static final String REQUIRED_SCOPE_KEY = "requiredScope";
+    static final String REQUIRED_SKILLS_KEY = "requiredSkillsList";
+    static final String JOB_DESCRIPTION_KEY = "jobDescription";
+    static final String SIDE_KEY = "side";
 
-    private static final String SWIPES_KEY = "swipes";
-    private static final String SIDE_KEY = "side";
-    private static final String MATCHES_KEY = "matches";
+    static final String SWIPES_COLLECTION_NAME = "Swipes";
+    static final String MATCHES_COLLECTION_NAME = "Matches";
+    static final String CANDIDATES_COLLECTION_NAME = "Candidates";
+    static final String RECRUITERS_COLLECTION_NAME = "Recruiters";
+    static final String JOB_CATEGORIES_COLLECTION_NAME = "JobCategories";
+    static final String USERS_COLLECTION_NAME = "Users";
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "DatabaseAPI";
 
-    private static final String candidatesCollectionName = "candidates";
-    private CollectionReference candidatesCollection = db.collection(candidatesCollectionName);
+    private CollectionReference candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
 
-    private static final String recruitersCollectionName = "recruiters";
-    private CollectionReference recruitersCollection = db.collection(recruitersCollectionName);
+    private CollectionReference recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
 
-    private static final String jobCategoriesCollectionName = "job categories";
-    private CollectionReference jobCategoriesCollection = db.collection(jobCategoriesCollectionName);
+    private CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
 
-    private static final String usersCollectionName = "users";
-    private CollectionReference usersCollection = db.collection(usersCollectionName);
-
-
+    private CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
 
 
     void isUserInTheDB(final String email) {
@@ -125,23 +124,46 @@ class DatabaseAPI {
         });
     }
 
+    void getCandidate(final String email) {
+        DocumentReference docRef = candidatesCollection.document(email);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        Map<String, Object> dataMap = document.getData();
+                        Candidate c = document.toObject(Candidate.class);
+                        String s = c.getEducation();
+
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+
     void insertCandidate(Candidate candidate) {
-        Map<String, Object> candidateMapData = new HashMap<>();
-        candidateMapData.put(AGE_KEY, candidate.getAge());
-        candidateMapData.put(EMAIL_KEY, candidate.getEmail());
-        candidateMapData.put(JOB_CATEGORY_KEY, candidate.getJobCategory());
-        candidateMapData.put(JOB_LOCATION_KEY, candidate.getJobLocation());
-        candidateMapData.put(LAST_NAME_KEY, candidate.getLastName());
-        candidateMapData.put(MORE_INFO_KEY, candidate.getMoreInfo());
-        candidateMapData.put(NAME_KEY, candidate.getName());
-        candidateMapData.put(SCOPE_KEY, candidate.getScope());
-        candidateMapData.put(SKILLS_KEY, candidate.getSkillsList());
-        candidateMapData.put(EDUCATION_KEY, candidate.getEducation());
+//        Map<String, Object> candidateMapData = new HashMap<>();
+//        candidateMapData.put(AGE_KEY, candidate.getAge());
+//        candidateMapData.put(EMAIL_KEY, candidate.getEmail());
+//        candidateMapData.put(JOB_CATEGORY_KEY, candidate.getJobCategory());
+//        candidateMapData.put(JOB_LOCATION_KEY, candidate.getJobLocation());
+//        candidateMapData.put(LAST_NAME_KEY, candidate.getLastName());
+//        candidateMapData.put(MORE_INFO_KEY, candidate.getMoreInfo());
+//        candidateMapData.put(NAME_KEY, candidate.getName());
+//        candidateMapData.put(SCOPE_KEY, candidate.getScope());
+//        candidateMapData.put(SKILLS_KEY, candidate.getSkillsList());
+//        candidateMapData.put(EDUCATION_KEY, candidate.getEducation());
 
         WriteBatch batch = db.batch();
 
         DocumentReference candidateDocumentReference = candidatesCollection.document(candidate.getEmail());
-        batch.set(candidateDocumentReference, candidateMapData);
+        batch.set(candidateDocumentReference, candidate);
 
         Map<String, Object> userMapData = new HashMap<>();
         userMapData.put(EMAIL_KEY, candidate.getEmail());
@@ -158,21 +180,21 @@ class DatabaseAPI {
     }
 
     void insertRecruiter(Recruiter recruiter) {
-        Map<String, Object> recruiterMapData = new HashMap<>();
-        recruiterMapData.put(EMAIL_KEY, recruiter.getEmail());
-        recruiterMapData.put(NAME_KEY, recruiter.getName());
-        recruiterMapData.put(LAST_NAME_KEY, recruiter.getLastName());
-        recruiterMapData.put(JOB_CATEGORY_KEY, recruiter.getJobCategory());
-        recruiterMapData.put(JOB_LOCATION_KEY, recruiter.getJobLocation());
-        recruiterMapData.put(REQUIRED_SCOPE_KEY, recruiter.getRequiredScope());
-        recruiterMapData.put(REQUIRED_SKILLS_KEY, recruiter.getRequiredSkillsList());
-        recruiterMapData.put(REQUIRED_EDUCATION, recruiter.getRequiredEducation());
-        recruiterMapData.put(JOB_DESCRIPTION_KEY, recruiter.getJobDescription());
+//        Map<String, Object> recruiterMapData = new HashMap<>();
+//        recruiterMapData.put(EMAIL_KEY, recruiter.getEmail());
+//        recruiterMapData.put(NAME_KEY, recruiter.getName());
+//        recruiterMapData.put(LAST_NAME_KEY, recruiter.getLastName());
+//        recruiterMapData.put(JOB_CATEGORY_KEY, recruiter.getJobCategory());
+//        recruiterMapData.put(JOB_LOCATION_KEY, recruiter.getJobLocation());
+//        recruiterMapData.put(REQUIRED_SCOPE_KEY, recruiter.getRequiredScope());
+//        recruiterMapData.put(REQUIRED_SKILLS_KEY, recruiter.getRequiredSkillsList());
+//        recruiterMapData.put(REQUIRED_EDUCATION, recruiter.getRequiredEducation());
+//        recruiterMapData.put(JOB_DESCRIPTION_KEY, recruiter.getJobDescription());
 
         WriteBatch batch = db.batch();
 
         DocumentReference recruiterDocumentReference = recruitersCollection.document(recruiter.getEmail());
-        batch.set(recruiterDocumentReference, recruiterMapData);
+        batch.set(recruiterDocumentReference, recruiter);
 
         Map<String, Object> userMapData = new HashMap<>();
         userMapData.put(EMAIL_KEY, recruiter.getEmail());
@@ -188,7 +210,7 @@ class DatabaseAPI {
         });
     }
 
-    void insertJobCategories() {
+    void initializeJobCategories() {
 
         List<String> jobCategories = new ArrayList<>();
         jobCategories.add("Accounting");
@@ -274,42 +296,42 @@ class DatabaseAPI {
             sideString = "left";
         }
 
-        final Map<String, Object> recruiterSwipesMapData = new HashMap<>();
-        recruiterSwipesMapData.put(EMAIL_KEY, secondMail);
-        recruiterSwipesMapData.put(SIDE_KEY, sideString);
+        final Map<String, Object> firstSwipesMapData = new HashMap<>();
+        firstSwipesMapData.put(EMAIL_KEY, secondMail);
+        firstSwipesMapData.put(SIDE_KEY, sideString);
 
-        final Map<String, Object> candidateSwipesMapData = new HashMap<>();
+        final Map<String, Object> secondSwipesMapData = new HashMap<>();
 
-        final Map<String, Object> recruiterMatchesMapData = new HashMap<>();
-        recruiterMatchesMapData.put(EMAIL_KEY, firstMail);
+        final Map<String, Object> firstMatchesMapData = new HashMap<>();
+        firstMatchesMapData.put(EMAIL_KEY, firstMail);
 
-        final Map<String, Object> candidateMatchesMapData = new HashMap<>();
-        candidateMatchesMapData.put(EMAIL_KEY, secondMail);
+        final Map<String, Object> secondMatchesMapData = new HashMap<>();
+        secondMatchesMapData.put(EMAIL_KEY, secondMail);
 
         if(side == Side.RIGHT) {
-            final DocumentReference swipeDocRefOfRecruiter = firstCollection.document(firstMail).collection(SWIPES_KEY).document(secondMail);
-            final DocumentReference swipeDocRefOfCandidate = secondCollection.document(secondMail).collection(SWIPES_KEY).document(firstMail);
-            final DocumentReference matchDocRefOfRecruiter = firstCollection.document(firstMail).collection(MATCHES_KEY).document(secondMail);
-            final DocumentReference matchDocRefOfCandidate = secondCollection.document(secondMail).collection(MATCHES_KEY).document(firstMail);
+            final DocumentReference swipeDocRefOfFirst = firstCollection.document(firstMail).collection(SWIPES_COLLECTION_NAME).document(secondMail);
+            final DocumentReference swipeDocRefOfSecond = secondCollection.document(secondMail).collection(SWIPES_COLLECTION_NAME).document(firstMail);
+            final DocumentReference matchDocRefOfFirst = firstCollection.document(firstMail).collection(MATCHES_COLLECTION_NAME).document(secondMail);
+            final DocumentReference matchDocRefOfSecond = secondCollection.document(secondMail).collection(MATCHES_COLLECTION_NAME).document(firstMail);
             db.runTransaction(new Transaction.Function<Void>() {
                 @Override
                 public Void apply(Transaction transaction) throws FirebaseFirestoreException {
-                    DocumentSnapshot snapshotSwipeCandidate = transaction.get(swipeDocRefOfCandidate);
-                    DocumentSnapshot snapshotSwipeRecruiter = transaction.get(swipeDocRefOfRecruiter);
-                    if(snapshotSwipeCandidate.exists()) {
-                        if(snapshotSwipeCandidate.get(SIDE_KEY).equals("right")) {
-                            transaction.set(matchDocRefOfRecruiter, candidateMatchesMapData);
-                            transaction.set(matchDocRefOfCandidate, recruiterMatchesMapData);
+                    DocumentSnapshot snapshotSwipeSecond = transaction.get(swipeDocRefOfSecond);
+                    DocumentSnapshot snapshotSwipeFirst = transaction.get(swipeDocRefOfFirst);
+                    if(snapshotSwipeSecond.exists()) {
+                        if(snapshotSwipeSecond.get(SIDE_KEY).equals("right")) {
+                            transaction.set(matchDocRefOfFirst, secondMatchesMapData);
+                            transaction.set(matchDocRefOfSecond, firstMatchesMapData);
                         }
-                        transaction.update(swipeDocRefOfCandidate, candidateSwipesMapData);
+                        transaction.update(swipeDocRefOfSecond, secondSwipesMapData);
                     } else {
-                        transaction.set(swipeDocRefOfCandidate, candidateSwipesMapData);
+                        transaction.set(swipeDocRefOfSecond, secondSwipesMapData);
                     }
 
-                    if(snapshotSwipeRecruiter.exists()) {
-                        transaction.update(swipeDocRefOfRecruiter, recruiterSwipesMapData);
+                    if(snapshotSwipeFirst.exists()) {
+                        transaction.update(swipeDocRefOfFirst, firstSwipesMapData);
                     } else {
-                        transaction.set(swipeDocRefOfRecruiter, recruiterSwipesMapData);
+                        transaction.set(swipeDocRefOfFirst, firstSwipesMapData);
                     }
 
                     return null;
@@ -328,8 +350,8 @@ class DatabaseAPI {
                 }
             });
         } else {
-            firstCollection.document(firstMail).collection(SWIPES_KEY).document(secondMail)
-                    .set(recruiterSwipesMapData)
+            firstCollection.document(firstMail).collection(SWIPES_COLLECTION_NAME).document(secondMail)
+                    .set(firstSwipesMapData)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -350,7 +372,7 @@ class DatabaseAPI {
         initializeDBWithRecruiters();
         initializeDBWithCandidates();
         initializeDBWithSwipes();
-        insertJobCategories();
+        initializeJobCategories();
     }
 
 //    public void initializeDBWithUsers() {

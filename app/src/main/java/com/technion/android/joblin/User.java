@@ -5,7 +5,7 @@ public class User {
     private String name;
     private String lastName;
     static private int totalNumberOfSwipes = 10;
-    private int numberOfSwipes = 10;
+    private int numberOfSwipesLeft = 10;
 
     User(String email, String name, String lastName) {
         this.email = email;
@@ -37,16 +37,16 @@ public class User {
         this.lastName = lastName;
     }
 
-    public boolean reduceNumberOfSwipes() {
-        if(numberOfSwipes == 0) {
+    public boolean reduceNumberOfSwipesLeft() {
+        if(numberOfSwipesLeft == 0) {
             return false;
         }
-        numberOfSwipes -= 1;
+        numberOfSwipesLeft -= 1;
         return true;
     }
 
-    public void restoreNumberOfSwipes() {
-        numberOfSwipes = totalNumberOfSwipes;
+    public void restoreNumberOfSwipesLeft() {
+        numberOfSwipesLeft = totalNumberOfSwipes;
     }
 
     public static int getTotalNumberOfSwipes() {
@@ -57,11 +57,11 @@ public class User {
         User.totalNumberOfSwipes = totalNumberOfSwipes;
     }
 
-    public int getNumberOfSwipes() {
-        return numberOfSwipes;
+    public int getNumberOfSwipesLeft() {
+        return numberOfSwipesLeft;
     }
 
-    public void setNumberOfSwipes(int numberOfSwipes) {
-        this.numberOfSwipes = numberOfSwipes;
+    public void setNumberOfSwipesLeft(int numberOfSwipesLeft) {
+        this.numberOfSwipesLeft = numberOfSwipesLeft;
     }
 }
