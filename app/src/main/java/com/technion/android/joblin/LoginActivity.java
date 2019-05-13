@@ -40,8 +40,11 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
+                            Intent intent = new Intent(LoginActivity.this,CandProfPrefActivity.class);
+                            startActivity(intent);
+
                             Toast.makeText(LoginActivity.this, "Hello "+ user.getEmail()+" !", Toast.LENGTH_SHORT).show();
-//                            updateUI(user);
+//
                         } else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -52,12 +55,19 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+
+    //Todo: 1 - Add the login aftermath
+    //Todo: 2 - Redesign layout
+    //Todo: 3 - Integrate with Levi's API
+    //Todo: 4 - Write Robolectric tests to see if the user can break the app
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_screen_layout);
         FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
+        mAuth.signOut();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -92,6 +102,7 @@ public class LoginActivity extends AppCompatActivity {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
+
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 // ...
@@ -112,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
 
-//        Todo: updateUI(currentUser);
+//        Todo: updateActivity Method based on user "stats"
     }
 
 
