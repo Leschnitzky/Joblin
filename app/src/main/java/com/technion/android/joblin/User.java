@@ -5,15 +5,17 @@ public class User {
     private String email;
     private String name;
     private String lastName;
+    private String imageUrl;
     static private long totalNumberOfSwipes = 10;
     private long numberOfSwipesLeft = 10;
 
     User() {}
 
-    User(String email, String name, String lastName) {
+    User(String email, String name, String lastName, String imageUrl) {
         this.email = email;
         this.name = name;
         this.lastName = lastName;
+        this.imageUrl = imageUrl;
     }
 
     public User(User other) {
@@ -21,6 +23,7 @@ public class User {
         this.name = other.name;
         this.lastName = other.lastName;
         this.numberOfSwipesLeft = other.numberOfSwipesLeft;
+        this.imageUrl = other.imageUrl;
     }
 
     public String getEmail() {
@@ -73,5 +76,13 @@ public class User {
 
     public void setNumberOfSwipesLeft(long  numberOfSwipesLeft) {
         this.numberOfSwipesLeft = numberOfSwipesLeft;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

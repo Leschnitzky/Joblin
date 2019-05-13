@@ -48,6 +48,7 @@ class DatabaseAPI {
     static final String REQUIRED_SKILLS_KEY = "requiredSkillsList";
     static final String JOB_DESCRIPTION_KEY = "jobDescription";
     static final String SIDE_KEY = "side";
+    static final String IMAGE_URL_KEY = "imageUrl";
 
     static final String SWIPES_COLLECTION_NAME = "Swipes";
     static final String MATCHES_COLLECTION_NAME = "Matches";
@@ -266,6 +267,7 @@ class DatabaseAPI {
                 "levi.weis3@gmail.com",
                 "Levi",
                 "Weiss",
+                "http://image",
                 25,
                 "Haifa",
                 "twice a week",
@@ -284,6 +286,7 @@ class DatabaseAPI {
                 "levi.weiss@gmail.com",
                 "Levi",
                 "Weiss",
+                "http://image",
                 "Computer Science",
                 "twice a week",
                 "Tel Aviv",
@@ -474,6 +477,7 @@ class DatabaseAPI {
         recruiter = new Recruiter("gre4f@gmail.com",
                 "Gregory",
                 "Weiss",
+                "http://image",
                 "Computer Science",
                 "Three times a week",
                 "Tel Aviv",
@@ -486,6 +490,7 @@ class DatabaseAPI {
         recruiter = new Recruiter("si7s@gmail.com",
                 "Simha",
                 "Golan",
+                "http://image",
                 "Media",
                 "Three times a week",
                 "Ramat Gan",
@@ -498,6 +503,7 @@ class DatabaseAPI {
         recruiter = new Recruiter("john3@gmail.com",
                 "John",
                 "Buka",
+                "http://image",
                 "IT",
                 "Three times a week",
                 "Eilat",
@@ -510,6 +516,7 @@ class DatabaseAPI {
         recruiter = new Recruiter("bar@gmail.com",
                 "Bar",
                 "Jim",
+                "http://image",
                 "Accounting",
                 "Three times a week",
                 "Ashdod",
@@ -522,6 +529,7 @@ class DatabaseAPI {
         recruiter = new Recruiter("Dani@gmail.com",
                 "Dani",
                 "Mizrahi",
+                "http://image",
                 "Accounting",
                 "Three times a week",
                 "Eilat",
@@ -537,37 +545,61 @@ class DatabaseAPI {
         List<String> skillsList;
 
         skillsList = new ArrayList<>(Arrays.asList("Java", "C++"));
-        candidate = new Candidate(
-                "levi.weiss3@gmail.com",  "Levi",  "Weiss",
-                25, "Haifa",  "40%", "Technion",
-                skillsList, "I like building Android apps",
+        candidate = new Candidate("levi.weiss3@gmail.com",
+                "Levi",
+                "Weiss",
+                "http://image",
+                25,
+                "Haifa",
+                "40%",
+                "Technion",
+                skillsList,
+                "I like building Android apps",
                 "Computer Science");
 
         insertCandidate(candidate);
 
         skillsList = new ArrayList<>(Arrays.asList("Bash", "TCSH"));
-        candidate = new Candidate(
-                "diego@gmail.com",  "Diego",  "Maradona",
-                33, "Eilat",  "Three times a week", "Tel Aviv University",
-                skillsList, "I am best person for cyber security",
+        candidate = new Candidate("diego@gmail.com",
+                "Diego",
+                "Maradona",
+                "http://image",
+                33,
+                "Eilat",
+                "Three times a week",
+                "Tel Aviv University",
+                skillsList,
+                "I am best person for cyber security",
                 "IT");
 
         insertCandidate(candidate);
 
         skillsList = new ArrayList<>(Arrays.asList("Bash", "Windows"));
-        candidate = new Candidate(
-                "macho@gmail.com",  "Macho",  "Pacho",
-                33, "Jaffa",  "Three times a week", "Ben Gurion University",
-                skillsList, "I am friendly personal",
+        candidate = new Candidate("macho@gmail.com",
+                "Macho",
+                "Pacho",
+                "http://image",
+                33,
+                "Jaffa",
+                "Three times a week",
+                "Ben Gurion University",
+                skillsList,
+                "I am friendly personal",
                 "IT");
 
         insertCandidate(candidate);
 
         skillsList = new ArrayList<>(Arrays.asList("Team work", "Tax professional"));
-        candidate = new Candidate(
-                "asaf@gmail.com",  "Asaf",  "Granit",
-                39, "Jaffa",  "Three times a week", "IDC",
-                skillsList, "I am looking to work in dynamic place with good people",
+        candidate = new Candidate("asaf@gmail.com",
+                "Asaf",
+                "Granit",
+                "http://image",
+                39,
+                "Jaffa",
+                "Three times a week",
+                "IDC",
+                skillsList,
+                "I am looking to work in dynamic place with good people",
                 "Accounting");
 
         insertCandidate(candidate);

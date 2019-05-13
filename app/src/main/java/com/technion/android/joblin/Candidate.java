@@ -17,6 +17,7 @@ public class Candidate extends User {
     public Candidate(String email,
                      String name,
                      String lastName,
+                     String imageUrl,
                      int age,
                      String jobLocation,
                      String scope,
@@ -25,7 +26,7 @@ public class Candidate extends User {
                      String moreInfo,
                      String jobCategory) {
 
-        super(email, name, lastName);
+        super(email, name, lastName, imageUrl);
         this.age = age;
         this.jobLocation = jobLocation;
         this.scope = scope;

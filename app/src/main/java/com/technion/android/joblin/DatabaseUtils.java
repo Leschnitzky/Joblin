@@ -21,6 +21,7 @@ class DatabaseUtils {
     static final String REQUIRED_SKILLS_KEY = "requiredSkillsList";
     static final String JOB_DESCRIPTION_KEY = "jobDescription";
     static final String SIDE_KEY = "side";
+    static final String IMAGE_URL_KEY = "imageUrl";
 
     static final String SWIPES_COLLECTION_NAME = "Swipes";
     static final String MATCHES_COLLECTION_NAME = "Matches";

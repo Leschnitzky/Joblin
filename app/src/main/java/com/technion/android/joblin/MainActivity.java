@@ -15,7 +15,6 @@ public class MainActivity extends AppCompatActivity {
 
         DatabaseAPI db = new DatabaseAPI();
         db.initializeDBWithSomeData();
-        db.getRecruitersForSwipingScreen_MainFunction("asaf@gmail.com");
 
         setContentView(R.layout.activity_main);
     }
