@@ -41,6 +41,7 @@ public class CanMainActivity extends AppCompatActivity {
     CollectionReference recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
     CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
     CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
+    private final String email = "levi.weiss3@gmail.com";
 
     void getRecruitersForSwipingScreen_MainFunction(final String candidateMail) {
         getRecruitersForSwipingScreen_CollectDataAboutCandidate(candidateMail);
@@ -133,7 +134,7 @@ public class CanMainActivity extends AppCompatActivity {
 
     void getRecruitersForSwipingScreen(List<Recruiter> listofRecruiters) {
         for(Recruiter profile : listofRecruiters){
-            mSwipeView.addView(new RecruiterCard(mContext, profile, mSwipeView));
+            mSwipeView.addView(new RecruiterCard(mContext, profile, mSwipeView,email));
         }
     }
 
@@ -160,7 +161,7 @@ public class CanMainActivity extends AppCompatActivity {
                         .setSwipeInMsgLayoutId(R.layout.swipe_in_msg_view)
                         .setSwipeOutMsgLayoutId(R.layout.swipe_out_msg_view));
 
-        getRecruitersForSwipingScreen_MainFunction("levi.weiss3@gmail.com");
+        getRecruitersForSwipingScreen_MainFunction(email);
 
         findViewById(R.id.rejectBtn).setOnClickListener(new View.OnClickListener() {
             @Override

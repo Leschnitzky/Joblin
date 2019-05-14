@@ -35,10 +35,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.technion.android.joblin.DatabaseUtils.*;
+import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.EMAIL_KEY;
+import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.MATCHES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SWIPES_LEFT_KEY;
+import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.SIDE_KEY;
+import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.TAG;
+import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
-@Layout(R.layout.reccard_view)
-public class RecruiterCard {
+@Layout(R.layout.cancard_view)
+public class CandidateCard {
     @View(R.id.profileImageView)
     ImageView profileImageView;
 
@@ -84,7 +93,7 @@ public class RecruiterCard {
     @View(R.id.slidingpanel)
     SlidingUpPanelLayout slidingPanel;
 
-    private Recruiter mProfile;
+    private Candidate mProfile;
     private Context mContext;
     private SwipePlaceHolderView mSwipeView;
     private final String swiper;
@@ -94,7 +103,7 @@ public class RecruiterCard {
     CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
     CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
 
-    public RecruiterCard(Context context, Recruiter profile, SwipePlaceHolderView swipeView, final String swiper_Email) {
+    public CandidateCard(Context context, Candidate profile, SwipePlaceHolderView swipeView, final String swiper_Email) {
         mContext = context;
         mProfile = profile;
         mSwipeView = swipeView;
@@ -115,13 +124,13 @@ public class RecruiterCard {
     public void onResolved(){
         Glide.with(mContext).load(mProfile.getImageUrl()).into(profileImageView);
         nameTxt.setText(String.format("%s %s", mProfile.getName(), mProfile.getLastName()));
-        positionScopeTxt.setText(mProfile.getRequiredScope());
-        EducationTxt.setText(mProfile.getRequiredEducation());
-        fullEducationTxt.setText(mProfile.getRequiredEducation());
-        SkillsTxt.setText(getSkillsString(mProfile.getRequiredSkillsList(),10));
-        fullSkillsTxt.setText(getSkillsString(mProfile.getRequiredSkillsList(),20));
+        positionScopeTxt.setText(mProfile.getScope());
+        EducationTxt.setText(mProfile.getEducation());
+        fullEducationTxt.setText(mProfile.getEducation());
+        SkillsTxt.setText(getSkillsString(mProfile.getSkillsList(),10));
+        fullSkillsTxt.setText(getSkillsString(mProfile.getSkillsList(),20));
         locationNameTxt.setText(mProfile.getJobLocation());
-        descTxt.setText(mProfile.getJobDescription());
+        descTxt.setText(mProfile.getMoreInfo());
 
         slidingPanel.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
@@ -147,9 +156,8 @@ public class RecruiterCard {
         Log.d("EVENT", "onSwipeCancelState");
     }
 
-    void candidateDoSwipe(final String candidateMail, final String recruiterMail, final Side side) {
-
-        DocumentReference docRef = candidatesCollection.document(candidateMail);
+    void recruiterDoSwipe(final String recruiterMail, final String candidateMail, final Side side) {
+        DocumentReference docRef = recruitersCollection.document(recruiterMail);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -157,12 +165,12 @@ public class RecruiterCard {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        Candidate candidate = document.toObject(Candidate.class);
-                        if((side == Side.RIGHT) && (candidate.getNumberOfSwipesLeft() == 0)) {
+                        Recruiter recruiter = document.toObject(Recruiter.class);
+                        if((side == Side.RIGHT) && (recruiter.getNumberOfSwipesLeft() == 0)) {
                             Log.d(TAG, "number of swipes is 0");
                             Utils.noMoreSwipesPopUp(mSwipeView.getContext());
                         } else {
-                            addSwipeDataForCandidate(candidateMail, recruiterMail, side);
+                            addSwipeDataForRecruiter(recruiterMail, candidateMail, side);
                         }
                     } else {
                         Log.d(TAG, "No such document");
@@ -176,8 +184,8 @@ public class RecruiterCard {
         });
     }
 
-    void addSwipeDataForCandidate(String candidateMail, String recruiterMail, Side side) {
-        addSwipeData(candidatesCollection, recruitersCollection, candidateMail, recruiterMail, side);
+    void addSwipeDataForRecruiter(String recruiterMail, String candidateMail, Side side) {
+        addSwipeData(recruitersCollection, candidatesCollection, recruiterMail, candidateMail, side);
     }
 
     void addSwipeData(CollectionReference firstCollection,
@@ -227,6 +235,7 @@ public class RecruiterCard {
                         transaction.update(swipeDocRefOfSecond, secondSwipesMapData);
                     } else {
                         transaction.set(swipeDocRefOfSecond, secondSwipesMapData);
+                        transaction.delete(swipeDocRefOfSecond);
                     }
 
                     if(snapshotSwipeFirst.exists()) {
@@ -283,13 +292,13 @@ public class RecruiterCard {
     @SwipeIn
     public void onSwipeIn(){
         Log.d("EVENT", "onSwipedIn");
-        candidateDoSwipe(swiper,mProfile.getEmail(),Side.RIGHT);
+        recruiterDoSwipe(swiper,mProfile.getEmail(),Side.RIGHT);
     }
 
     @SwipeOut
     public void onSwipedOut(){
         Log.d("EVENT", "onSwipedOut");
-        candidateDoSwipe(swiper,mProfile.getEmail(),Side.LEFT);
+        recruiterDoSwipe(swiper,mProfile.getEmail(),Side.LEFT);
     }
 
     @SwipeInState

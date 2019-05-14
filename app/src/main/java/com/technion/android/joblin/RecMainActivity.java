@@ -23,7 +23,13 @@ import com.mindorks.placeholderview.SwipePlaceHolderView;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.technion.android.joblin.DatabaseUtils.*;
+import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORY_KEY;
+import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.TAG;
+import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
 
 public class RecMainActivity extends AppCompatActivity {
@@ -35,6 +41,7 @@ public class RecMainActivity extends AppCompatActivity {
     CollectionReference recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
     CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
     CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
+    private final String email = "libat@gmail.com";
 
     void getCandidatesForSwipingScreen_MainFunction(final String recruiterMail) {
         getCandidatesForSwipingScreen_CollectDataAboutRecruiter(recruiterMail);
@@ -127,7 +134,7 @@ public class RecMainActivity extends AppCompatActivity {
 
     void getCandidatesForSwipingScreen(List<Candidate> listOfCandidates) {
         for(Candidate profile : listOfCandidates){
-            mSwipeView.addView(new CandidateCard(mContext, profile, mSwipeView));
+            mSwipeView.addView(new CandidateCard(mContext, profile, mSwipeView,email));
         }
     }
 
@@ -153,7 +160,7 @@ public class RecMainActivity extends AppCompatActivity {
                         .setSwipeInMsgLayoutId(R.layout.swipe_in_msg_view)
                         .setSwipeOutMsgLayoutId(R.layout.swipe_out_msg_view));
 
-        getCandidatesForSwipingScreen_MainFunction("john3@gmail.com");
+        getCandidatesForSwipingScreen_MainFunction(email);
 
         findViewById(R.id.rejectBtn).setOnClickListener(new View.OnClickListener() {
             @Override
