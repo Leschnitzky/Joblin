@@ -2,7 +2,6 @@ package com.technion.android.joblin;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -11,7 +10,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -297,10 +295,7 @@ class DatabaseAPI {
         insertRecruiter(recruiter);
     }
 
-    void checkIfRecruiterCanMakeSwipe(String recruiterMail, Side side) {
-        if(side == Side.LEFT) {
-            return;
-        }
+    void recruiterDoSwipe(final String recruiterMail, final String candidateMail, final Side side) {
         DocumentReference docRef = recruitersCollection.document(recruiterMail);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -310,23 +305,24 @@ class DatabaseAPI {
                     if (document.exists()) {
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         Recruiter recruiter = document.toObject(Recruiter.class);
-                        if(recruiter.getNumberOfSwipesLeft() == 0) {
+                        if((side == Side.RIGHT) && (recruiter.getNumberOfSwipesLeft() == 0)) {
                             Log.d(TAG, "number of swipes is 0");
+                            //TODO: message for no more swipes
+                        } else {
+                            addSwipeDataForRecruiter(recruiterMail, candidateMail, side);
                         }
                     } else {
                         Log.d(TAG, "No such document");
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());
+                    //TODO: add general toast for failure.
                 }
             }
         });
     }
 
-    void checkIfCandidateCanMakeSwipe(String candidateMail, Side side) {
-        if(side == Side.LEFT) {
-            return;
-        }
+    void candidateDoSwipe(final String candidateMail,final String recruiterMail, final Side side) {
         DocumentReference docRef = candidatesCollection.document(candidateMail);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -336,9 +332,11 @@ class DatabaseAPI {
                     if (document.exists()) {
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         Candidate candidate = document.toObject(Candidate.class);
-                        if(candidate.getNumberOfSwipesLeft() == 0) {
+                        if((side == Side.RIGHT) && (candidate.getNumberOfSwipesLeft() == 0)) {
                             Log.d(TAG, "number of swipes is 0");
-
+                            //TODO: message for no more swipes
+                        } else {
+                            addSwipeDataForCandidate(candidateMail, recruiterMail, side);
                         }
                     } else {
                         Log.d(TAG, "No such document");
@@ -399,6 +397,7 @@ class DatabaseAPI {
                         if(snapshotSwipeSecond.get(SIDE_KEY).equals("right")) {
                             transaction.set(matchDocRefOfFirst, secondMatchesMapData);
                             transaction.set(matchDocRefOfSecond, firstMatchesMapData);
+                            //TODO:
                         }
                         transaction.update(swipeDocRefOfSecond, secondSwipesMapData);
                     } else {
@@ -430,6 +429,7 @@ class DatabaseAPI {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Log.w(TAG, "Transaction failure.", e);
+                    //TODO: add general toast for failure.
                 }
             });
         } else {
@@ -445,6 +445,7 @@ class DatabaseAPI {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Log.w(TAG, "Error updating document", e);
+                            //TODO: add general toast for failure.
                         }
                     });
         }

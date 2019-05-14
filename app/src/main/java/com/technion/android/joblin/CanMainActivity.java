@@ -7,13 +7,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
 
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
+import static com.technion.android.joblin.DatabaseUtils.*;
 
 public class CanMainActivity extends AppCompatActivity {
 
     private SwipePlaceHolderView mSwipeView;
     private Context mContext;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    CollectionReference candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
+    CollectionReference recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
+    CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
+    CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
