@@ -748,8 +748,8 @@ class DatabaseAPI {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 Candidate candidate = document.toObject(Candidate.class);
                                 listOfCandidates.add(candidate);
-                                getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped(recruiterMail, listOfCandidates);
                             }
+                            getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped(recruiterMail, listOfCandidates);
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
