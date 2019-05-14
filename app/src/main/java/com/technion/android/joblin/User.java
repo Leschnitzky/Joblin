@@ -1,16 +1,29 @@
 package com.technion.android.joblin;
 
 public class User {
+
     private String email;
     private String name;
     private String lastName;
-    static private int totalNumberOfSwipes = 10;
-    private int numberOfSwipes = 10;
+    private String imageUrl;
+    static private long totalNumberOfSwipes = 10;
+    private long numberOfSwipesLeft = 10;
 
-    User(String email, String name, String lastName) {
+    User() {}
+
+    User(String email, String name, String lastName, String imageUrl) {
         this.email = email;
         this.name = name;
         this.lastName = lastName;
+        this.imageUrl = imageUrl;
+    }
+
+    public User(User other) {
+        this.email = other.email;
+        this.name = other.name;
+        this.lastName = other.lastName;
+        this.numberOfSwipesLeft = other.numberOfSwipesLeft;
+        this.imageUrl = other.imageUrl;
     }
 
     public String getEmail() {
@@ -37,31 +50,39 @@ public class User {
         this.lastName = lastName;
     }
 
-    public boolean reduceNumberOfSwipes() {
-        if(numberOfSwipes == 0) {
+    public boolean reduceNumberOfSwipesLeft() {
+        if(numberOfSwipesLeft == 0) {
             return false;
         }
-        numberOfSwipes -= 1;
+        numberOfSwipesLeft -= 1;
         return true;
     }
 
-    public void restoreNumberOfSwipes() {
-        numberOfSwipes = totalNumberOfSwipes;
+    public void restoreNumberOfSwipesLeft() {
+        numberOfSwipesLeft = totalNumberOfSwipes;
     }
 
-    public static int getTotalNumberOfSwipes() {
+    public static long getTotalNumberOfSwipes() {
         return totalNumberOfSwipes;
     }
 
-    public static void setTotalNumberOfSwipes(int totalNumberOfSwipes) {
+    public static void setTotalNumberOfSwipes(long totalNumberOfSwipes) {
         User.totalNumberOfSwipes = totalNumberOfSwipes;
     }
 
-    public int getNumberOfSwipes() {
-        return numberOfSwipes;
+    public long getNumberOfSwipesLeft() {
+        return numberOfSwipesLeft;
     }
 
-    public void setNumberOfSwipes(int numberOfSwipes) {
-        this.numberOfSwipes = numberOfSwipes;
+    public void setNumberOfSwipesLeft(long  numberOfSwipesLeft) {
+        this.numberOfSwipesLeft = numberOfSwipesLeft;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

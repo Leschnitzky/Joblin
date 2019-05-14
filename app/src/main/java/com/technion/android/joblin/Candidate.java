@@ -12,9 +12,12 @@ public class Candidate extends User {
     private String moreInfo;
     private String jobCategory;
 
+    public Candidate() {}
+
     public Candidate(String email,
                      String name,
                      String lastName,
+                     String imageUrl,
                      int age,
                      String jobLocation,
                      String scope,
@@ -23,7 +26,7 @@ public class Candidate extends User {
                      String moreInfo,
                      String jobCategory) {
 
-        super(email, name, lastName);
+        super(email, name, lastName, imageUrl);
         this.age = age;
         this.jobLocation = jobLocation;
         this.scope = scope;
@@ -31,6 +34,17 @@ public class Candidate extends User {
         this.skillsList = skillsList;
         this.moreInfo = moreInfo;
         this.jobCategory = jobCategory;
+    }
+
+    public Candidate(Candidate other) {
+        super(other);
+        this.age = other.age;
+        this.jobLocation = other.jobLocation;
+        this.scope = other.scope;
+        this.education = other.education;
+        this.skillsList = other.skillsList;
+        this.moreInfo = other.moreInfo;
+        this.jobCategory = other.jobCategory;
     }
 
     public int getAge() {

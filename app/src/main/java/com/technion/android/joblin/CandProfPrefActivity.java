@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.widget.EditText;
 
 public class CandProfPrefActivity extends AppCompatActivity {
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

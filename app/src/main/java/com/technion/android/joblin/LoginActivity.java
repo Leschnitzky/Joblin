@@ -22,17 +22,38 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.technion.android.joblin.DatabaseUtils.*;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String FIRST_NAME_KEY = "firstName";
-    private static final String LAST_NAME_KEY = "lastName";
+    public static final String FIRST_NAME_KEY = "firstName";
+    public static final String LAST_NAME_KEY = "lastName";
+    private boolean not_in_db_cand = false;
+    private boolean not_in_db_recr = false;
 
     private final int RC_SIGN_IN = 530;
     private String mUserFirstName;
     private String mUserLastName;
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
+
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    CollectionReference candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
+    CollectionReference recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
+    CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
+    CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d("Init", "firebaseAuthWithGoogle:" + acct.getId());
@@ -45,12 +66,9 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Intent intent = new Intent(LoginActivity.this,CandProfPrefActivity.class);
-                            intent.putExtra(FIRST_NAME_KEY,mUserFirstName);
-                            intent.putExtra(LAST_NAME_KEY,mUserLastName);
-                            startActivity(intent);
 
-                            Toast.makeText(LoginActivity.this, "Hello "+ user.getEmail()+" !", Toast.LENGTH_SHORT).show();
+                            //Will check and advance the user to choose if that's his first time
+                            isCandidateOrRecrInDB(user.getEmail());
 //
                         } else {
                             // If sign in fails, display a message to the user.
@@ -61,7 +79,6 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
-
 
     //Todo: 1 - Add the login aftermath
     //Todo: 2 - Redesign layout
@@ -122,19 +139,77 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+    // Todo: Redundant?
     @Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        if(currentUser != null){
-            Toast.makeText(LoginActivity.this, "Hello "+ currentUser.getEmail(), Toast.LENGTH_SHORT).show();
+        if(currentUser != null) {
+            isCandidateOrRecrInDB(currentUser.getEmail());
         }
+    }
 
-
-//        Todo: updateActivity Method based on user "stats"
+    void isCandidateOrRecrInDB(final String email) {
+        DocumentReference docRef = candidatesCollection.document(email);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        // Already a candidate
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                                                    // Todo: Change to bar's activity name once pulled from dev (Cand)
+                        Intent intent = new Intent(LoginActivity.this, CandProfPrefActivity.class);
+                        intent.putExtra(FIRST_NAME_KEY,mUserFirstName);
+                        intent.putExtra(LAST_NAME_KEY,mUserLastName);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Not Found Cand", Toast.LENGTH_SHORT).show();
+                        // Not a Cand, check if recruiter
+                        isRecruiterInDB(email);
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
     }
 
 
+    void isRecruiterInDB(final String email) {
+        DocumentReference docRef = recruitersCollection.document(email);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        // Tis a recruiter
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        // Todo: Change to bar's activity name once pulled from dev (Recr)
+                        Intent intent = new Intent(LoginActivity.this, RecrProfPrefActivity.class);
+                        intent.putExtra(FIRST_NAME_KEY,mUserFirstName);
+                        intent.putExtra(LAST_NAME_KEY,mUserLastName);
+                        startActivity(intent);
+                    } else {
+                        // Not a Cand nor Recr
+                        // Logged in with google, just need to choose
+                        Log.d(TAG, "No such document");
+
+                        Toast.makeText(LoginActivity.this, "Not Found Recr", Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(LoginActivity.this, ChooseUserTypeActivity.class);
+                        intent.putExtra(FIRST_NAME_KEY,mUserFirstName);
+                        intent.putExtra(LAST_NAME_KEY,mUserLastName);
+                        startActivity(intent);
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
 }
