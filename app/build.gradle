@@ -4,6 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.technion.android.joblin"
+        multiDexEnabled true
         minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
@@ -18,7 +19,6 @@ android {
     }
     sourceSets {
         main {
-            assets.srcDirs = ['src/main/assets', 'src/main/assets/']
             res.srcDirs = ['src/main/res', 'src/main/res/drawable']
         }
     }
@@ -44,6 +44,11 @@ android {
         implementation 'com.android.support:design:28.0.0'
         implementation 'com.google.firebase:firebase-firestore:19.0.0'
         implementation 'com.google.firebase:firebase-core:16.0.9'
+        implementation 'com.android.support:multidex:1.0.3'
     }
+}
+
+dependencies {
+    implementation 'com.android.support:gridlayout-v7:27.1.1'
 }
 apply plugin: 'com.google.gms.google-services'

@@ -228,36 +228,6 @@ class DatabaseAPI {
         });
     }
 
-    void initializeJobCategories() {
-
-        List<String> jobCategories = new ArrayList<>();
-        jobCategories.add("Accounting");
-        jobCategories.add("Computer Science");
-        jobCategories.add("Education");
-        jobCategories.add("Finance");
-        jobCategories.add("IT");
-        jobCategories.add("Media");
-        jobCategories.add("Sales");
-
-        WriteBatch batch = db.batch();
-        DocumentReference jobCategoryDocumentReference;
-        Map<String, Object> jobCategoryMapData = new HashMap<>();
-
-        for(String category : jobCategories) {
-            jobCategoryDocumentReference = jobCategoriesCollection.document(category);
-            jobCategoryMapData.clear();
-            jobCategoryMapData.put(JOB_CATEGORY_KEY, category);
-            batch.set(jobCategoryDocumentReference, jobCategoryMapData);
-        }
-
-        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-
-            }
-        });
-    }
-
     void insertSampleCandidate() {
         List<String> skillsList = new ArrayList<>(Arrays.asList("Java", "C++"));
 
@@ -322,7 +292,8 @@ class DatabaseAPI {
         });
     }
 
-    void candidateDoSwipe(final String candidateMail,final String recruiterMail, final Side side) {
+    void candidateDoSwipe(final String candidateMail, final String recruiterMail, final Side side) {
+
         DocumentReference docRef = candidatesCollection.document(candidateMail);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -387,17 +358,18 @@ class DatabaseAPI {
             final DocumentReference swipeDocRefOfSecond = secondCollection.document(secondMail).collection(SWIPES_COLLECTION_NAME).document(firstMail);
             final DocumentReference matchDocRefOfFirst = firstCollection.document(firstMail).collection(MATCHES_COLLECTION_NAME).document(secondMail);
             final DocumentReference matchDocRefOfSecond = secondCollection.document(secondMail).collection(MATCHES_COLLECTION_NAME).document(firstMail);
-            db.runTransaction(new Transaction.Function<Void>() {
+            db.runTransaction(new Transaction.Function<Boolean>() {
                 @Override
-                public Void apply(Transaction transaction) throws FirebaseFirestoreException {
+                public Boolean apply(Transaction transaction) throws FirebaseFirestoreException {
                     DocumentSnapshot snapshotMainFirst = transaction.get(mainDocRefOfFirst);
                     DocumentSnapshot snapshotSwipeSecond = transaction.get(swipeDocRefOfSecond);
                     DocumentSnapshot snapshotSwipeFirst = transaction.get(swipeDocRefOfFirst);
+                    boolean isMatch = false;
                     if(snapshotSwipeSecond.exists()) {
                         if(snapshotSwipeSecond.get(SIDE_KEY).equals("right")) {
                             transaction.set(matchDocRefOfFirst, secondMatchesMapData);
                             transaction.set(matchDocRefOfSecond, firstMatchesMapData);
-                            //TODO:
+                            isMatch = true;
                         }
                         transaction.update(swipeDocRefOfSecond, secondSwipesMapData);
                     } else {
@@ -416,13 +388,15 @@ class DatabaseAPI {
                         transaction.update(mainDocRefOfFirst, NUMBER_OF_SWIPES_LEFT_KEY, numberOfSwipesLeft - 1);
                     }
 
-                    return null;
+                    return isMatch;
                 }
-            }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            }).addOnSuccessListener(new OnSuccessListener<Boolean>() {
                 @Override
-                public void onSuccess(Void aVoid) {
+                public void onSuccess(Boolean isMatch) {
                     Log.d(TAG, "Transaction success!");
-
+                    if(isMatch) {
+                        Log.d(TAG, "It is a match!");
+                    }
                 }
             })
             .addOnFailureListener(new OnFailureListener() {
@@ -478,7 +452,7 @@ class DatabaseAPI {
         recruiter = new Recruiter("gre4f@gmail.com",
                 "Gregory",
                 "Weiss",
-                "http://image",
+                "https://www.lafollette.wisc.edu/images/facultystaff/highres/Nemet-Gregory-2016.jpg",
                 "Computer Science",
                 "Three times a week",
                 "Tel Aviv",
@@ -488,10 +462,36 @@ class DatabaseAPI {
 
         insertRecruiter(recruiter);
 
+        recruiter = new Recruiter("limor@gmail.com",
+                "Limor",
+                "Snonit",
+                "https://www.lafollette.wisc.edu/images/facultystaff/highres/Nemet-Gregory-2016.jpg",
+                "Computer Science",
+                "Full time",
+                "Haifa",
+                "Building apps for ios",
+                "Kindergarden",
+                skillsList);
+
+        insertRecruiter(recruiter);
+
+        recruiter = new Recruiter("libat@gmail.com",
+                "Libat",
+                "Yogev",
+                "https://www.lafollette.wisc.edu/images/facultystaff/highres/Nemet-Gregory-2016.jpg",
+                "Computer Science",
+                "twice a week",
+                "Carmiel",
+                "it's a secret job that can only be known when you have the special skills",
+                "Magic from Hogwarts",
+                new ArrayList<String> (Arrays.asList("Java","C#","abra kadabra")));
+
+        insertRecruiter(recruiter);
+
         recruiter = new Recruiter("si7s@gmail.com",
                 "Simha",
                 "Golan",
-                "http://image",
+                "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 "Media",
                 "Three times a week",
                 "Ramat Gan",
@@ -504,7 +504,7 @@ class DatabaseAPI {
         recruiter = new Recruiter("john3@gmail.com",
                 "John",
                 "Buka",
-                "http://image",
+                "https://pbs.twimg.com/profile_images/972872769019850753/YTxFZF2x_400x400.jpg",
                 "IT",
                 "Three times a week",
                 "Eilat",
@@ -517,7 +517,7 @@ class DatabaseAPI {
         recruiter = new Recruiter("bar@gmail.com",
                 "Bar",
                 "Jim",
-                "http://image",
+                "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 "Accounting",
                 "Three times a week",
                 "Ashdod",
@@ -530,7 +530,7 @@ class DatabaseAPI {
         recruiter = new Recruiter("Dani@gmail.com",
                 "Dani",
                 "Mizrahi",
-                "http://image",
+                "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 "Accounting",
                 "Three times a week",
                 "Eilat",
@@ -549,7 +549,7 @@ class DatabaseAPI {
         candidate = new Candidate("levi.weiss3@gmail.com",
                 "Levi",
                 "Weiss",
-                "http://image",
+                "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 25,
                 "Haifa",
                 "40%",
@@ -564,7 +564,7 @@ class DatabaseAPI {
         candidate = new Candidate("diego@gmail.com",
                 "Diego",
                 "Maradona",
-                "http://image",
+                "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 33,
                 "Eilat",
                 "Three times a week",
@@ -579,7 +579,7 @@ class DatabaseAPI {
         candidate = new Candidate("macho@gmail.com",
                 "Macho",
                 "Pacho",
-                "http://image",
+                "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 33,
                 "Jaffa",
                 "Three times a week",
@@ -594,7 +594,7 @@ class DatabaseAPI {
         candidate = new Candidate("asaf@gmail.com",
                 "Asaf",
                 "Granit",
-                "http://image",
+                "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 39,
                 "Jaffa",
                 "Three times a week",
@@ -607,12 +607,42 @@ class DatabaseAPI {
     }
 
     public void initializeDBWithSwipes() {
-        addSwipeDataForRecruiter("gre4f@gmail.com", "levi.weiss3@gmail.com", Side.RIGHT);
-        addSwipeDataForRecruiter("john3@gmail.com", "macho@gmail.com", Side.LEFT);
-        addSwipeDataForRecruiter("bar@gmail.com", "asaf@gmail.com", Side.RIGHT);
-        addSwipeDataForCandidate("levi.weiss3@gmail.com", "gre4f@gmail.com", Side.RIGHT);
-        addSwipeDataForCandidate("macho@gmail.com", "john3@gmail.com", Side.RIGHT);
-        addSwipeDataForCandidate("asaf@gmail.com", "bar@gmail.com", Side.RIGHT);
+        recruiterDoSwipe("gre4f@gmail.com", "levi.weiss3@gmail.com", Side.RIGHT);
+        recruiterDoSwipe("john3@gmail.com", "macho@gmail.com", Side.LEFT);
+        recruiterDoSwipe("bar@gmail.com", "asaf@gmail.com", Side.RIGHT);
+        candidateDoSwipe("levi.weiss3@gmail.com", "gre4f@gmail.com", Side.RIGHT);
+        candidateDoSwipe("macho@gmail.com", "john3@gmail.com", Side.RIGHT);
+        candidateDoSwipe("asaf@gmail.com", "bar@gmail.com", Side.RIGHT);
+    }
+
+    void initializeJobCategories() {
+
+        List<String> jobCategories = new ArrayList<>();
+        jobCategories.add("Accounting");
+        jobCategories.add("Computer Science");
+        jobCategories.add("Education");
+        jobCategories.add("Finance");
+        jobCategories.add("IT");
+        jobCategories.add("Media");
+        jobCategories.add("Sales");
+
+        WriteBatch batch = db.batch();
+        DocumentReference jobCategoryDocumentReference;
+        Map<String, Object> jobCategoryMapData = new HashMap<>();
+
+        for(String category : jobCategories) {
+            jobCategoryDocumentReference = jobCategoriesCollection.document(category);
+            jobCategoryMapData.clear();
+            jobCategoryMapData.put(JOB_CATEGORY_KEY, category);
+            batch.set(jobCategoryDocumentReference, jobCategoryMapData);
+        }
+
+        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+            }
+        });
     }
 
     void getRecruitersForSwipingScreen_MainFunction(final String candidateMail) {
@@ -656,8 +686,8 @@ class DatabaseAPI {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 Recruiter recruiter = document.toObject(Recruiter.class);
                                 listOfRecruiters.add(recruiter);
-                                getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);
                             }
+                            getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
@@ -748,8 +778,8 @@ class DatabaseAPI {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 Candidate candidate = document.toObject(Candidate.class);
                                 listOfCandidates.add(candidate);
-                                getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped(recruiterMail, listOfCandidates);
                             }
+                            getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped(recruiterMail, listOfCandidates);
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }

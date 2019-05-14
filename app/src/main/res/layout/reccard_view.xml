@@ -82,7 +82,7 @@
 
                         <TextView
                             android:id="@+id/positionScopeTxt"
-                            android:layout_width="wrap_content"
+                            android:layout_width="120dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginTop="10dp"
@@ -110,7 +110,7 @@
 
                         <TextView
                             android:id="@+id/locationNameTxt"
-                            android:layout_width="wrap_content"
+                            android:layout_width="120dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginTop="10dp"
@@ -173,6 +173,7 @@
                             android:layout_gravity="center"
                             android:layout_marginTop="10dp"
                             android:gravity="center"
+                            android:maxLines="2"
                             android:text="skills"
                             android:textColor="#000000"
                             android:textSize="20sp"
@@ -231,7 +232,8 @@
                         android:src="@drawable/icon_school"
                         app:layout_columnWeight="1"
                         app:layout_gravity="center"
-                        app:layout_rowWeight="1" />
+                        app:layout_rowWeight="1"
+                        android:layout_marginBottom="10dp"/>
 
                     <TextView
                         android:id="@+id/fullEducationTxt"
@@ -246,7 +248,8 @@
                         android:textStyle="normal|bold"
                         app:layout_columnWeight="1"
                         app:layout_gravity="center"
-                        app:layout_rowWeight="1" />
+                        app:layout_rowWeight="1"
+                        android:layout_marginBottom="10dp"/>
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -278,7 +281,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
-                    android:text="About Me:"
+                    android:text="About The Job:"
                     android:textAllCaps="false"
                     android:textColor="#000000"
                     android:textSize="30sp"

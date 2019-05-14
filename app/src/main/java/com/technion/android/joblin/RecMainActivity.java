@@ -3,14 +3,26 @@ package com.technion.android.joblin;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.technion.android.joblin.DatabaseUtils.*;
 
 
@@ -24,10 +36,105 @@ public class RecMainActivity extends AppCompatActivity {
     CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
     CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
 
+    void getCandidatesForSwipingScreen_MainFunction(final String recruiterMail) {
+        getCandidatesForSwipingScreen_CollectDataAboutRecruiter(recruiterMail);
+    }
+
+    void getCandidatesForSwipingScreen_CollectDataAboutRecruiter(final String recruiterMail) {
+        DocumentReference docRef = recruitersCollection.document(recruiterMail);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        String recruiterJobCategory = (String) document.get(JOB_CATEGORY_KEY);
+                        getCandidatesForSwipingScreen_FindRelevantCandidates(recruiterMail, recruiterJobCategory);
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+
+    void getCandidatesForSwipingScreen_FindRelevantCandidates(final String recruiterMail,
+                                                              final String recruiterJobCategory) {
+
+        candidatesCollection
+                .whereEqualTo(JOB_CATEGORY_KEY, recruiterJobCategory)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<Candidate> listOfCandidates = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                Candidate candidate = document.toObject(Candidate.class);
+                                listOfCandidates.add(candidate);
+                            }
+                            getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped(recruiterMail, listOfCandidates);
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+    }
+
+    void getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped(final String recruiterMail,
+                                                                                  final List<Candidate> listOfCandidates) {
+
+        recruitersCollection.document(recruiterMail).collection(SWIPES_COLLECTION_NAME).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<String> listOfCandidatesMailStrings = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                listOfCandidatesMailStrings.add(document.getId());
+                            }
+                            getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped_Final(listOfCandidates, listOfCandidatesMailStrings);
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+
+    }
+
+    void getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped_Final(final List<Candidate> listOfCandidates,
+                                                                                        final List<String> listOfCandidatesMailStrings) {
+
+        List<Candidate> finalListOfCandidates = new ArrayList<>();
+        for(Candidate candidate : listOfCandidates) {
+            String candidateMail = candidate.getEmail();
+            if(! listOfCandidatesMailStrings.contains(candidateMail)) {
+                Candidate candidateToAdd = new Candidate(candidate);
+                finalListOfCandidates.add(candidateToAdd);
+            }
+        }
+
+        getCandidatesForSwipingScreen(finalListOfCandidates);
+    }
+
+
+    void getCandidatesForSwipingScreen(List<Candidate> listOfCandidates) {
+        for(Candidate profile : listOfCandidates){
+            mSwipeView.addView(new CandidateCard(mContext, profile, mSwipeView));
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_swipe);
 
         mSwipeView = (SwipePlaceHolderView)findViewById(R.id.swipeView);
         mContext = getApplicationContext();
@@ -46,10 +153,7 @@ public class RecMainActivity extends AppCompatActivity {
                         .setSwipeInMsgLayoutId(R.layout.swipe_in_msg_view)
                         .setSwipeOutMsgLayoutId(R.layout.swipe_out_msg_view));
 
-
-        for(Profile profile : Utils.loadProfiles(this.getApplicationContext())){
-            mSwipeView.addView(new Card(mContext, profile, mSwipeView));
-        }
+        getCandidatesForSwipingScreen_MainFunction("john3@gmail.com");
 
         findViewById(R.id.rejectBtn).setOnClickListener(new View.OnClickListener() {
             @Override

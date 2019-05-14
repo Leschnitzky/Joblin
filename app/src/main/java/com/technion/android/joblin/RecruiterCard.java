@@ -19,8 +19,10 @@ import com.mindorks.placeholderview.annotations.swipe.SwipeOut;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOutState;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
-@Layout(R.layout.card_view)
-public class Card {
+import java.util.List;
+
+@Layout(R.layout.reccard_view)
+public class RecruiterCard {
     @View(R.id.profileImageView)
     ImageView profileImageView;
 
@@ -66,27 +68,37 @@ public class Card {
     @View(R.id.slidingpanel)
     SlidingUpPanelLayout slidingPanel;
 
-    private Profile mProfile;
+    private Recruiter mProfile;
     private Context mContext;
     private SwipePlaceHolderView mSwipeView;
 
-    public Card(Context context, Profile profile, SwipePlaceHolderView swipeView) {
+    public RecruiterCard(Context context, Recruiter profile, SwipePlaceHolderView swipeView) {
         mContext = context;
         mProfile = profile;
         mSwipeView = swipeView;
     }
 
+    private String getSkillsString(List<String> skills, int maxLength)
+    {
+        StringBuilder skillsString = new StringBuilder();
+        for (String skill:skills) {
+            if(skill.length()<=maxLength)
+                skillsString.append(skill).append(", ");
+        }
+        return skillsString.toString().substring(0,skillsString.toString().length()-2);
+    }
+
     @Resolve
     public void onResolved(){
         Glide.with(mContext).load(mProfile.getImageUrl()).into(profileImageView);
-        nameTxt.setText(mProfile.getName());
-        positionScopeTxt.setText(mProfile.getScope());
-        EducationTxt.setText(mProfile.getEducation());
-        fullEducationTxt.setText(mProfile.getEducation());
-        SkillsTxt.setText(mProfile.getSkills());
-        fullSkillsTxt.setText(mProfile.getSkills());
-        locationNameTxt.setText(mProfile.getLocation());
-        descTxt.setText(mProfile.getDesc());
+        nameTxt.setText(String.format("%s %s", mProfile.getName(), mProfile.getLastName()));
+        positionScopeTxt.setText(mProfile.getRequiredScope());
+        EducationTxt.setText(mProfile.getRequiredEducation());
+        fullEducationTxt.setText(mProfile.getRequiredEducation());
+        SkillsTxt.setText(getSkillsString(mProfile.getRequiredSkillsList(),10));
+        fullSkillsTxt.setText(getSkillsString(mProfile.getRequiredSkillsList(),20));
+        locationNameTxt.setText(mProfile.getJobLocation());
+        descTxt.setText(mProfile.getJobDescription());
 
         slidingPanel.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
