@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="10dip"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/location_recr"
+            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:hint="@string/location_recr"
+            android:maxLength="30"/>
+
+        <EditText
+            android:id="@+id/scope_recr"
+            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:hint="@string/required_scope"
+            android:maxLength="10"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorDivider"/>
+
+        <TextView
+            android:layout_margin="5dp"
+            android:textColor="@color/colorPrimaryText"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dip"
+            android:text="@string/category_recr"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="5dp"/>
+
+        <Spinner
+            android:layout_margin="5dp"
+            android:id="@+id/category_spinner_recr"
+            android:layout_width="fill_parent"
+            android:layout_height="20dp"
+            android:prompt="@string/app_name" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorDivider"/>
+
+        <EditText
+            android:id="@+id/education_recr"
+            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:hint="@string/education_recr"
+            android:maxLength="20"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorDivider"/>
+
+        <TextView
+            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="@string/skills_recr"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimaryText"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/first_skill_recr"
+                android:layout_margin="2dp"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:hint="@string/skill"
+                android:maxLength="10"/>
+            <EditText
+                android:id="@+id/second_skill_recr"
+                android:layout_margin="2dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:hint="@string/skill"
+                android:maxLength="10"/>
+            <EditText
+                android:id="@+id/third_skill_recr"
+                android:layout_margin="2dp"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:hint="@string/skill"
+                android:maxLength="10"/>
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/job_description"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:gravity="top"
+            android:hint="@string/description_recr"
+            android:maxLength="150"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorDivider"/>
+        <Button
+            android:id="@+id/submit_button_recr"
+            android:layout_margin="5dp"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:background="@color/colorAccent"
+            android:textColor="@color/colorTextOrIcons"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:text="@string/pref_button"/>
+    </LinearLayout>
+</ScrollView>
