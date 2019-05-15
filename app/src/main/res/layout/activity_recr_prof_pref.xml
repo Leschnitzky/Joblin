@@ -10,9 +10,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
 
-
-
         <EditText
+            android:id="@+id/location_recr"
             android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -20,6 +19,7 @@
             android:maxLength="30"/>
 
         <EditText
+            android:id="@+id/scope_recr"
             android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -45,7 +45,7 @@
 
         <Spinner
             android:layout_margin="5dp"
-            android:id="@+id/category_spinner"
+            android:id="@+id/category_spinner_recr"
             android:layout_width="fill_parent"
             android:layout_height="20dp"
             android:prompt="@string/app_name" />
@@ -56,6 +56,7 @@
             android:background="@color/colorDivider"/>
 
         <EditText
+            android:id="@+id/education_recr"
             android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -81,6 +82,7 @@
             android:layout_height="50dp"
             android:orientation="horizontal">
             <EditText
+                android:id="@+id/first_skill_recr"
                 android:layout_margin="2dp"
                 android:layout_width="match_parent"
                 android:layout_weight="1"
@@ -88,6 +90,7 @@
                 android:hint="@string/skill"
                 android:maxLength="10"/>
             <EditText
+                android:id="@+id/second_skill_recr"
                 android:layout_margin="2dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -95,6 +98,7 @@
                 android:hint="@string/skill"
                 android:maxLength="10"/>
             <EditText
+                android:id="@+id/third_skill_recr"
                 android:layout_margin="2dp"
                 android:layout_width="match_parent"
                 android:layout_weight="1"
@@ -104,6 +108,7 @@
         </LinearLayout>
 
         <EditText
+            android:id="@+id/job_description"
             android:layout_margin="10dp"
             android:layout_width="match_parent"
             android:layout_height="400dp"
@@ -116,6 +121,7 @@
             android:layout_height="1dp"
             android:background="@color/colorDivider"/>
         <Button
+            android:id="@+id/submit_button_recr"
             android:layout_margin="5dp"
             android:layout_width="120dp"
             android:layout_height="50dp"

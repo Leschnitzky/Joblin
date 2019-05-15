@@ -94,7 +94,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.login_screen_layout);
         FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
-        mAuth.signOut();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -144,14 +143,17 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    // Todo: Redundant?
+//    // Todo: Redundant?
     @Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        GoogleSignInAccount currentUser = GoogleSignIn.getLastSignedInAccount(this);
 
         if(currentUser != null) {
+            mUserFirstName = currentUser.getGivenName();
+            mUserLastName = currentUser.getFamilyName();
+            mUserPhoto = currentUser.getPhotoUrl();
             isCandidateOrRecrInDB(currentUser.getEmail());
         }
     }
@@ -168,9 +170,6 @@ public class LoginActivity extends AppCompatActivity {
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                                                     // Todo: Change to bar's activity name once pulled from dev (Cand)
                         Intent intent = new Intent(LoginActivity.this, CandProfPrefActivity.class);
-                        intent.putExtra(FIRST_NAME_KEY,mUserFirstName);
-                        intent.putExtra(LAST_NAME_KEY,mUserLastName);
-                        intent.putExtra(URI_KEY,mUserPhoto.toString());
                         startActivity(intent);
                     } else {
                         Toast.makeText(LoginActivity.this, "Not Found Cand", Toast.LENGTH_SHORT).show();
@@ -195,11 +194,8 @@ public class LoginActivity extends AppCompatActivity {
                     if (document.exists()) {
                         // Tis a recruiter
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        // Todo: Change to bar's activity name once pulled from dev (Recr)
+//                         Todo: Change to bar's activity name once pulled from dev (Recr)
                         Intent intent = new Intent(LoginActivity.this, RecrProfPrefActivity.class);
-                        intent.putExtra(FIRST_NAME_KEY,mUserFirstName);
-                        intent.putExtra(LAST_NAME_KEY,mUserLastName);
-                        intent.putExtra(URI_KEY,mUserPhoto);
                         startActivity(intent);
                     } else {
                         // Not a Cand nor Recr
@@ -211,7 +207,7 @@ public class LoginActivity extends AppCompatActivity {
                         Intent intent = new Intent(LoginActivity.this, ChooseUserTypeActivity.class);
                         intent.putExtra(FIRST_NAME_KEY,mUserFirstName);
                         intent.putExtra(LAST_NAME_KEY,mUserLastName);
-                        intent.putExtra(URI_KEY,mUserPhoto);
+                        intent.putExtra(URI_KEY,mUserPhoto.toString());
                         startActivity(intent);
                     }
                 } else {

@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -60,6 +61,8 @@ public class CandProfPrefActivity extends AppCompatActivity {
     EditText mSecondSkillText;
     EditText mThirdSkillText;
 
+    Intent thisIntent;
+
     EditText mDescriptionText;
 
     Button mSubmitButton;
@@ -92,10 +95,12 @@ public class CandProfPrefActivity extends AppCompatActivity {
         initiateCategories();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cand_prof_pref);
+        thisIntent = getIntent();
 
         mDateText = findViewById(R.id.date_of_birth);
         mLocationText = findViewById(R.id.job_location_cand);
         mScopeText = findViewById(R.id.scope_cand);
+        mEducationText = findViewById(R.id.education_cand);
         mDescriptionText = findViewById(R.id.description_cand);
         mFirstSkillText = findViewById(R.id.first_skill_cand);
         mSecondSkillText = findViewById(R.id.second_skill_cand);
@@ -120,28 +125,83 @@ public class CandProfPrefActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //TODO: Check all fields
-                Candidate cand = new Candidate(
-                        mAuth.getCurrentUser().getEmail(),
-                        getIntent().getStringExtra(LoginActivity.FIRST_NAME_KEY),
-                        getIntent().getStringExtra(LoginActivity.LAST_NAME_KEY),
-                        getIntent().getStringExtra(LoginActivity.URI_KEY),
-               //         new Timestamp(myCalendar.getTime()),
-                        7,
-                        mLocationText.getText().toString(),
-                        mScopeText.getText().toString(),
-                        mEducationText.getText().toString(),
-                        Arrays.asList(mFirstSkillText.getText().toString(),
-                                mSecondSkillText.getText().toString(),
-                                mThirdSkillText.getText().toString()),
-                        mDescriptionText.getText().toString(),
-                        mJobCategorySpinner.getSelectedItem().toString()
-                );
-                insertCandidate(cand);
+                    ArrayList<Integer> emptyFields = checkAllEditTextsForEmptyStrings();
+                    if(emptyFields.isEmpty()){
+                        Candidate cand = new Candidate(
+
+                                mAuth.getCurrentUser().getEmail(),
+                                thisIntent.getStringExtra(LoginActivity.FIRST_NAME_KEY),
+                                thisIntent.getStringExtra(LoginActivity.LAST_NAME_KEY),
+                                thisIntent.getStringExtra(LoginActivity.URI_KEY),
+                                //         new Timestamp(myCalendar.getTime()),
+                                7,
+                                mLocationText.getText().toString(),
+                                mScopeText.getText().toString(),
+                                mEducationText.getText().toString(),
+                                Arrays.asList(mFirstSkillText.getText().toString(),
+                                        mSecondSkillText.getText().toString(),
+                                        mThirdSkillText.getText().toString()),
+                                mDescriptionText.getText().toString(),
+                                mJobCategorySpinner.getSelectedItem().toString()
+                        );
+                        insertCandidate(cand);
+                    } else {
+                        String errorToast = createEmptyFieldToastMessage(emptyFields);
+                        Toast.makeText(CandProfPrefActivity.this, errorToast, Toast.LENGTH_SHORT).show();
+                    }
             }
         });
     }
 
+    private String createEmptyFieldToastMessage(ArrayList<Integer> emptyFields) {
+        String error = "The following fields are empty: ";
+        for(Integer index : emptyFields){
+            error += getFieldName(index);
+            error += ", ";
+        }
+        return error.substring(0,error.length() -2 ) + ".";
+    }
+
+    private String getFieldName(Integer index) {
+        switch (index){
+            case 1: return "Date of Birth";
+            case 2: return "Location";
+            case 3: return "Scope";
+            case 4: return "Education";
+            case 5: return "First Skill";
+            case 6: return "Second Skill";
+            case 7: return "Third Skill";
+            case 8: return "Description";
+            default: return null;
+        }
+    }
+
+    private ArrayList<Integer> checkAllEditTextsForEmptyStrings() {
+        ArrayList<Integer> emptyFields = new ArrayList<>();
+        if(isEmpty(mDateText)) emptyFields.add(1);
+        if(isEmpty(mLocationText)) emptyFields.add(2);
+        if(isEmpty(mScopeText)) emptyFields.add(3);
+        if(isEmpty(mEducationText)) emptyFields.add(4);
+        if(isEmpty(mFirstSkillText)) emptyFields.add(5);
+        if(isEmpty(mSecondSkillText)) emptyFields.add(6);
+        if(isEmpty(mThirdSkillText)) emptyFields.add(7);
+        if(isEmpty(mDescriptionText)) emptyFields.add(8);
+        return emptyFields;
+
+    }
+
     void insertCandidate(Candidate candidate) {
+//        Map<String, Object> candidateMapData = new HashMap<>();
+//        candidateMapData.put(AGE_KEY, candidate.getAge());
+//        candidateMapData.put(EMAIL_KEY, candidate.getEmail());
+//        candidateMapData.put(JOB_CATEGORY_KEY, candidate.getJobCategory());
+//        candidateMapData.put(JOB_LOCATION_KEY, candidate.getJobLocation());
+//        candidateMapData.put(LAST_NAME_KEY, candidate.getLastName());
+//        candidateMapData.put(MORE_INFO_KEY, candidate.getMoreInfo());
+//        candidateMapData.put(NAME_KEY, candidate.getName());
+//        candidateMapData.put(SCOPE_KEY, candidate.getScope());
+//        candidateMapData.put(SKILLS_KEY, candidate.getSkillsList());
+//        candidateMapData.put(EDUCATION_KEY, candidate.getEducation());
 
         WriteBatch batch = db.batch();
 
@@ -151,15 +211,15 @@ public class CandProfPrefActivity extends AppCompatActivity {
         Map<String, Object> userMapData = new HashMap<>();
         userMapData.put(EMAIL_KEY, candidate.getEmail());
 
+
         DocumentReference userDocumentReference = usersCollection.document(candidate.getEmail());
         batch.set(userDocumentReference, userMapData);
+        Log.d("GOT HERE:","GOT HERE!");
 
         batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                Toast.makeText(CandProfPrefActivity.this, "ADDED CANDIDATE", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(CandProfPrefActivity.this,LoginActivity.class);
-                startActivity(intent);
+                Toast.makeText(CandProfPrefActivity.this, "ADDED CAND", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -173,6 +233,13 @@ public class CandProfPrefActivity extends AppCompatActivity {
         jobCategories.add("Media");
         jobCategories.add("Sales");
 
+    }
+
+    private boolean isEmpty(EditText etText) {
+        if (etText.getText().toString().trim().length() > 0)
+            return false;
+
+        return true;
     }
 
 

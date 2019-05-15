@@ -1,14 +1,24 @@
 package com.technion.android.joblin;
 
+import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -22,6 +32,7 @@ import static com.technion.android.joblin.DatabaseUtils.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,116 +45,114 @@ public class RecrProfPrefActivity extends AppCompatActivity {
     CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
     CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
 
+    final Calendar myCalendar = Calendar.getInstance();
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private ArrayList<String> jobCategories = new ArrayList<>();
+    Spinner mJobCategorySpinner;
+    EditText mScopeText;
+    EditText mLocationText;
+    EditText mEducationText;
+    EditText mFirstSkillText;
+    EditText mSecondSkillText;
+    EditText mThirdSkillText;
+
+    Intent thisIntent;
+
+    EditText mDescriptionText;
+
+    Button mSubmitButton;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        initiateCategories();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recr_prof_pref);
+        thisIntent = getIntent();
 
-        initializeDBWithSomeData();
-    }
+        mLocationText = findViewById(R.id.location_recr);
+        mScopeText = findViewById(R.id.scope_recr);
+        mEducationText = findViewById(R.id.education_recr);
+        mDescriptionText = findViewById(R.id.job_description);
+        mFirstSkillText = findViewById(R.id.first_skill_recr);
+        mSecondSkillText = findViewById(R.id.second_skill_recr);
+        mThirdSkillText = findViewById(R.id.third_skill_recr);
 
-    void isUserInTheDB(final String email) {
-        DocumentReference docRef = usersCollection.document(email);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        mSubmitButton = findViewById(R.id.submit_button_recr);
+
+        mJobCategorySpinner = findViewById(R.id.category_spinner_recr);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.
+                support_simple_spinner_dropdown_item,jobCategories);
+        mJobCategorySpinner.setAdapter(adapter);
+
+        mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
+            public void onClick(View v) {
+                //TODO: Check all fields
+                ArrayList<Integer> emptyFields = checkAllEditTextsForEmptyStrings();
+                if(emptyFields.isEmpty()){
+                    Recruiter recr = new Recruiter(
+
+                            mAuth.getCurrentUser().getEmail(),
+                            thisIntent.getStringExtra(LoginActivity.FIRST_NAME_KEY),
+                            thisIntent.getStringExtra(LoginActivity.LAST_NAME_KEY),
+                            thisIntent.getStringExtra(LoginActivity.URI_KEY),
+                            //         new Timestamp(myCalendar.getTime()),
+                            mJobCategorySpinner.getSelectedItem().toString(),
+                            mScopeText.getText().toString(),
+                            mDescriptionText.getText().toString(),
+                            mLocationText.getText().toString(),
+                            mEducationText.getText().toString(),
+                            Arrays.asList(mFirstSkillText.getText().toString(),
+                                    mSecondSkillText.getText().toString(),
+                                    mThirdSkillText.getText().toString())
+                    );
+                    insertRecruiter(recr);
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
+                    String errorToast = createEmptyFieldToastMessage(emptyFields);
+                    Toast.makeText(RecrProfPrefActivity.this, errorToast, Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
-    void isCandidateInDB(final String email) {
-        DocumentReference docRef = candidatesCollection.document(email);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
+    private String createEmptyFieldToastMessage(ArrayList<Integer> emptyFields) {
+        String error = "The following fields are empty: ";
+        for(Integer index : emptyFields){
+            error += getFieldName(index);
+            error += ", ";
+        }
+        return error.substring(0,error.length() -2 ) + ".";
     }
 
-    void isRecruiterInDB(final String email) {
-        DocumentReference docRef = recruitersCollection.document(email);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
+    private String getFieldName(Integer index) {
+        switch (index){
+            case 1: return "Location";
+            case 2: return "Scope";
+            case 3: return "Education";
+            case 4: return "First Skill";
+            case 5: return "Second Skill";
+            case 6: return "Third Skill";
+            case 7: return "Description";
+            default: return null;
+        }
     }
 
-    void getCandidate(final String email) {
-        DocumentReference docRef = candidatesCollection.document(email);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        Candidate candidate = document.toObject(Candidate.class);
+    private ArrayList<Integer> checkAllEditTextsForEmptyStrings() {
+        ArrayList<Integer> emptyFields = new ArrayList<>();
+        if(isEmpty(mLocationText)) emptyFields.add(1);
+        if(isEmpty(mScopeText)) emptyFields.add(2);
+        if(isEmpty(mEducationText)) emptyFields.add(3);
+        if(isEmpty(mFirstSkillText)) emptyFields.add(4);
+        if(isEmpty(mSecondSkillText)) emptyFields.add(5);
+        if(isEmpty(mThirdSkillText)) emptyFields.add(6);
+        if(isEmpty(mDescriptionText)) emptyFields.add(7);
+        return emptyFields;
 
-
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
     }
 
-    void getRecruiter(final String email) {
-        DocumentReference docRef = recruitersCollection.document(email);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        Recruiter recruiter = document.toObject(Recruiter.class);
-
-
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
-    }
-
-    void insertCandidate(Candidate candidate) {
+    void insertRecruiter(Recruiter recruiter) {
 //        Map<String, Object> candidateMapData = new HashMap<>();
 //        candidateMapData.put(AGE_KEY, candidate.getAge());
 //        candidateMapData.put(EMAIL_KEY, candidate.getEmail());
@@ -158,42 +167,12 @@ public class RecrProfPrefActivity extends AppCompatActivity {
 
         WriteBatch batch = db.batch();
 
-        DocumentReference candidateDocumentReference = candidatesCollection.document(candidate.getEmail());
-        batch.set(candidateDocumentReference, candidate);
-
-        Map<String, Object> userMapData = new HashMap<>();
-        userMapData.put(EMAIL_KEY, candidate.getEmail());
-
-        DocumentReference userDocumentReference = usersCollection.document(candidate.getEmail());
-        batch.set(userDocumentReference, userMapData);
-
-        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-
-            }
-        });
-    }
-
-    void insertRecruiter(Recruiter recruiter) {
-//        Map<String, Object> recruiterMapData = new HashMap<>();
-//        recruiterMapData.put(EMAIL_KEY, recruiter.getEmail());
-//        recruiterMapData.put(NAME_KEY, recruiter.getName());
-//        recruiterMapData.put(LAST_NAME_KEY, recruiter.getLastName());
-//        recruiterMapData.put(JOB_CATEGORY_KEY, recruiter.getJobCategory());
-//        recruiterMapData.put(JOB_LOCATION_KEY, recruiter.getJobLocation());
-//        recruiterMapData.put(REQUIRED_SCOPE_KEY, recruiter.getRequiredScope());
-//        recruiterMapData.put(REQUIRED_SKILLS_KEY, recruiter.getRequiredSkillsList());
-//        recruiterMapData.put(REQUIRED_EDUCATION, recruiter.getRequiredEducation());
-//        recruiterMapData.put(JOB_DESCRIPTION_KEY, recruiter.getJobDescription());
-
-        WriteBatch batch = db.batch();
-
-        DocumentReference recruiterDocumentReference = recruitersCollection.document(recruiter.getEmail());
-        batch.set(recruiterDocumentReference, recruiter);
+        DocumentReference candidateDocumentReference = recruitersCollection.document(recruiter.getEmail());
+        batch.set(candidateDocumentReference, recruiter);
 
         Map<String, Object> userMapData = new HashMap<>();
         userMapData.put(EMAIL_KEY, recruiter.getEmail());
+
 
         DocumentReference userDocumentReference = usersCollection.document(recruiter.getEmail());
         batch.set(userDocumentReference, userMapData);
@@ -201,14 +180,12 @@ public class RecrProfPrefActivity extends AppCompatActivity {
         batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-
+                Toast.makeText(RecrProfPrefActivity.this, "ADDED RECR", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    void initializeJobCategories() {
-
-        List<String> jobCategories = new ArrayList<>();
+    private void initiateCategories() {
         jobCategories.add("Accounting");
         jobCategories.add("Computer Science");
         jobCategories.add("Education");
@@ -217,562 +194,14 @@ public class RecrProfPrefActivity extends AppCompatActivity {
         jobCategories.add("Media");
         jobCategories.add("Sales");
 
-        WriteBatch batch = db.batch();
-        DocumentReference jobCategoryDocumentReference;
-        Map<String, Object> jobCategoryMapData = new HashMap<>();
-
-        for(String category : jobCategories) {
-            jobCategoryDocumentReference = jobCategoriesCollection.document(category);
-            jobCategoryMapData.clear();
-            jobCategoryMapData.put(JOB_CATEGORY_KEY, category);
-            batch.set(jobCategoryDocumentReference, jobCategoryMapData);
-        }
-
-        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-
-            }
-        });
     }
 
-    void insertSampleCandidate() {
-        List<String> skillsList = new ArrayList<>(Arrays.asList("Java", "C++"));
-
-        Candidate candidate = new Candidate(
-                "levi.weis3@gmail.com",
-                "Levi",
-                "Weiss",
-                "http://image",
-                25,
-                "Haifa",
-                "twice a week",
-                "Technion",
-                skillsList,
-                "I like building Android apps",
-                "Computer Science");
-
-        insertCandidate(candidate);
-    }
-
-    void insertSampleRecruiter() {
-        List<String> skillsList = new ArrayList<>(Arrays.asList("Java", "C++"));
-
-        Recruiter recruiter = new Recruiter(
-                "levi.weiss@gmail.com",
-                "Levi",
-                "Weiss",
-                "http://image",
-                "Computer Science",
-                "twice a week",
-                "Tel Aviv",
-                "Building apps for android",
-                "CS",
-                skillsList);
-
-        insertRecruiter(recruiter);
-    }
-
-    void checkIfRecruiterCanMakeSwipe(String recruiterMail, DatabaseAPI.Side side) {
-        if(side == DatabaseAPI.Side.LEFT) {
-            return;
-        }
-        DocumentReference docRef = recruitersCollection.document(recruiterMail);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        Recruiter recruiter = document.toObject(Recruiter.class);
-                        if(recruiter.getNumberOfSwipesLeft() == 0) {
-                            Log.d(TAG, "number of swipes is 0");
-                        }
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
-    }
-
-    void checkIfCandidateCanMakeSwipe(String candidateMail, DatabaseAPI.Side side) {
-        if(side == DatabaseAPI.Side.LEFT) {
-            return;
-        }
-        DocumentReference docRef = candidatesCollection.document(candidateMail);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        Candidate candidate = document.toObject(Candidate.class);
-                        if(candidate.getNumberOfSwipesLeft() == 0) {
-                            Log.d(TAG, "number of swipes is 0");
-
-                        }
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
-    }
-
-    void addSwipeDataForRecruiter(String recruiterMail, String candidateMail, DatabaseAPI.Side side) {
-        addSwipeData(recruitersCollection, candidatesCollection, recruiterMail, candidateMail, side);
-    }
-
-    void addSwipeDataForCandidate(String candidateMail, String recruiterMail, DatabaseAPI.Side side) {
-        addSwipeData(candidatesCollection, recruitersCollection, candidateMail, recruiterMail, side);
-    }
-
-    void addSwipeData(CollectionReference firstCollection,
-                      CollectionReference secondCollection,
-                      String firstMail,
-                      String secondMail,
-                      DatabaseAPI.Side side) {
-
-        String sideString;
-        if(side == DatabaseAPI.Side.RIGHT) {
-            sideString = "right";
-        } else {
-            sideString = "left";
-        }
-
-        final Map<String, Object> firstSwipesMapData = new HashMap<>();
-        firstSwipesMapData.put(EMAIL_KEY, secondMail);
-        firstSwipesMapData.put(SIDE_KEY, sideString);
-
-        final Map<String, Object> secondSwipesMapData = new HashMap<>();
-
-        final Map<String, Object> firstMatchesMapData = new HashMap<>();
-        firstMatchesMapData.put(EMAIL_KEY, firstMail);
-
-        final Map<String, Object> secondMatchesMapData = new HashMap<>();
-        secondMatchesMapData.put(EMAIL_KEY, secondMail);
-
-        if(side == DatabaseAPI.Side.RIGHT) {
-            final DocumentReference mainDocRefOfFirst = firstCollection.document(firstMail);
-            final DocumentReference swipeDocRefOfFirst = firstCollection.document(firstMail).collection(SWIPES_COLLECTION_NAME).document(secondMail);
-            final DocumentReference swipeDocRefOfSecond = secondCollection.document(secondMail).collection(SWIPES_COLLECTION_NAME).document(firstMail);
-            final DocumentReference matchDocRefOfFirst = firstCollection.document(firstMail).collection(MATCHES_COLLECTION_NAME).document(secondMail);
-            final DocumentReference matchDocRefOfSecond = secondCollection.document(secondMail).collection(MATCHES_COLLECTION_NAME).document(firstMail);
-            db.runTransaction(new Transaction.Function<Void>() {
-                @Override
-                public Void apply(Transaction transaction) throws FirebaseFirestoreException {
-                    DocumentSnapshot snapshotMainFirst = transaction.get(mainDocRefOfFirst);
-                    DocumentSnapshot snapshotSwipeSecond = transaction.get(swipeDocRefOfSecond);
-                    DocumentSnapshot snapshotSwipeFirst = transaction.get(swipeDocRefOfFirst);
-                    if(snapshotSwipeSecond.exists()) {
-                        if(snapshotSwipeSecond.get(SIDE_KEY).equals("right")) {
-                            transaction.set(matchDocRefOfFirst, secondMatchesMapData);
-                            transaction.set(matchDocRefOfSecond, firstMatchesMapData);
-                        }
-                        transaction.update(swipeDocRefOfSecond, secondSwipesMapData);
-                    } else {
-                        transaction.set(swipeDocRefOfSecond, secondSwipesMapData);
-                    }
-
-                    if(snapshotSwipeFirst.exists()) {
-                        transaction.update(swipeDocRefOfFirst, firstSwipesMapData);
-                    } else {
-                        transaction.set(swipeDocRefOfFirst, firstSwipesMapData);
-                    }
-
-                    Log.d(TAG, "DocumentSnapshot data: " + snapshotMainFirst.getData());
-                    if(snapshotMainFirst.exists()) {
-                        long numberOfSwipesLeft = snapshotMainFirst.getLong(NUMBER_OF_SWIPES_LEFT_KEY);
-                        transaction.update(mainDocRefOfFirst, NUMBER_OF_SWIPES_LEFT_KEY, numberOfSwipesLeft - 1);
-                    }
-
-                    return null;
-                }
-            }).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.d(TAG, "Transaction success!");
-
-                }
-            })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w(TAG, "Transaction failure.", e);
-                        }
-                    });
-        } else {
-            firstCollection.document(firstMail).collection(SWIPES_COLLECTION_NAME).document(secondMail)
-                    .set(firstSwipesMapData)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d(TAG, "DocumentSnapshot successfully updated!");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w(TAG, "Error updating document", e);
-                        }
-                    });
-        }
-
-    }
-
-    public void initializeDBWithSomeData() {
-        initializeDBWithRecruiters();
-        initializeDBWithCandidates();
-        initializeDBWithSwipes();
-        initializeJobCategories();
-    }
-
-//    public void initializeDBWithUsers() {
-//        insertUser("gre4f@gmail.com");
-//        insertUser("si7s@gmail.com");
-//        insertUser("john3@gmail.com");
-//        insertUser("bar@gmail.com");
-//        insertUser("levi.weiss3@gmail.com");
-//        insertUser("diego@gmail.com");
-//        insertUser("macho@gmail.com");
-//        insertUser("asaf@gmail.com");
-//    }
-
-    public void initializeDBWithRecruiters() {
-        Recruiter recruiter;
-        List<String> skillsList;
-
-        skillsList = new ArrayList<>(Arrays.asList("Java", "C++"));
-        recruiter = new Recruiter("gre4f@gmail.com",
-                "Gregory",
-                "Weiss",
-                "http://image",
-                "Computer Science",
-                "Three times a week",
-                "Tel Aviv",
-                "Building apps for android",
-                "High School graduate",
-                skillsList);
-
-        insertRecruiter(recruiter);
-
-        recruiter = new Recruiter("si7s@gmail.com",
-                "Simha",
-                "Golan",
-                "http://image",
-                "Media",
-                "Three times a week",
-                "Ramat Gan",
-                "Speaking with people about arts",
-                "PHD",
-                skillsList);
-
-        insertRecruiter(recruiter);
-
-        recruiter = new Recruiter("john3@gmail.com",
-                "John",
-                "Buka",
-                "http://image",
-                "IT",
-                "Three times a week",
-                "Eilat",
-                "Configuration of IT services in windows",
-                "None",
-                skillsList);
-
-        insertRecruiter(recruiter);
-
-        recruiter = new Recruiter("bar@gmail.com",
-                "Bar",
-                "Jim",
-                "http://image",
-                "Accounting",
-                "Three times a week",
-                "Ashdod",
-                "Accounting for a big company",
-                "Graduate in Accounting",
-                skillsList);
-
-        insertRecruiter(recruiter);
-
-        recruiter = new Recruiter("Dani@gmail.com",
-                "Dani",
-                "Mizrahi",
-                "http://image",
-                "Accounting",
-                "Three times a week",
-                "Eilat",
-                "Accounting for a big company",
-                "Graduate in Accounting",
-                skillsList);
-
-        insertRecruiter(recruiter);
-    }
-
-    public void initializeDBWithCandidates() {
-        Candidate candidate;
-        List<String> skillsList;
-
-        skillsList = new ArrayList<>(Arrays.asList("Java", "C++"));
-        candidate = new Candidate("levi.weiss3@gmail.com",
-                "Levi",
-                "Weiss",
-                "http://image",
-                25,
-                "Haifa",
-                "40%",
-                "Technion",
-                skillsList,
-                "I like building Android apps",
-                "Computer Science");
-
-        insertCandidate(candidate);
-
-        skillsList = new ArrayList<>(Arrays.asList("Bash", "TCSH"));
-        candidate = new Candidate("diego@gmail.com",
-                "Diego",
-                "Maradona",
-                "http://image",
-                33,
-                "Eilat",
-                "Three times a week",
-                "Tel Aviv University",
-                skillsList,
-                "I am best person for cyber security",
-                "IT");
-
-        insertCandidate(candidate);
-
-        skillsList = new ArrayList<>(Arrays.asList("Bash", "Windows"));
-        candidate = new Candidate("macho@gmail.com",
-                "Macho",
-                "Pacho",
-                "http://image",
-                33,
-                "Jaffa",
-                "Three times a week",
-                "Ben Gurion University",
-                skillsList,
-                "I am friendly personal",
-                "IT");
-
-        insertCandidate(candidate);
-
-        skillsList = new ArrayList<>(Arrays.asList("Team work", "Tax professional"));
-        candidate = new Candidate("asaf@gmail.com",
-                "Asaf",
-                "Granit",
-                "http://image",
-                39,
-                "Jaffa",
-                "Three times a week",
-                "IDC",
-                skillsList,
-                "I am looking to work in dynamic place with good people",
-                "Accounting");
-
-        insertCandidate(candidate);
-    }
-
-    public void initializeDBWithSwipes() {
-        addSwipeDataForRecruiter("gre4f@gmail.com", "levi.weiss3@gmail.com", DatabaseAPI.Side.RIGHT);
-        addSwipeDataForRecruiter("john3@gmail.com", "macho@gmail.com", DatabaseAPI.Side.LEFT);
-        addSwipeDataForRecruiter("bar@gmail.com", "asaf@gmail.com", DatabaseAPI.Side.RIGHT);
-        addSwipeDataForCandidate("levi.weiss3@gmail.com", "gre4f@gmail.com", DatabaseAPI.Side.RIGHT);
-        addSwipeDataForCandidate("macho@gmail.com", "john3@gmail.com", DatabaseAPI.Side.RIGHT);
-        addSwipeDataForCandidate("asaf@gmail.com", "bar@gmail.com", DatabaseAPI.Side.RIGHT);
-    }
-
-    void getRecruitersForSwipingScreen_MainFunction(final String candidateMail) {
-        getRecruitersForSwipingScreen_CollectDataAboutCandidate(candidateMail);
-    }
-
-    void getRecruitersForSwipingScreen_CollectDataAboutCandidate(final String candidateMail) {
-        DocumentReference docRef = candidatesCollection.document(candidateMail);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        String candidateJobCategory = (String) document.get(JOB_CATEGORY_KEY);
-                        getRecruitersForSwipingScreen_FindRelevantRecruiters(candidateMail, candidateJobCategory);
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
-
-    }
-
-    void getRecruitersForSwipingScreen_FindRelevantRecruiters(final String candidateMail,
-                                                              final String candidateJobCategory) {
-
-        recruitersCollection
-                .whereEqualTo(JOB_CATEGORY_KEY, candidateJobCategory)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            List<Recruiter> listOfRecruiters = new ArrayList<>();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                Recruiter recruiter = document.toObject(Recruiter.class);
-                                listOfRecruiters.add(recruiter);
-                                getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);
-                            }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
-    }
-
-    void getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(final String candidateMail,
-                                                                                  final List<Recruiter> listOfRecruiters) {
-
-        candidatesCollection.document(candidateMail).collection(SWIPES_COLLECTION_NAME).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            List<String> listOfRecruitersMailStrings = new ArrayList<>();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                listOfRecruitersMailStrings.add(document.getId());
-                            }
-                            getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped_Final(listOfRecruiters, listOfRecruitersMailStrings);
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
-
-    }
-
-    void getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped_Final(final List<Recruiter> listOfRecruiters,
-                                                                                        final List<String> listOfRecruitersMailStrings) {
-
-        List<Recruiter> finalListOfRecruiters = new ArrayList<>();
-        for(Recruiter recruiter : listOfRecruiters) {
-            String recruiterMail = recruiter.getEmail();
-            if(! listOfRecruitersMailStrings.contains(recruiterMail)) {
-                Recruiter recruiterToAdd = new Recruiter(recruiter);
-                finalListOfRecruiters.add(recruiterToAdd);
-            }
-        }
-
-        getRecruitersForSwipingScreen(finalListOfRecruiters);
-
-    }
-
-    void getRecruitersForSwipingScreen(List<Recruiter> listOfRecruiters) {
-
+    private boolean isEmpty(EditText etText) {
+        if (etText.getText().toString().trim().length() > 0)
+            return false;
+        return true;
     }
 
 
-    void getCandidatesForSwipingScreen_MainFunction(final String recruiterMail) {
-        getCandidatesForSwipingScreen_CollectDataAboutRecruiter(recruiterMail);
-    }
-
-    void getCandidatesForSwipingScreen_CollectDataAboutRecruiter(final String recruiterMail) {
-        DocumentReference docRef = recruitersCollection.document(recruiterMail);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        String recruiterJobCategory = (String) document.get(JOB_CATEGORY_KEY);
-                        getCandidatesForSwipingScreen_FindRelevantCandidates(recruiterMail, recruiterJobCategory);
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
-    }
-
-    void getCandidatesForSwipingScreen_FindRelevantCandidates(final String recruiterMail,
-                                                              final String recruiterJobCategory) {
-
-        candidatesCollection
-                .whereEqualTo(JOB_CATEGORY_KEY, recruiterJobCategory)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            List<Candidate> listOfCandidates = new ArrayList<>();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                Candidate candidate = document.toObject(Candidate.class);
-                                listOfCandidates.add(candidate);
-                                getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped(recruiterMail, listOfCandidates);
-                            }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
-
-    }
-
-    void getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped(final String recruiterMail,
-                                                                                  final List<Candidate> listOfCandidates) {
-
-        recruitersCollection.document(recruiterMail).collection(SWIPES_COLLECTION_NAME).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            List<String> listOfCandidatesMailStrings = new ArrayList<>();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                listOfCandidatesMailStrings.add(document.getId());
-                            }
-                            getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped_Final(listOfCandidates, listOfCandidatesMailStrings);
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
-
-
-    }
-
-    void getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped_Final(final List<Candidate> listOfCandidates,
-                                                                                        final List<String> listOfCandidatesMailStrings) {
-
-        List<Candidate> finalListOfCandidates = new ArrayList<>();
-        for(Candidate candidate : listOfCandidates) {
-            String candidateMail = candidate.getEmail();
-            if(! listOfCandidatesMailStrings.contains(candidateMail)) {
-                Candidate candidateToAdd = new Candidate(candidate);
-                finalListOfCandidates.add(candidateToAdd);
-            }
-        }
-
-        getCandidatesForSwipingScreen(finalListOfCandidates);
-    }
-
-    void getCandidatesForSwipingScreen(List<Candidate> listOfCandidates) {
-
-    }
 
 }

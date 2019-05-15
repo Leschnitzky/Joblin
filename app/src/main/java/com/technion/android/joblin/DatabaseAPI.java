@@ -230,36 +230,6 @@ class DatabaseAPI {
         });
     }
 
-    void initializeJobCategories() {
-
-        List<String> jobCategories = new ArrayList<>();
-        jobCategories.add("Accounting");
-        jobCategories.add("Computer Science");
-        jobCategories.add("Education");
-        jobCategories.add("Finance");
-        jobCategories.add("IT");
-        jobCategories.add("Media");
-        jobCategories.add("Sales");
-
-        WriteBatch batch = db.batch();
-        DocumentReference jobCategoryDocumentReference;
-        Map<String, Object> jobCategoryMapData = new HashMap<>();
-
-        for(String category : jobCategories) {
-            jobCategoryDocumentReference = jobCategoriesCollection.document(category);
-            jobCategoryMapData.clear();
-            jobCategoryMapData.put(JOB_CATEGORY_KEY, category);
-            batch.set(jobCategoryDocumentReference, jobCategoryMapData);
-        }
-
-        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-
-            }
-        });
-    }
-
     void insertSampleCandidate() {
         List<String> skillsList = new ArrayList<>(Arrays.asList("Java", "C++"));
 
@@ -297,10 +267,7 @@ class DatabaseAPI {
         insertRecruiter(recruiter);
     }
 
-    void checkIfRecruiterCanMakeSwipe(String recruiterMail, Side side) {
-        if(side == Side.LEFT) {
-            return;
-        }
+    void recruiterDoSwipe(final String recruiterMail, final String candidateMail, final Side side) {
         DocumentReference docRef = recruitersCollection.document(recruiterMail);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -310,8 +277,10 @@ class DatabaseAPI {
                     if (document.exists()) {
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         Recruiter recruiter = document.toObject(Recruiter.class);
-                        if(recruiter.getNumberOfSwipesLeft() == 0) {
-                            Log.d(TAG, "number of swipes is 0");
+                        if((side == Side.RIGHT) && (recruiter.getNumberOfSwipesLeft() == 0)) {
+
+                        } else {
+                            addSwipeDataForRecruiter(recruiterMail, candidateMail, side);
                         }
                     } else {
                         Log.d(TAG, "No such document");
@@ -323,10 +292,7 @@ class DatabaseAPI {
         });
     }
 
-    void checkIfCandidateCanMakeSwipe(String candidateMail, Side side) {
-        if(side == Side.LEFT) {
-            return;
-        }
+    void candidateDoSwipe(final String candidateMail, final String recruiterMail, final Side side) {
         DocumentReference docRef = candidatesCollection.document(candidateMail);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -336,9 +302,10 @@ class DatabaseAPI {
                     if (document.exists()) {
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         Candidate candidate = document.toObject(Candidate.class);
-                        if(candidate.getNumberOfSwipesLeft() == 0) {
-                            Log.d(TAG, "number of swipes is 0");
+                        if((side == Side.RIGHT) && (candidate.getNumberOfSwipesLeft() == 0)) {
 
+                        } else {
+                            addSwipeDataForCandidate(candidateMail, recruiterMail, side);
                         }
                     } else {
                         Log.d(TAG, "No such document");
@@ -389,20 +356,23 @@ class DatabaseAPI {
             final DocumentReference swipeDocRefOfSecond = secondCollection.document(secondMail).collection(SWIPES_COLLECTION_NAME).document(firstMail);
             final DocumentReference matchDocRefOfFirst = firstCollection.document(firstMail).collection(MATCHES_COLLECTION_NAME).document(secondMail);
             final DocumentReference matchDocRefOfSecond = secondCollection.document(secondMail).collection(MATCHES_COLLECTION_NAME).document(firstMail);
-            db.runTransaction(new Transaction.Function<Void>() {
+            db.runTransaction(new Transaction.Function<Boolean>() {
                 @Override
-                public Void apply(Transaction transaction) throws FirebaseFirestoreException {
+                public Boolean apply(Transaction transaction) throws FirebaseFirestoreException {
                     DocumentSnapshot snapshotMainFirst = transaction.get(mainDocRefOfFirst);
                     DocumentSnapshot snapshotSwipeSecond = transaction.get(swipeDocRefOfSecond);
                     DocumentSnapshot snapshotSwipeFirst = transaction.get(swipeDocRefOfFirst);
+                    boolean isMatch = false;
                     if(snapshotSwipeSecond.exists()) {
                         if(snapshotSwipeSecond.get(SIDE_KEY).equals("right")) {
                             transaction.set(matchDocRefOfFirst, secondMatchesMapData);
                             transaction.set(matchDocRefOfSecond, firstMatchesMapData);
+                            isMatch = true;
                         }
                         transaction.update(swipeDocRefOfSecond, secondSwipesMapData);
                     } else {
                         transaction.set(swipeDocRefOfSecond, secondSwipesMapData);
+                        transaction.delete(swipeDocRefOfSecond);
                     }
 
                     if(snapshotSwipeFirst.exists()) {
@@ -417,13 +387,15 @@ class DatabaseAPI {
                         transaction.update(mainDocRefOfFirst, NUMBER_OF_SWIPES_LEFT_KEY, numberOfSwipesLeft - 1);
                     }
 
-                    return null;
+                    return isMatch;
                 }
-            }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            }).addOnSuccessListener(new OnSuccessListener<Boolean>() {
                 @Override
-                public void onSuccess(Void aVoid) {
+                public void onSuccess(Boolean isMatch) {
                     Log.d(TAG, "Transaction success!");
-
+                    if(isMatch) {
+                        Log.d(TAG, "It is a match!");
+                    }
                 }
             })
             .addOnFailureListener(new OnFailureListener() {
@@ -606,12 +578,42 @@ class DatabaseAPI {
     }
 
     public void initializeDBWithSwipes() {
-        addSwipeDataForRecruiter("gre4f@gmail.com", "levi.weiss3@gmail.com", Side.RIGHT);
-        addSwipeDataForRecruiter("john3@gmail.com", "macho@gmail.com", Side.LEFT);
-        addSwipeDataForRecruiter("bar@gmail.com", "asaf@gmail.com", Side.RIGHT);
-        addSwipeDataForCandidate("levi.weiss3@gmail.com", "gre4f@gmail.com", Side.RIGHT);
-        addSwipeDataForCandidate("macho@gmail.com", "john3@gmail.com", Side.RIGHT);
-        addSwipeDataForCandidate("asaf@gmail.com", "bar@gmail.com", Side.RIGHT);
+        recruiterDoSwipe("gre4f@gmail.com", "levi.weiss3@gmail.com", Side.RIGHT);
+        recruiterDoSwipe("john3@gmail.com", "macho@gmail.com", Side.LEFT);
+        recruiterDoSwipe("bar@gmail.com", "asaf@gmail.com", Side.RIGHT);
+        candidateDoSwipe("levi.weiss3@gmail.com", "gre4f@gmail.com", Side.RIGHT);
+        candidateDoSwipe("macho@gmail.com", "john3@gmail.com", Side.RIGHT);
+        candidateDoSwipe("asaf@gmail.com", "bar@gmail.com", Side.RIGHT);
+    }
+
+    void initializeJobCategories() {
+
+        List<String> jobCategories = new ArrayList<>();
+        jobCategories.add("Accounting");
+        jobCategories.add("Computer Science");
+        jobCategories.add("Education");
+        jobCategories.add("Finance");
+        jobCategories.add("IT");
+        jobCategories.add("Media");
+        jobCategories.add("Sales");
+
+        WriteBatch batch = db.batch();
+        DocumentReference jobCategoryDocumentReference;
+        Map<String, Object> jobCategoryMapData = new HashMap<>();
+
+        for(String category : jobCategories) {
+            jobCategoryDocumentReference = jobCategoriesCollection.document(category);
+            jobCategoryMapData.clear();
+            jobCategoryMapData.put(JOB_CATEGORY_KEY, category);
+            batch.set(jobCategoryDocumentReference, jobCategoryMapData);
+        }
+
+        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+            }
+        });
     }
 
     void getRecruitersForSwipingScreen_MainFunction(final String candidateMail) {
@@ -747,8 +749,8 @@ class DatabaseAPI {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 Candidate candidate = document.toObject(Candidate.class);
                                 listOfCandidates.add(candidate);
-                                getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped(recruiterMail, listOfCandidates);
                             }
+                            getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped(recruiterMail, listOfCandidates);
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }

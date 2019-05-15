@@ -23,7 +23,7 @@ public class ChooseUserTypeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_user_type);
         mFirstName = getIntent().getStringExtra(LoginActivity.FIRST_NAME_KEY);
-        mLastName = getIntent().getStringExtra(LoginActivity.FIRST_NAME_KEY);
+        mLastName = getIntent().getStringExtra(LoginActivity.LAST_NAME_KEY);
         mPhotoString = getIntent().getStringExtra(LoginActivity.URI_KEY);
 
 
