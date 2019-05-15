@@ -1,6 +1,7 @@
 package com.technion.android.joblin;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -47,6 +48,7 @@ public class RecrProfPrefActivity extends AppCompatActivity {
 
     final Calendar myCalendar = Calendar.getInstance();
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    ProgressDialog dialog;
     private ArrayList<String> jobCategories = new ArrayList<>();
     Spinner mJobCategorySpinner;
     EditText mScopeText;
@@ -69,6 +71,7 @@ public class RecrProfPrefActivity extends AppCompatActivity {
         initiateCategories();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recr_prof_pref);
+        dialog = new ProgressDialog(RecrProfPrefActivity.this);
         thisIntent = getIntent();
 
         mLocationText = findViewById(R.id.location_recr);
@@ -90,6 +93,10 @@ public class RecrProfPrefActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //TODO: Check all fields
+                dialog.setMessage("Please wait...");
+                dialog.setCancelable(false);
+                dialog.setInverseBackgroundForced(false);
+                dialog.show();
                 ArrayList<Integer> emptyFields = checkAllEditTextsForEmptyStrings();
                 if(emptyFields.isEmpty()){
                     Recruiter recr = new Recruiter(
@@ -112,6 +119,7 @@ public class RecrProfPrefActivity extends AppCompatActivity {
                 } else {
                     String errorToast = createEmptyFieldToastMessage(emptyFields);
                     Toast.makeText(RecrProfPrefActivity.this, errorToast, Toast.LENGTH_SHORT).show();
+                    dialog.hide();
                 }
             }
         });
@@ -180,6 +188,7 @@ public class RecrProfPrefActivity extends AppCompatActivity {
         batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
+                dialog.hide();
                 Toast.makeText(RecrProfPrefActivity.this, "ADDED RECR", Toast.LENGTH_SHORT).show();
             }
         });

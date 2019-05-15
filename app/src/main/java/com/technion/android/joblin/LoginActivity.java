@@ -1,6 +1,7 @@
 package com.technion.android.joblin;
 
 import android.app.ActionBar;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -46,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     private boolean not_in_db_recr = false;
 
     private final int RC_SIGN_IN = 530;
+    ProgressDialog dialog;
     private String mUserFirstName;
     private String mUserLastName;
     private Uri mUserPhoto;
@@ -92,6 +94,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_screen_layout);
+        dialog = new ProgressDialog(LoginActivity.this);
         FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -114,6 +117,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        dialog.setMessage("Please wait...");
+        dialog.setCancelable(false);
+        dialog.setInverseBackgroundForced(false);
+        dialog.show();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
@@ -151,6 +158,10 @@ public class LoginActivity extends AppCompatActivity {
         GoogleSignInAccount currentUser = GoogleSignIn.getLastSignedInAccount(this);
 
         if(currentUser != null) {
+            dialog.setMessage("Please wait...");
+            dialog.setCancelable(false);
+            dialog.setInverseBackgroundForced(false);
+            dialog.show();
             mUserFirstName = currentUser.getGivenName();
             mUserLastName = currentUser.getFamilyName();
             mUserPhoto = currentUser.getPhotoUrl();
@@ -169,6 +180,7 @@ public class LoginActivity extends AppCompatActivity {
                         // Already a candidate
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                                                     // Todo: Change to bar's activity name once pulled from dev (Cand)
+                        dialog.hide();
                         Intent intent = new Intent(LoginActivity.this, CandProfPrefActivity.class);
                         startActivity(intent);
                     } else {
@@ -195,6 +207,8 @@ public class LoginActivity extends AppCompatActivity {
                         // Tis a recruiter
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
 //                         Todo: Change to bar's activity name once pulled from dev (Recr)
+                        dialog.hide();
+
                         Intent intent = new Intent(LoginActivity.this, RecrProfPrefActivity.class);
                         startActivity(intent);
                     } else {
@@ -209,6 +223,7 @@ public class LoginActivity extends AppCompatActivity {
                         intent.putExtra(LAST_NAME_KEY,mUserLastName);
                         intent.putExtra(URI_KEY,mUserPhoto.toString());
                         startActivity(intent);
+                        dialog.hide();
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());

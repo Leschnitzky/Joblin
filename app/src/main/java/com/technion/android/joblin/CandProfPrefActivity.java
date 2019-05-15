@@ -1,6 +1,7 @@
 package com.technion.android.joblin;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 
@@ -50,6 +51,7 @@ public class CandProfPrefActivity extends AppCompatActivity {
     CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
 
     final Calendar myCalendar = Calendar.getInstance();
+    ProgressDialog dialog;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private ArrayList<String> jobCategories = new ArrayList<>();
     Spinner mJobCategorySpinner;
@@ -92,8 +94,10 @@ public class CandProfPrefActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         initiateCategories();
         super.onCreate(savedInstanceState);
+        dialog = new ProgressDialog(CandProfPrefActivity.this);
         setContentView(R.layout.activity_cand_prof_pref);
         thisIntent = getIntent();
 
@@ -125,6 +129,10 @@ public class CandProfPrefActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //TODO: Check all fields
+                    dialog.setMessage("Please wait...");
+                    dialog.setCancelable(false);
+                    dialog.setInverseBackgroundForced(false);
+                    dialog.show();
                     ArrayList<Integer> emptyFields = checkAllEditTextsForEmptyStrings();
                     if(emptyFields.isEmpty()){
                         Candidate cand = new Candidate(
@@ -147,6 +155,7 @@ public class CandProfPrefActivity extends AppCompatActivity {
                         insertCandidate(cand);
                     } else {
                         String errorToast = createEmptyFieldToastMessage(emptyFields);
+                        dialog.hide();
                         Toast.makeText(CandProfPrefActivity.this, errorToast, Toast.LENGTH_SHORT).show();
                     }
             }
@@ -219,6 +228,7 @@ public class CandProfPrefActivity extends AppCompatActivity {
         batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
+                dialog.hide();
                 Toast.makeText(CandProfPrefActivity.this, "ADDED CAND", Toast.LENGTH_SHORT).show();
             }
         });
