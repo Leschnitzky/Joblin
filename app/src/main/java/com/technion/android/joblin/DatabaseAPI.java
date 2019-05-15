@@ -546,16 +546,87 @@ class DatabaseAPI {
         List<String> skillsList;
 
         skillsList = new ArrayList<>(Arrays.asList("Java", "C++"));
+
+        candidate = new Candidate("gabi@gmail.com",
+                "Gabi",
+                "Gavrieli",
+                "https://pbs.twimg.com/profile_images/972872769019850753/YTxFZF2x_400x400.jpg",
+                30,
+                "Tel Aviv",
+                "Full Time",
+                "High School",
+                new ArrayList<String> (Arrays.asList("Java","C#")),
+                "I know how to code, code is my life, more than anything in the world.",
+                "Computer Science");
+
+        insertCandidate(candidate);
+
+        candidate = new Candidate("moriel@gmail.com",
+                "Moriel",
+                "Shlomiel",
+                "https://media.npr.org/assets/img/2015/11/24/ajeup0ayctw4ztltklrnuvtm-y4xulezgneawbqw4cs_custom-7aa29347d5da230c6101168c71549a7399302d0c-s1100-c15.jpg",
+                17,
+                "Beer Sheva",
+                "20 hours per month",
+                "Ort Barude",
+                new ArrayList<String> (Arrays.asList("C","Assembly","Writing songs")),
+                "Hello, it's me\n I was wondering if after all these years you'd like to meet",
+                "Computer Science");
+
+        insertCandidate(candidate);
+
         candidate = new Candidate("levi.weiss3@gmail.com",
                 "Levi",
                 "Weiss",
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 25,
                 "Haifa",
-                "40%",
+                "Twice a week",
                 "Technion",
                 skillsList,
                 "I like building Android apps",
+                "Computer Science");
+
+        insertCandidate(candidate);
+
+        candidate = new Candidate("caleb@walla.com",
+                "Caleb",
+                "Smorchi",
+                "https://pbs.twimg.com/profile_images/972872769019850753/YTxFZF2x_400x400.jpg",
+                21,
+                "Salem",
+                "Night Shifts",
+                "Witches School of Salem",
+                new ArrayList<String> (Arrays.asList("abra kadabra","whoofoo","escaping")),
+                "I'm a witch and i'm proud of it. i can spell any programming language i want.",
+                "Computer Science");
+
+        insertCandidate(candidate);
+
+        candidate = new Candidate("hotty@walla.com",
+                "Hatich",
+                "Esh megil shesh",
+                "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
+                23,
+                "Jerusalem",
+                "75% misra",
+                "Haward Univerity",
+                new ArrayList<String> (Arrays.asList("C#","angry birds")),
+                "Only Iphones. If you make android, swipe left!",
+                "Computer Science");
+
+        insertCandidate(candidate);
+
+        candidate = new Candidate("guy@walla.com",
+                "Guy",
+                "Menhel",
+                "https://avatars1.githubusercontent.com/u/28152692?s=400&v=4",
+                25,
+                "Haifa",
+                "Full Time",
+                "Technion instituation",
+                new ArrayList<String> (Arrays.asList("Java","Good at jokes")),
+                "I have a great idea for an android app, it's called...\n 'remedicene'\n ~mind blown~",
                 "Computer Science");
 
         insertCandidate(candidate);
@@ -607,10 +678,10 @@ class DatabaseAPI {
     }
 
     public void initializeDBWithSwipes() {
-        recruiterDoSwipe("gre4f@gmail.com", "levi.weiss3@gmail.com", Side.RIGHT);
         recruiterDoSwipe("john3@gmail.com", "macho@gmail.com", Side.LEFT);
         recruiterDoSwipe("bar@gmail.com", "asaf@gmail.com", Side.RIGHT);
         candidateDoSwipe("levi.weiss3@gmail.com", "gre4f@gmail.com", Side.RIGHT);
+        candidateDoSwipe("hotty@walla.com", "gre4f@gmail.com", Side.RIGHT);
         candidateDoSwipe("macho@gmail.com", "john3@gmail.com", Side.RIGHT);
         candidateDoSwipe("asaf@gmail.com", "bar@gmail.com", Side.RIGHT);
     }

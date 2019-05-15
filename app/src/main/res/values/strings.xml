@@ -2,4 +2,6 @@
     <string name="app_name">Joblin</string>
     <string name="more_details">More Details</string>
     <string name="less_details">Less Details</string>
+    <string name="no_new_rec_right_now">There are no new recruiters right now</string>
+    <string name="no_new_can_right_now">There are no new candidates right now</string>
 </resources>

@@ -31,11 +31,11 @@ public class Utils {
         public static int dpToPx(int dp) {
             return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
         }
-    public static void matchPopUp(Context context)
+    public static void matchPopUp(Context context, String type)
     {
         new SweetAlertDialog(context)
                 .setTitleText("It's a match!")
-                .setContentText("Now you can contact the recruiter.")
+                .setContentText("Now you can contact the " + type + ".")
                 .setConfirmText("Great!")
                 .show();
     }

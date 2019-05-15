@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -19,6 +20,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
+import com.mindorks.placeholderview.listeners.ItemRemovedListener;
+import com.victor.loading.rotate.RotateLoading;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +45,7 @@ public class CanMainActivity extends AppCompatActivity {
     CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
     CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
     private final String email = "levi.weiss3@gmail.com";
+    RotateLoading rl;
 
     void getRecruitersForSwipingScreen_MainFunction(final String candidateMail) {
         getRecruitersForSwipingScreen_CollectDataAboutCandidate(candidateMail);
@@ -134,6 +138,11 @@ public class CanMainActivity extends AppCompatActivity {
 
     void getRecruitersForSwipingScreen(List<Recruiter> listofRecruiters) {
         for(Recruiter profile : listofRecruiters){
+            if(rl.isStart())
+            {
+                rl.stop();
+                findViewById(R.id.nothingNewTxt).animate().scaleY(0).start();
+            }
             mSwipeView.addView(new RecruiterCard(mContext, profile, mSwipeView,email));
         }
     }
@@ -142,15 +151,19 @@ public class CanMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe);
-        DatabaseAPI databaseAPI = new DatabaseAPI();
-        databaseAPI.initializeDBWithSomeData();
+        /*DatabaseAPI databaseAPI = new DatabaseAPI();
+        databaseAPI.initializeDBWithSomeData();*/
         mSwipeView = (SwipePlaceHolderView)findViewById(R.id.swipeView);
         mContext = getApplicationContext();
+        rl = findViewById(R.id.rotateloading);
+        rl.start();
+        TextView nothingNew = findViewById(R.id.nothingNewTxt);
+        nothingNew.setText(R.string.no_new_rec_right_now);
 
         int bottomMargin = Utils.dpToPx(180);
         Point windowSize = Utils.getDisplaySize(getWindowManager());
         mSwipeView.getBuilder()
-
+                .setIsUndoEnabled(true)
                 .setDisplayViewCount(3)
                 .setSwipeDecor(new SwipeDecor()
                         .setViewWidth(windowSize.x)
@@ -162,6 +175,16 @@ public class CanMainActivity extends AppCompatActivity {
                         .setSwipeOutMsgLayoutId(R.layout.swipe_out_msg_view));
 
         getRecruitersForSwipingScreen_MainFunction(email);
+
+        mSwipeView.addItemRemoveListener(new ItemRemovedListener() {
+            @Override
+            public void onItemRemoved(int count) {
+                if(mSwipeView.getAllResolvers().isEmpty()) {
+                    rl.start();
+                    findViewById(R.id.nothingNewTxt).animate().scaleY(1).start();
+                }
+            }
+        });
 
         findViewById(R.id.rejectBtn).setOnClickListener(new View.OnClickListener() {
             @Override

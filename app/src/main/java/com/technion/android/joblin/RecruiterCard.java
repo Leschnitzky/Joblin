@@ -161,6 +161,7 @@ public class RecruiterCard {
                         if((side == Side.RIGHT) && (candidate.getNumberOfSwipesLeft() == 0)) {
                             Log.d(TAG, "number of swipes is 0");
                             Utils.noMoreSwipesPopUp(mSwipeView.getContext());
+                            mSwipeView.undoLastSwipe();
                         } else {
                             addSwipeDataForCandidate(candidateMail, recruiterMail, side);
                         }
@@ -251,7 +252,7 @@ public class RecruiterCard {
                     Log.d(TAG, "Transaction success!");
                     if(isMatch) {
                         Log.d(TAG, "It is a match!");
-                        Utils.matchPopUp(mSwipeView.getContext());
+                        Utils.matchPopUp(mSwipeView.getContext(),"recruiter");
                     }
                 }
             })

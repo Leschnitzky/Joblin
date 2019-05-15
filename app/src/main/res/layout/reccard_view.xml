@@ -11,6 +11,7 @@
         android:background="@color/DividerColor"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:cardUseCompatPadding="true"
         android:layout_margin="10dp"
         app:cardCornerRadius="7dp"
         app:cardElevation="4dp">

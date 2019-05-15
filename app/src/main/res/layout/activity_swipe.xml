@@ -45,36 +45,70 @@
     </LinearLayout>
 
     <FrameLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/topPanel"
-        android:background="@color/colorPrimaryLight">
+        android:background="@color/colorPrimaryLight"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <TextView
+                android:id="@+id/nothingNewTxt"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/no_new_rec_right_now"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <com.victor.loading.rotate.RotateLoading
+                android:id="@+id/rotateloading"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_below="@id/nothingNewTxt"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                app:loading_color="@color/colorPrimary"
+                app:loading_width="5dp" />
+
+        </RelativeLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:layout_gravity="bottom"
+            android:background="@color/colorPrimary"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:background="@color/colorPrimary">
+            android:orientation="horizontal">
+
             <ImageButton
                 android:id="@+id/rejectBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_cancel_black_24dp"/>
+                android:background="@drawable/ic_cancel_black_24dp" />
+
             <ImageButton
                 android:id="@+id/starBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
-                android:background="@drawable/ic_stars_black_24dp"/>
+                android:background="@drawable/ic_stars_black_24dp" />
+
             <ImageButton
                 android:id="@+id/acceptBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
-                android:background="@drawable/ic_done_black_24dp"/>
+                android:background="@drawable/ic_done_black_24dp" />
         </LinearLayout>
+
         <com.mindorks.placeholderview.SwipePlaceHolderView
             android:id="@+id/swipeView"
             android:layout_width="match_parent"
