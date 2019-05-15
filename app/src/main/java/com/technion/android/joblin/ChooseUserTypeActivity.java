@@ -7,10 +7,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import java.net.URI;
+
 public class ChooseUserTypeActivity extends AppCompatActivity {
 
     private Button mCandButton;
     private Button mRecrButton;
+    private String mPhotoString;
     private String mFirstName;
     private String mLastName;
 
@@ -21,6 +24,7 @@ public class ChooseUserTypeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_choose_user_type);
         mFirstName = getIntent().getStringExtra(LoginActivity.FIRST_NAME_KEY);
         mLastName = getIntent().getStringExtra(LoginActivity.FIRST_NAME_KEY);
+        mPhotoString = getIntent().getStringExtra(LoginActivity.URI_KEY);
 
 
         mCandButton = findViewById(R.id.candidate_button);
@@ -32,6 +36,7 @@ public class ChooseUserTypeActivity extends AppCompatActivity {
                 Intent intent = new Intent(ChooseUserTypeActivity.this,CandProfPrefActivity.class);
                 intent.putExtra(LoginActivity.FIRST_NAME_KEY,mFirstName);
                 intent.putExtra(LoginActivity.LAST_NAME_KEY,mLastName);
+                intent.putExtra(LoginActivity.URI_KEY,mPhotoString);
 
                 startActivity(intent);
             }
@@ -43,6 +48,7 @@ public class ChooseUserTypeActivity extends AppCompatActivity {
                 Intent intent = new Intent(ChooseUserTypeActivity.this,RecrProfPrefActivity.class);
                 intent.putExtra(LoginActivity.FIRST_NAME_KEY,mFirstName);
                 intent.putExtra(LoginActivity.LAST_NAME_KEY,mLastName);
+                intent.putExtra(LoginActivity.URI_KEY,mPhotoString);
 
                 startActivity(intent);
 

@@ -2,6 +2,7 @@ package com.technion.android.joblin;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -40,12 +41,14 @@ public class LoginActivity extends AppCompatActivity {
 
     public static final String FIRST_NAME_KEY = "firstName";
     public static final String LAST_NAME_KEY = "lastName";
+    public static final String URI_KEY = "userPhoto";
     private boolean not_in_db_cand = false;
     private boolean not_in_db_recr = false;
 
     private final int RC_SIGN_IN = 530;
     private String mUserFirstName;
     private String mUserLastName;
+    private Uri mUserPhoto;
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
 
@@ -127,6 +130,8 @@ public class LoginActivity extends AppCompatActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 mUserFirstName = account.getGivenName();
                 mUserLastName = account.getFamilyName();
+                mUserPhoto = account.getPhotoUrl();
+                account.getPhotoUrl();
 
                 firebaseAuthWithGoogle(account);
 
@@ -165,6 +170,7 @@ public class LoginActivity extends AppCompatActivity {
                         Intent intent = new Intent(LoginActivity.this, CandProfPrefActivity.class);
                         intent.putExtra(FIRST_NAME_KEY,mUserFirstName);
                         intent.putExtra(LAST_NAME_KEY,mUserLastName);
+                        intent.putExtra(URI_KEY,mUserPhoto.toString());
                         startActivity(intent);
                     } else {
                         Toast.makeText(LoginActivity.this, "Not Found Cand", Toast.LENGTH_SHORT).show();
@@ -193,6 +199,7 @@ public class LoginActivity extends AppCompatActivity {
                         Intent intent = new Intent(LoginActivity.this, RecrProfPrefActivity.class);
                         intent.putExtra(FIRST_NAME_KEY,mUserFirstName);
                         intent.putExtra(LAST_NAME_KEY,mUserLastName);
+                        intent.putExtra(URI_KEY,mUserPhoto);
                         startActivity(intent);
                     } else {
                         // Not a Cand nor Recr
@@ -204,6 +211,7 @@ public class LoginActivity extends AppCompatActivity {
                         Intent intent = new Intent(LoginActivity.this, ChooseUserTypeActivity.class);
                         intent.putExtra(FIRST_NAME_KEY,mUserFirstName);
                         intent.putExtra(LAST_NAME_KEY,mUserLastName);
+                        intent.putExtra(URI_KEY,mUserPhoto);
                         startActivity(intent);
                     }
                 } else {
