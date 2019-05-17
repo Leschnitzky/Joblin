@@ -8,4 +8,8 @@
     <color name="textColorSecondary">#757575</color>
     <color name="DividerColor">#BDBDBD</color>
     <color name="DividerColor2">#EBEBEB</color>
+    <color name="colorTextOrIcons">#FFFFFF</color>
+    <color name="colorPrimaryText">#212121</color>
+    <color name="colorDivider">#BDBDBD</color>
+    <color name="colorSecondaryText">#757575</color>
 </resources>

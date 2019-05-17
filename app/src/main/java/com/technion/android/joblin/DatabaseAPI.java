@@ -374,6 +374,7 @@ class DatabaseAPI {
                         transaction.update(swipeDocRefOfSecond, secondSwipesMapData);
                     } else {
                         transaction.set(swipeDocRefOfSecond, secondSwipesMapData);
+                        transaction.delete(swipeDocRefOfSecond);
                     }
 
                     if(snapshotSwipeFirst.exists()) {

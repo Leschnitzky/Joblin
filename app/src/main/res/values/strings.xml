@@ -4,4 +4,34 @@
     <string name="less_details">Less Details</string>
     <string name="no_new_rec_right_now">There are no new recruiters right now</string>
     <string name="no_new_can_right_now">There are no new candidates right now</string>
+    <string name="greeting_text">Welcome To Joblin</string>
+    <string name="greeting_text_2"> The app for finding your next job!</string>
+
+    <!--For Choose Activity-->
+    <string name="choose_one">Before we start, please choose which service you wish to use</string>
+    <string name="proceed_as_cand">Proceed as a Candidate</string>
+    <string name="proceed_as_recr">Proceed as a Recruiter</string>
+
+
+    <!--For Profile Pref Forms-->
+    <string name="first_name">Enter your First Name</string>
+    <string name="last_name">Enter your Last Name</string>
+    <string name="date_of_birth">Date of Birth: </string>
+    <string name="education">Please write your education level </string>
+    <string name="skills">Please list your job skills </string>
+    <string name="skill">Skill</string>
+    <string name="location_cand">Please write your preferred job location: </string>
+    <string name="job_scope">Please write your preferred job scope: </string>
+    <string name="category">Please choose the field you wish to work in: </string>
+    <string name="description">Please write a short description about yourself</string>
+    <string name="pref_button">Proceed</string>
+
+    <!--For recruiter-->
+    <string name="location_recr">Please write the location your job will be in</string>
+    <string name="required_scope">Please write your required job scope:</string>
+    <string name="category_recr" >Please choose the field of your job: </string>
+    <string name="education_recr" >Please write the required education level:</string>
+    <string name="skills_recr">Please list your required skills for the job </string>
+    <string name="description_recr">Please write a short description about your job</string>
+>>>>>>> 95dfc7d24b14793240c468741f8cd070829811f6
 </resources>
