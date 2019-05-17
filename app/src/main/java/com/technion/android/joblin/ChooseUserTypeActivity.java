@@ -1,13 +1,10 @@
 package com.technion.android.joblin;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-
-import java.net.URI;
 
 public class ChooseUserTypeActivity extends AppCompatActivity {
 
