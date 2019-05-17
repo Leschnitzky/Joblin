@@ -2,7 +2,6 @@ package com.technion.android.joblin;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -11,7 +10,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -278,7 +276,8 @@ class DatabaseAPI {
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         Recruiter recruiter = document.toObject(Recruiter.class);
                         if((side == Side.RIGHT) && (recruiter.getNumberOfSwipesLeft() == 0)) {
-
+                            Log.d(TAG, "number of swipes is 0");
+                            //TODO: message for no more swipes
                         } else {
                             addSwipeDataForRecruiter(recruiterMail, candidateMail, side);
                         }
@@ -287,12 +286,14 @@ class DatabaseAPI {
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());
+                    //TODO: add general toast for failure.
                 }
             }
         });
     }
 
     void candidateDoSwipe(final String candidateMail, final String recruiterMail, final Side side) {
+
         DocumentReference docRef = candidatesCollection.document(candidateMail);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -303,7 +304,8 @@ class DatabaseAPI {
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         Candidate candidate = document.toObject(Candidate.class);
                         if((side == Side.RIGHT) && (candidate.getNumberOfSwipesLeft() == 0)) {
-
+                            Log.d(TAG, "number of swipes is 0");
+                            //TODO: message for no more swipes
                         } else {
                             addSwipeDataForCandidate(candidateMail, recruiterMail, side);
                         }
@@ -402,6 +404,7 @@ class DatabaseAPI {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Log.w(TAG, "Transaction failure.", e);
+                    //TODO: add general toast for failure.
                 }
             });
         } else {
@@ -417,6 +420,7 @@ class DatabaseAPI {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Log.w(TAG, "Error updating document", e);
+                            //TODO: add general toast for failure.
                         }
                     });
         }
@@ -449,7 +453,7 @@ class DatabaseAPI {
         recruiter = new Recruiter("gre4f@gmail.com",
                 "Gregory",
                 "Weiss",
-                "http://image",
+                "https://www.lafollette.wisc.edu/images/facultystaff/highres/Nemet-Gregory-2016.jpg",
                 "Computer Science",
                 "Three times a week",
                 "Tel Aviv",
@@ -459,10 +463,36 @@ class DatabaseAPI {
 
         insertRecruiter(recruiter);
 
+        recruiter = new Recruiter("limor@gmail.com",
+                "Limor",
+                "Snonit",
+                "https://www.lafollette.wisc.edu/images/facultystaff/highres/Nemet-Gregory-2016.jpg",
+                "Computer Science",
+                "Full time",
+                "Haifa",
+                "Building apps for ios",
+                "Kindergarden",
+                skillsList);
+
+        insertRecruiter(recruiter);
+
+        recruiter = new Recruiter("libat@gmail.com",
+                "Libat",
+                "Yogev",
+                "https://www.lafollette.wisc.edu/images/facultystaff/highres/Nemet-Gregory-2016.jpg",
+                "Computer Science",
+                "twice a week",
+                "Carmiel",
+                "it's a secret job that can only be known when you have the special skills",
+                "Magic from Hogwarts",
+                new ArrayList<String> (Arrays.asList("Java","C#","abra kadabra")));
+
+        insertRecruiter(recruiter);
+
         recruiter = new Recruiter("si7s@gmail.com",
                 "Simha",
                 "Golan",
-                "http://image",
+                "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 "Media",
                 "Three times a week",
                 "Ramat Gan",
@@ -475,7 +505,7 @@ class DatabaseAPI {
         recruiter = new Recruiter("john3@gmail.com",
                 "John",
                 "Buka",
-                "http://image",
+                "https://pbs.twimg.com/profile_images/972872769019850753/YTxFZF2x_400x400.jpg",
                 "IT",
                 "Three times a week",
                 "Eilat",
@@ -488,7 +518,7 @@ class DatabaseAPI {
         recruiter = new Recruiter("bar@gmail.com",
                 "Bar",
                 "Jim",
-                "http://image",
+                "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 "Accounting",
                 "Three times a week",
                 "Ashdod",
@@ -501,7 +531,7 @@ class DatabaseAPI {
         recruiter = new Recruiter("Dani@gmail.com",
                 "Dani",
                 "Mizrahi",
-                "http://image",
+                "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 "Accounting",
                 "Three times a week",
                 "Eilat",
@@ -517,16 +547,87 @@ class DatabaseAPI {
         List<String> skillsList;
 
         skillsList = new ArrayList<>(Arrays.asList("Java", "C++"));
+
+        candidate = new Candidate("gabi@gmail.com",
+                "Gabi",
+                "Gavrieli",
+                "https://pbs.twimg.com/profile_images/972872769019850753/YTxFZF2x_400x400.jpg",
+                30,
+                "Tel Aviv",
+                "Full Time",
+                "High School",
+                new ArrayList<String> (Arrays.asList("Java","C#")),
+                "I know how to code, code is my life, more than anything in the world.",
+                "Computer Science");
+
+        insertCandidate(candidate);
+
+        candidate = new Candidate("moriel@gmail.com",
+                "Moriel",
+                "Shlomiel",
+                "https://media.npr.org/assets/img/2015/11/24/ajeup0ayctw4ztltklrnuvtm-y4xulezgneawbqw4cs_custom-7aa29347d5da230c6101168c71549a7399302d0c-s1100-c15.jpg",
+                17,
+                "Beer Sheva",
+                "20 hours per month",
+                "Ort Barude",
+                new ArrayList<String> (Arrays.asList("C","Assembly","Writing songs")),
+                "Hello, it's me\n I was wondering if after all these years you'd like to meet",
+                "Computer Science");
+
+        insertCandidate(candidate);
+
         candidate = new Candidate("levi.weiss3@gmail.com",
                 "Levi",
                 "Weiss",
-                "http://image",
+                "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 25,
                 "Haifa",
-                "40%",
+                "Twice a week",
                 "Technion",
                 skillsList,
                 "I like building Android apps",
+                "Computer Science");
+
+        insertCandidate(candidate);
+
+        candidate = new Candidate("caleb@walla.com",
+                "Caleb",
+                "Smorchi",
+                "https://pbs.twimg.com/profile_images/972872769019850753/YTxFZF2x_400x400.jpg",
+                21,
+                "Salem",
+                "Night Shifts",
+                "Witches School of Salem",
+                new ArrayList<String> (Arrays.asList("abra kadabra","whoofoo","escaping")),
+                "I'm a witch and i'm proud of it. i can spell any programming language i want.",
+                "Computer Science");
+
+        insertCandidate(candidate);
+
+        candidate = new Candidate("hotty@walla.com",
+                "Hatich",
+                "Esh megil shesh",
+                "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
+                23,
+                "Jerusalem",
+                "75% misra",
+                "Haward Univerity",
+                new ArrayList<String> (Arrays.asList("C#","angry birds")),
+                "Only Iphones. If you make android, swipe left!",
+                "Computer Science");
+
+        insertCandidate(candidate);
+
+        candidate = new Candidate("guy@walla.com",
+                "Guy",
+                "Menhel",
+                "https://avatars1.githubusercontent.com/u/28152692?s=400&v=4",
+                25,
+                "Haifa",
+                "Full Time",
+                "Technion instituation",
+                new ArrayList<String> (Arrays.asList("Java","Good at jokes")),
+                "I have a great idea for an android app, it's called...\n 'remedicene'\n ~mind blown~",
                 "Computer Science");
 
         insertCandidate(candidate);
@@ -535,7 +636,7 @@ class DatabaseAPI {
         candidate = new Candidate("diego@gmail.com",
                 "Diego",
                 "Maradona",
-                "http://image",
+                "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 33,
                 "Eilat",
                 "Three times a week",
@@ -550,7 +651,7 @@ class DatabaseAPI {
         candidate = new Candidate("macho@gmail.com",
                 "Macho",
                 "Pacho",
-                "http://image",
+                "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 33,
                 "Jaffa",
                 "Three times a week",
@@ -565,7 +666,7 @@ class DatabaseAPI {
         candidate = new Candidate("asaf@gmail.com",
                 "Asaf",
                 "Granit",
-                "http://image",
+                "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 39,
                 "Jaffa",
                 "Three times a week",
@@ -578,10 +679,10 @@ class DatabaseAPI {
     }
 
     public void initializeDBWithSwipes() {
-        recruiterDoSwipe("gre4f@gmail.com", "levi.weiss3@gmail.com", Side.RIGHT);
         recruiterDoSwipe("john3@gmail.com", "macho@gmail.com", Side.LEFT);
         recruiterDoSwipe("bar@gmail.com", "asaf@gmail.com", Side.RIGHT);
         candidateDoSwipe("levi.weiss3@gmail.com", "gre4f@gmail.com", Side.RIGHT);
+        candidateDoSwipe("hotty@walla.com", "gre4f@gmail.com", Side.RIGHT);
         candidateDoSwipe("macho@gmail.com", "john3@gmail.com", Side.RIGHT);
         candidateDoSwipe("asaf@gmail.com", "bar@gmail.com", Side.RIGHT);
     }
@@ -657,8 +758,8 @@ class DatabaseAPI {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 Recruiter recruiter = document.toObject(Recruiter.class);
                                 listOfRecruiters.add(recruiter);
-                                getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);
                             }
+                            getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
