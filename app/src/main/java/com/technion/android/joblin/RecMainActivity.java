@@ -147,6 +147,13 @@ public class RecMainActivity extends AppCompatActivity {
         }
     }
 
+    void searchNew()
+    {
+        while (mSwipeView.getAllResolvers().isEmpty())
+            getCandidatesForSwipingScreen_MainFunction(email);
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -173,7 +180,6 @@ public class RecMainActivity extends AppCompatActivity {
                         .setRelativeScale(0.01f)
                         .setSwipeInMsgLayoutId(R.layout.swipe_in_msg_view)
                         .setSwipeOutMsgLayoutId(R.layout.swipe_out_msg_view));
-
         getCandidatesForSwipingScreen_MainFunction(email);
 
         mSwipeView.addItemRemoveListener(new ItemRemovedListener() {
@@ -182,6 +188,7 @@ public class RecMainActivity extends AppCompatActivity {
                 if(mSwipeView.getAllResolvers().isEmpty()) {
                     rl.start();
                     findViewById(R.id.nothingNewTxt).animate().scaleY(1).start();
+                    searchNew();
                 }
             }
         });
