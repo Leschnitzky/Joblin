@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -39,13 +40,11 @@ public class RecMainActivity extends AppCompatActivity {
 
     private SwipePlaceHolderView mSwipeView;
     private Context mContext;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-    CollectionReference candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
-    CollectionReference recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
-    CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
-    CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
-    private final String email = "john3@gmail.com";
+    FirebaseFirestore db;
+    CollectionReference candidatesCollection, recruitersCollection, usersCollection, jobCategoriesCollection;
+    private FirebaseAuth mAuth;
     RotateLoading rl;
+    private String email;
 
     void getCandidatesForSwipingScreen_MainFunction(final String recruiterMail) {
         getCandidatesForSwipingScreen_CollectDataAboutRecruiter(recruiterMail);
@@ -147,26 +146,23 @@ public class RecMainActivity extends AppCompatActivity {
         }
     }
 
-    void searchNew()
-    {
-        while (mSwipeView.getAllResolvers().isEmpty())
-            getCandidatesForSwipingScreen_MainFunction(email);
-    }
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe);
-        DatabaseAPI databaseAPI = new DatabaseAPI();
-        databaseAPI.initializeDBWithSomeData();
-        mSwipeView = (SwipePlaceHolderView)findViewById(R.id.swipeView);
-        mContext = getApplicationContext();
-        rl = findViewById(R.id.rotateloading);
-        rl.start();
-        TextView nothingNew = findViewById(R.id.nothingNewTxt);
-        nothingNew.setText(R.string.no_new_can_right_now);
 
+        //Database initialization
+        db = FirebaseFirestore.getInstance();
+        candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
+        recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
+        usersCollection = db.collection(USERS_COLLECTION_NAME);
+        jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
+        mAuth = FirebaseAuth.getInstance();
+        email = mAuth.getCurrentUser().getEmail();
+
+        //swipeView initialization
+        mSwipeView = findViewById(R.id.swipeView);
+        mContext = getApplicationContext();
         int bottomMargin = Utils.dpToPx(180);
         Point windowSize = Utils.getDisplaySize(getWindowManager());
         mSwipeView.getBuilder()
@@ -180,31 +176,35 @@ public class RecMainActivity extends AppCompatActivity {
                         .setRelativeScale(0.01f)
                         .setSwipeInMsgLayoutId(R.layout.swipe_in_msg_view)
                         .setSwipeOutMsgLayoutId(R.layout.swipe_out_msg_view));
-        getCandidatesForSwipingScreen_MainFunction(email);
-
         mSwipeView.addItemRemoveListener(new ItemRemovedListener() {
             @Override
             public void onItemRemoved(int count) {
                 if(mSwipeView.getAllResolvers().isEmpty()) {
                     rl.start();
                     findViewById(R.id.nothingNewTxt).animate().scaleY(1).start();
-                    searchNew();
                 }
             }
         });
-
         findViewById(R.id.rejectBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mSwipeView.doSwipe(false);
             }
         });
-
         findViewById(R.id.acceptBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mSwipeView.doSwipe(true);
             }
         });
+
+        //initialization for display
+        rl = findViewById(R.id.rotateloading);
+        rl.start();
+        TextView nothingNew = findViewById(R.id.nothingNewTxt);
+        nothingNew.setText(R.string.no_new_can_right_now);
+
+
+        getCandidatesForSwipingScreen_MainFunction(email);
     }
 }
