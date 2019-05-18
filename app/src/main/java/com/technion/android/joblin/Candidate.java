@@ -1,10 +1,11 @@
 package com.technion.android.joblin;
 
+import com.google.firebase.Timestamp;
+
 import java.util.List;
-import java.util.Set;
 
 public class Candidate extends User {
-    private int age;
+    private Timestamp birthday;
     private String jobLocation;
     private String scope;
     private String education;
@@ -18,7 +19,7 @@ public class Candidate extends User {
                      String name,
                      String lastName,
                      String imageUrl,
-                     int age,
+                     Timestamp birthDate,
                      String jobLocation,
                      String scope,
                      String education,
@@ -27,7 +28,7 @@ public class Candidate extends User {
                      String jobCategory) {
 
         super(email, name, lastName, imageUrl);
-        this.age = age;
+        this.birthday = birthDate;
         this.jobLocation = jobLocation;
         this.scope = scope;
         this.education = education;
@@ -38,7 +39,7 @@ public class Candidate extends User {
 
     public Candidate(Candidate other) {
         super(other);
-        this.age = other.age;
+        this.birthday = other.birthday;
         this.jobLocation = other.jobLocation;
         this.scope = other.scope;
         this.education = other.education;
@@ -47,12 +48,11 @@ public class Candidate extends User {
         this.jobCategory = other.jobCategory;
     }
 
-    public int getAge() {
-        return age;
+    public Timestamp getBirthday() { return birthday;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setBirthday(Timestamp birthday) {
+        this.birthday = birthday;
     }
 
     public String getJobLocation() {

@@ -5,7 +5,7 @@ class DatabaseUtils {
         LEFT, RIGHT
     }
 
-    static final String AGE_KEY = "age";
+    static final String BIRTHDAY_KEY = "birthday";
     static final String EMAIL_KEY = "email";
     static final String JOB_CATEGORY_KEY = "jobCategory";
     static final String JOB_LOCATION_KEY = "jobLocation";
