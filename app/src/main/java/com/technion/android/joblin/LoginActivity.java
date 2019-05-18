@@ -81,11 +81,6 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    //Todo: 1 - Add the login aftermath
-    //Todo: 2 - Redesign layout
-    //Todo: 3 - Integrate with Levi's API
-    //Todo: 4 - Write Robolectric tests to see if the user can break the app
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,12 +170,10 @@ public class LoginActivity extends AppCompatActivity {
                     if (document.exists()) {
                         // Already a candidate
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                                                    // Todo: Change to bar's activity name once pulled from dev (Cand)
                         dialog.hide();
-                        Intent intent = new Intent(LoginActivity.this, CandProfPrefActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, CanMainActivity.class);
                         startActivity(intent);
                     } else {
-                        Toast.makeText(LoginActivity.this, "Not Found Cand", Toast.LENGTH_SHORT).show();
                         // Not a Cand, check if recruiter
                         isRecruiterInDB(email);
                     }
@@ -202,10 +195,9 @@ public class LoginActivity extends AppCompatActivity {
                     if (document.exists()) {
                         // Tis a recruiter
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-//                         Todo: Change to bar's activity name once pulled from dev (Recr)
                         dialog.hide();
 
-                        Intent intent = new Intent(LoginActivity.this, RecrProfPrefActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, RecMainActivity.class);
                         startActivity(intent);
                     } else {
                         // Not a Cand nor Recr

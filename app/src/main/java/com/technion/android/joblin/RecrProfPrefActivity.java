@@ -189,7 +189,8 @@ public class RecrProfPrefActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 dialog.hide();
-                Toast.makeText(RecrProfPrefActivity.this, "ADDED RECR", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(RecrProfPrefActivity.this,RecMainActivity.class);
+                startActivity(intent);
             }
         });
     }

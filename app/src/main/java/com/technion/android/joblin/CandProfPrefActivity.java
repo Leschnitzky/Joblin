@@ -223,13 +223,13 @@ public class CandProfPrefActivity extends AppCompatActivity {
 
         DocumentReference userDocumentReference = usersCollection.document(candidate.getEmail());
         batch.set(userDocumentReference, userMapData);
-        Log.d("GOT HERE:","GOT HERE!");
 
         batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 dialog.hide();
-                Toast.makeText(CandProfPrefActivity.this, "ADDED CAND", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(CandProfPrefActivity.this,CanMainActivity.class);
+                startActivity(intent);
             }
         });
     }
