@@ -160,6 +160,7 @@ public class CanMainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         email = mAuth.getCurrentUser().getEmail();
 
+
         //swipeView initialization
         mSwipeView = findViewById(R.id.swipeView);
         mContext = getApplicationContext();

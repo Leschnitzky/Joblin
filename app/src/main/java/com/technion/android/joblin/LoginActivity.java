@@ -204,7 +204,6 @@ public class LoginActivity extends AppCompatActivity {
                         // Logged in with google, just need to choose
                         Log.d(TAG, "No such document");
 
-                        Toast.makeText(LoginActivity.this, "Not Found Recr", Toast.LENGTH_SHORT).show();
 
                         Intent intent = new Intent(LoginActivity.this, ChooseUserTypeActivity.class);
                         intent.putExtra(FIRST_NAME_KEY,mUserFirstName);
