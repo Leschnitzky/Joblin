@@ -41,15 +41,42 @@
         >
 
         <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_image"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:layout_marginBottom="100dp"
+            android:layout_marginBottom="80dp"
             android:src="@drawable/logojoblin_64x64_green"
             app:civ_border_width="5dp"
             app:civ_border_color="@color/colorTextOrIcons"
             />
 
         <TextView
+            android:id="@+id/user_nameText"
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test"
+            android:textColor="@color/colorTextOrIcons"
+            android:textSize="20dp" />
+        <TextView
+            android:id="@+id/user_skills"
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test"
+            android:textColor="@color/colorTextOrIcons"
+            android:textSize="20dp" />
+        <TextView
+            android:id="@+id/user_job_category"
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test"
+            android:textColor="@color/colorTextOrIcons"
+            android:textSize="20dp" />
+        <TextView
+            android:id="@+id/user_education"
+            android:layout_margin="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Test"
