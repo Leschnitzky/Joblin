@@ -7,6 +7,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -19,6 +20,7 @@ import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +32,7 @@ class DatabaseAPI {
         LEFT, RIGHT
     }
 
-    static final String AGE_KEY = "age";
+    static final String BIRTHDAY_KEY = "birthday";
     static final String EMAIL_KEY = "email";
     static final String JOB_CATEGORY_KEY = "jobCategory";
     static final String JOB_LOCATION_KEY = "jobLocation";
@@ -167,7 +169,7 @@ class DatabaseAPI {
 
     void insertCandidate(Candidate candidate) {
 //        Map<String, Object> candidateMapData = new HashMap<>();
-//        candidateMapData.put(AGE_KEY, candidate.getAge());
+//        candidateMapData.put(BIRTHDAY_KEY, candidate.getBirthday());
 //        candidateMapData.put(EMAIL_KEY, candidate.getEmail());
 //        candidateMapData.put(JOB_CATEGORY_KEY, candidate.getJobCategory());
 //        candidateMapData.put(JOB_LOCATION_KEY, candidate.getJobLocation());
@@ -236,7 +238,7 @@ class DatabaseAPI {
                 "Levi",
                 "Weiss",
                 "http://image",
-                25,
+                new Timestamp(new Date(96,10,5)),
                 "Haifa",
                 "twice a week",
                 "Technion",
@@ -552,7 +554,7 @@ class DatabaseAPI {
                 "Gabi",
                 "Gavrieli",
                 "https://pbs.twimg.com/profile_images/972872769019850753/YTxFZF2x_400x400.jpg",
-                30,
+                new Timestamp(new Date(90,4,5)),
                 "Tel Aviv",
                 "Full Time",
                 "High School",
@@ -566,7 +568,7 @@ class DatabaseAPI {
                 "Moriel",
                 "Shlomiel",
                 "https://media.npr.org/assets/img/2015/11/24/ajeup0ayctw4ztltklrnuvtm-y4xulezgneawbqw4cs_custom-7aa29347d5da230c6101168c71549a7399302d0c-s1100-c15.jpg",
-                17,
+                new Timestamp(new Date(2001,3,12)),
                 "Beer Sheva",
                 "20 hours per month",
                 "Ort Barude",
@@ -580,7 +582,7 @@ class DatabaseAPI {
                 "Levi",
                 "Weiss",
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
-                25,
+                new Timestamp(new Date(90,4,5)),
                 "Haifa",
                 "Twice a week",
                 "Technion",
@@ -594,7 +596,7 @@ class DatabaseAPI {
                 "Caleb",
                 "Smorchi",
                 "https://pbs.twimg.com/profile_images/972872769019850753/YTxFZF2x_400x400.jpg",
-                21,
+                new Timestamp(new Date(90,4,5)),
                 "Salem",
                 "Night Shifts",
                 "Witches School of Salem",
@@ -608,7 +610,7 @@ class DatabaseAPI {
                 "Hatich",
                 "Esh megil shesh",
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
-                23,
+                new Timestamp(new Date(90,4,5)),
                 "Jerusalem",
                 "75% misra",
                 "Haward Univerity",
@@ -622,7 +624,7 @@ class DatabaseAPI {
                 "Guy",
                 "Menhel",
                 "https://avatars1.githubusercontent.com/u/28152692?s=400&v=4",
-                25,
+                new Timestamp(new Date(90,4,5)),
                 "Haifa",
                 "Full Time",
                 "Technion instituation",
@@ -637,7 +639,7 @@ class DatabaseAPI {
                 "Diego",
                 "Maradona",
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
-                33,
+                new Timestamp(new Date(90,4,5)),
                 "Eilat",
                 "Three times a week",
                 "Tel Aviv University",
@@ -652,7 +654,7 @@ class DatabaseAPI {
                 "Macho",
                 "Pacho",
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
-                33,
+                new Timestamp(new Date(90,4,5)),
                 "Jaffa",
                 "Three times a week",
                 "Ben Gurion University",
@@ -667,7 +669,7 @@ class DatabaseAPI {
                 "Asaf",
                 "Granit",
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
-                39,
+                new Timestamp(new Date(90,4,5)),
                 "Jaffa",
                 "Three times a week",
                 "IDC",

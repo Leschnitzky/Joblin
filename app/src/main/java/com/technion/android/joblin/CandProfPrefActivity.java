@@ -3,17 +3,9 @@ package com.technion.android.joblin;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.Build;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -31,9 +23,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
@@ -135,6 +128,7 @@ public class CandProfPrefActivity extends AppCompatActivity {
                     dialog.show();
                     ArrayList<Integer> emptyFields = checkAllEditTextsForEmptyStrings();
                     if(emptyFields.isEmpty()){
+                        Timestamp birthday = new Timestamp(myCalendar.getTime());
                         Candidate cand = new Candidate(
 
                                 mAuth.getCurrentUser().getEmail(),
@@ -142,7 +136,7 @@ public class CandProfPrefActivity extends AppCompatActivity {
                                 thisIntent.getStringExtra(LoginActivity.LAST_NAME_KEY),
                                 thisIntent.getStringExtra(LoginActivity.URI_KEY),
                                 //         new Timestamp(myCalendar.getTime()),
-                                7,
+                                birthday,
                                 mLocationText.getText().toString(),
                                 mScopeText.getText().toString(),
                                 mEducationText.getText().toString(),
