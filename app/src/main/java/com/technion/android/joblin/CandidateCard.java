@@ -13,6 +13,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -31,6 +32,9 @@ import com.mindorks.placeholderview.annotations.swipe.SwipeOutState;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.technion.android.joblin.DatabaseAPI.Side;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,10 +124,21 @@ public class CandidateCard {
         return skillsString.toString().substring(0,skillsString.toString().length()-2);
     }
 
+    public int getAge(
+            Date birthDate,
+            Date currentDate) {
+        DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+        int d1 = Integer.parseInt(formatter.format(birthDate));
+        int d2 = Integer.parseInt(formatter.format(currentDate));
+        int age = (d2 - d1) / 10000;
+        return age;
+    }
+
     @Resolve
     public void onResolved(){
         Glide.with(mContext).load(mProfile.getImageUrl()).into(profileImageView);
-        nameTxt.setText(String.format("%s %s", mProfile.getName(), mProfile.getLastName()));
+        Integer age = getAge(mProfile.getBirthday().toDate(), Timestamp.now().toDate());
+        nameTxt.setText(String.format("%s %s, %s", mProfile.getName(), mProfile.getLastName(), age.toString()));
         positionScopeTxt.setText(mProfile.getScope());
         EducationTxt.setText(mProfile.getEducation());
         fullEducationTxt.setText(mProfile.getEducation());

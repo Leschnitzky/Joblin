@@ -176,8 +176,9 @@ public class RecMainActivity extends AppCompatActivity {
         //swipeView initialization
         mSwipeView = findViewById(R.id.swipeView);
         mContext = getApplicationContext();
-        int bottomMargin = Utils.dpToPx(180);
+        int bottomMargin = Utils.dpToPx(150);
         Point windowSize = Utils.getDisplaySize(getWindowManager());
+        int padding = getResources().getDimensionPixelSize(R.dimen._7sdp);
         mSwipeView.getBuilder()
                 .setIsUndoEnabled(true)
                 .setDisplayViewCount(3)
@@ -185,7 +186,7 @@ public class RecMainActivity extends AppCompatActivity {
                         .setViewWidth(windowSize.x)
                         .setViewHeight(windowSize.y - bottomMargin)
                         .setViewGravity(Gravity.TOP)
-                        .setPaddingTop(20)
+                        .setPaddingTop(padding)
                         .setRelativeScale(0.01f)
                         .setSwipeInMsgLayoutId(R.layout.swipe_in_msg_view)
                         .setSwipeOutMsgLayoutId(R.layout.swipe_out_msg_view));
