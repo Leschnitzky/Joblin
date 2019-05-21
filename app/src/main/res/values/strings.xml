@@ -1,9 +1,7 @@
 <resources>
     <string name="app_name">Joblin</string>
-<<<<<<< HEAD
     <string name="title_activity_recr_edit">RecrEditActivity</string>
     <string name="title_activity_cand_edit">CandEditActivity</string>
-=======
     <string name="more_details">More Details</string>
     <string name="less_details">Less Details</string>
     <string name="no_new_rec_right_now">There are no new recruiters right now</string>
@@ -37,6 +35,4 @@
     <string name="education_recr" >Please write the required education level:</string>
     <string name="skills_recr">Please list your required skills for the job </string>
     <string name="description_recr">Please write a short description about your job</string>
->>>>>>> 95dfc7d24b14793240c468741f8cd070829811f6
->>>>>>> e4535a0a20122ea6fb87302e12bf898a31364ad8
 </resources>

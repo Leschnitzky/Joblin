@@ -15,7 +15,7 @@
             android:screenOrientation="portrait"></activity>
         <activity android:name=".ChooseUserTypeActivity"></activity>
         <activity android:name=".LoginActivity">
-            <intent-filter>
+            <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -29,7 +29,6 @@
         <activity
             android:name=".CandEditActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <action android:name="android.intent.action.VIEW" />
     </application>
 
 </manifest>

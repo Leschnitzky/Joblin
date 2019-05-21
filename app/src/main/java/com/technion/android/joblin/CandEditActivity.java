@@ -1,21 +1,19 @@
 package com.technion.android.joblin;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aminography.redirectglide.GlideApp;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,9 +22,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.IOException;
 
-import io.opencensus.internal.StringUtil;
 
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
@@ -44,8 +40,10 @@ public class CandEditActivity extends AppCompatActivity {
 
     ImageView userImage;
     TextView mUserName;
+    Context mContext;
     TextView mUserSkills;
     TextView mUserEducation;
+    ImageView mProfileBackButton;
     TextView mUserJobCategory;
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -58,6 +56,7 @@ public class CandEditActivity extends AppCompatActivity {
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
+        dialog = new ProgressDialog(CandEditActivity.this);
         dialog.setMessage("Retrieving user information...");
         dialog.setCancelable(false);
         dialog.setInverseBackgroundForced(false);
@@ -67,6 +66,16 @@ public class CandEditActivity extends AppCompatActivity {
         mUserName = findViewById(R.id.user_nameText);
         mUserEducation = findViewById(R.id.user_education);
         mUserJobCategory = findViewById(R.id.user_job_category);
+        mContext = this;
+        mProfileBackButton = findViewById(R.id.profile_back_button);
+
+        mProfileBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CandEditActivity.this,CanMainActivity.class);
+                startActivity(intent);
+            }
+        });
 
         userImage = findViewById(R.id.user_image);
         String email = mAuth.getCurrentUser().getEmail();
@@ -95,19 +104,14 @@ public class CandEditActivity extends AppCompatActivity {
                         mUserEducation.setText(candidate.getEducation());
                         mUserName.setText(candidate.getName() +" "+ candidate.getLastName());
                         mUserJobCategory.setText(candidate.getJobCategory());
-
-                        try {
-                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(
-                                    getApplicationContext().getContentResolver(),Uri.parse(candidate.getImageUrl()));
-                            dialog.hide();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-
-                        }
+                        GlideApp.with(mContext).load(candidate.getImageUrl()).into(userImage);
+                        dialog.hide();
                     } else {
+                        dialog.hide();
                         Toast.makeText(CandEditActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
+                    dialog.hide();
                     Toast.makeText(CandEditActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }

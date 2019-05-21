@@ -22,6 +22,7 @@
             android:src="@drawable/baseline_person_green_18"
             />
         <ImageView
+            android:id="@+id/recr_edit_back_button"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="right"
@@ -34,22 +35,49 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar_recr"
-        android:layout_above="@id/bottom_background_recr"
+        android:layout_above="@+id/bottom_background_recr"
         android:background="@color/colorDivider"
         android:orientation="vertical"
         android:gravity="center"
         >
 
         <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/recr_image"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:layout_marginBottom="100dp"
+            android:layout_marginBottom="80dp"
             android:src="@drawable/logojoblin_64x64_green"
             app:civ_border_width="5dp"
             app:civ_border_color="@color/colorTextOrIcons"
             />
 
         <TextView
+            android:id="@+id/recr_nameText"
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test"
+            android:textColor="@color/colorTextOrIcons"
+            android:textSize="20dp" />
+        <TextView
+            android:id="@+id/recr_skills"
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test"
+            android:textColor="@color/colorTextOrIcons"
+            android:textSize="20dp" />
+        <TextView
+            android:id="@+id/recr_job_category"
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Test"
+            android:textColor="@color/colorTextOrIcons"
+            android:textSize="20dp" />
+        <TextView
+            android:id="@+id/recr_education"
+            android:layout_margin="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Test"

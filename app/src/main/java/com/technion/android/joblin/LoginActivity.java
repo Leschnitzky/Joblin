@@ -110,6 +110,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        Log.d("BLABLA", "GOT ACCOUNT!");
         dialog.setMessage("Please wait...");
         dialog.setCancelable(false);
         dialog.setInverseBackgroundForced(false);
@@ -127,10 +128,10 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
+                Log.d("BLABLA", "GOT ACCOUNT!");
                 mUserFirstName = account.getGivenName();
                 mUserLastName = account.getFamilyName();
                 mUserPhoto = account.getPhotoUrl();
-                account.getPhotoUrl();
 
                 firebaseAuthWithGoogle(account);
 
