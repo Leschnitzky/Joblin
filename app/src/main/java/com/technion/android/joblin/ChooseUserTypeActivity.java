@@ -42,7 +42,7 @@ public class ChooseUserTypeActivity extends AppCompatActivity {
         mRecrButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ChooseUserTypeActivity.this,RecProfPrefActivity.class);
+                Intent intent = new Intent(ChooseUserTypeActivity.this, RecrProfPrefActivity.class);
                 intent.putExtra(LoginActivity.FIRST_NAME_KEY,mFirstName);
                 intent.putExtra(LoginActivity.LAST_NAME_KEY,mLastName);
                 intent.putExtra(LoginActivity.URI_KEY,mPhotoString);

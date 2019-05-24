@@ -24,7 +24,7 @@
         </activity>
         <activity android:name=".CanMainActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".RecProfPrefActivity">
+        <activity android:name=".RecrProfPrefActivity">
         </activity>
         <activity android:name=".CandProfPrefActivity" />
     </application>

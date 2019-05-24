@@ -43,7 +43,7 @@ import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTIO
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
-public class RecProfPrefActivity extends AppCompatActivity implements OnFormElementValueChangedListener {
+public class RecrProfPrefActivity extends AppCompatActivity implements OnFormElementValueChangedListener {
 
     private FormBuildHelper formBuilder = null;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -61,7 +61,7 @@ public class RecProfPrefActivity extends AppCompatActivity implements OnFormElem
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        dialog = new ProgressDialog(RecProfPrefActivity.this);
+        dialog = new ProgressDialog(RecrProfPrefActivity.this);
         thisIntent = getIntent();
         setupForm();
     }
@@ -126,7 +126,7 @@ public class RecProfPrefActivity extends AppCompatActivity implements OnFormElem
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 dialog.hide();
-                Intent intent = new Intent(RecProfPrefActivity.this,RecMainActivity.class);
+                Intent intent = new Intent(RecrProfPrefActivity.this,RecMainActivity.class);
                 startActivity(intent);
             }
         });
