@@ -45,7 +45,7 @@
             android:id="@+id/user_image"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:layout_marginBottom="80dp"
+            android:layout_marginBottom="@dimen/_10sdp"
             android:src="@drawable/logojoblin_64x64_green"
             app:civ_border_width="5dp"
             app:civ_border_color="@color/colorTextOrIcons"
@@ -53,36 +53,116 @@
 
         <TextView
             android:id="@+id/user_nameText"
-            android:layout_margin="10dp"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="name"
+            android:textColor="#000000"
+            android:textSize="@dimen/_20sdp"
+            android:textStyle="bold" />
+
+        <android.support.v7.widget.GridLayout
+            android:layout_below="@id/user_nameText"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Test"
-            android:textColor="@color/colorTextOrIcons"
-            android:textSize="20dp" />
-        <TextView
-            android:id="@+id/user_skills"
-            android:layout_margin="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Test"
-            android:textColor="@color/colorTextOrIcons"
-            android:textSize="20dp" />
-        <TextView
-            android:id="@+id/user_job_category"
-            android:layout_margin="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Test"
-            android:textColor="@color/colorTextOrIcons"
-            android:textSize="20dp" />
-        <TextView
-            android:id="@+id/user_education"
-            android:layout_margin="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Test"
-            android:textColor="@color/colorTextOrIcons"
-            android:textSize="20dp" />
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:layout_marginLeft="@dimen/_20sdp"
+            android:gravity="center"
+            app:columnCount="2"
+            app:rowCount="4">
+
+
+            <ImageView
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:src="@drawable/icon_business_64x64" />
+
+            <TextView
+                android:id="@+id/user_job_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="middle"
+                android:gravity="center"
+                android:maxLines="2"
+                android:text="test"
+                android:textColor="#000000"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="normal|bold"
+                app:layout_columnWeight="1"
+                app:layout_gravity="center"
+                app:layout_rowWeight="1" />
+
+            <ImageView
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:src="@drawable/icon_place_64x64" />
+
+            <TextView
+                android:id="@+id/job_location_cand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:ellipsize="middle"
+                android:gravity="center"
+                android:maxLines="2"
+                android:text="education"
+                android:textColor="#000000"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="normal|bold"
+                app:layout_columnWeight="1"
+                app:layout_gravity="center"
+                app:layout_rowWeight="1" />
+
+            <ImageView
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:src="@drawable/icon_school" />
+
+            <TextView
+                android:id="@+id/user_education"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:ellipsize="middle"
+                android:gravity="center"
+                android:maxLines="2"
+                android:text="education"
+                android:textColor="#000000"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="normal|bold"
+                app:layout_columnWeight="1"
+                app:layout_gravity="center"
+                app:layout_rowWeight="1" />
+
+            <ImageView
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:src="@drawable/icon_skill_64x64" />
+
+            <TextView
+                android:id="@+id/user_skills"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="middle"
+                android:gravity="center"
+                android:maxLines="2"
+                android:text="skills"
+                android:textColor="#000000"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="normal|bold"
+                app:layout_columnWeight="1"
+                app:layout_gravity="center"
+                app:layout_rowWeight="1" />
+
+
+        </android.support.v7.widget.GridLayout>
+
+
+
+
+
     </LinearLayout>
 
 

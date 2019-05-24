@@ -93,6 +93,8 @@ public class LoginActivity extends AppCompatActivity {
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mGoogleSignInClient.signOut();
+        mAuth.signOut();
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -110,7 +112,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        Log.d("BLABLA", "GOT ACCOUNT!");
         dialog.setMessage("Please wait...");
         dialog.setCancelable(false);
         dialog.setInverseBackgroundForced(false);
