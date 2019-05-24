@@ -23,6 +23,12 @@
         <activity android:name=".CanMainActivity"/>
         <activity android:name=".CandProfPrefActivity" />
         <activity android:name=".RecrProfPrefActivity" />
+        <activity android:name=".CanMatchesActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
