@@ -1,58 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryLight"
     android:orientation="vertical"
-    android:background="@color/colorDivider"
-    tools:context=".ChooseUserTypeActivity"
-    android:gravity="center">
+    tools:context=".ChooseUserTypeActivity">
 
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/main_screen_logo"
-        android:layout_marginTop="50dp"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="@dimen/_120sdp"
+        android:layout_marginTop="@dimen/_30sdp"
         android:src="@drawable/logojoblin_2"
-        app:civ_border_width="2dp"
-        app:civ_circle_background_color="@color/colorPrimaryLight"
-        app:civ_border_color="@color/colorPrimaryLight"
-        android:layout_margin="20dp"/>
+        app:civ_border_color="@color/colorAccent"
+        app:civ_border_width="@dimen/_1sdp"
+        app:civ_circle_background_color="@color/colorAccent" />
 
     <TextView
         android:id="@+id/welcome_text"
         android:layout_width="260dp"
         android:layout_height="wrap_content"
+        android:layout_below="@id/main_screen_logo"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
         android:text="@string/choose_one"
         android:textAlignment="center"
-        android:textColor="@color/colorPrimaryText"
-        android:textSize="30dp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/_25sdp"
         android:textStyle="bold" />
 
     <Button
         android:id="@+id/candidate_button"
-        android:layout_margin="5dp"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/_155sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_below="@id/welcome_text"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="false"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="@dimen/_40sdp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="@dimen/_10sdp"
         android:background="@color/colorAccent"
+        android:text="@string/proceed_as_cand"
         android:textColor="@color/colorTextOrIcons"
-        android:textStyle="bold"
-        android:layout_gravity="center"
-        android:text="@string/proceed_as_cand"/>
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/recruiter_button"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
+        android:layout_width="@dimen/_155sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_below="@id/candidate_button"
+        android:layout_centerHorizontal="true"
         android:background="@color/colorAccent"
         android:text="@string/proceed_as_recr"
         android:textColor="@color/colorTextOrIcons"
         android:textStyle="bold" />
 
-</LinearLayout>
+</RelativeLayout>
