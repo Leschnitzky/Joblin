@@ -2,16 +2,16 @@ package com.technion.android.joblin;
 
 public class MatchesItem {
 
-    private String title;
+    private String email;
 
     public MatchesItem() {};
 
-    public MatchesItem(String title) {
-        this.title = title;
+    public MatchesItem(String email) {
+        this.email = email;
     }
 
-    public String getTitle() {
-        return title;
+    public String getEmail() {
+        return email;
     }
 
 }

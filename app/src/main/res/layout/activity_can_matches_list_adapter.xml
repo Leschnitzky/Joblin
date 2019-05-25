@@ -4,21 +4,18 @@
     android:layout_height="match_parent"
     android:orientation="horizontal" >
 
-    <TextView
-        android:id="@+id/idTextView"
+    <ImageView
+        android:id="@+id/recImage"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="90dp"
         android:layout_weight="1"
-        android:gravity="center"
-        android:textColor="@color/book_loading_book"
-        android:textSize="40sp"
-        android:textStyle="bold" />
+        android:gravity="center" />
 
     <TextView
-        android:id="@+id/dataTextView"
+        android:id="@+id/recName"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="5"
+        android:layout_height="90dp"
+        android:layout_weight="3"
         android:gravity="center"
         android:textColor="@android:color/darker_gray"
         android:textSize="24sp" />
