@@ -14,9 +14,9 @@ import com.google.firebase.firestore.Query;
 import static com.technion.android.joblin.DatabaseUtils.*;
 
 
-public class CanMatchesActivity extends AppCompatActivity {
+public class RecMatchesActivity extends AppCompatActivity {
 
-    CanMatchesItemsListAdapter adapter;
+    RecMatchesItemsListAdapter adapter;
     private FirebaseAuth mAuth;
     RecyclerView recyclerViewList;
 
@@ -29,22 +29,22 @@ public class CanMatchesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_can_matches);
+        setContentView(R.layout.activity_rec_matches);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        recyclerViewList = findViewById(R.id.RecyclerViewOfCanMatches);
+        recyclerViewList = findViewById(R.id.RecyclerViewOfRecMatches);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerViewList.setLayoutManager(layoutManager);
 
-        Query query = recruitersCollection.document(mAuth.getCurrentUser().getEmail())
+        Query query = candidatesCollection.document(mAuth.getCurrentUser().getEmail())
                 .collection(MATCHES_COLLECTION_NAME);
 
         FirestoreRecyclerOptions<MatchesItem> options = new FirestoreRecyclerOptions.Builder<MatchesItem>()
                 .setQuery(query, MatchesItem.class)
                 .build();
 
-        adapter = new CanMatchesItemsListAdapter(options);
+        adapter = new RecMatchesItemsListAdapter(options);
         recyclerViewList.setAdapter(adapter);
     }
 

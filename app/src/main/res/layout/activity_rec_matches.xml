@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CanMatchesActivity">
+    tools:context=".RecMatchesActivity">
 
     <LinearLayout
         android:id="@+id/topPanel"
@@ -39,7 +39,7 @@
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/RecyclerViewOfCanMatches"
+        android:id="@+id/RecyclerViewOfRecMatches"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/topPanel"

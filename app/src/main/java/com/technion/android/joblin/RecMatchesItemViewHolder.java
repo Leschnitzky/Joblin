@@ -4,11 +4,11 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 import android.view.View;
 
-public class MatchesItemViewHolder extends RecyclerView.ViewHolder {
+public class RecMatchesItemViewHolder extends RecyclerView.ViewHolder {
     private TextView dataTextView;
     private TextView idTextView;
 
-    public MatchesItemViewHolder(View itemView) {
+    public RecMatchesItemViewHolder(View itemView) {
         super(itemView);
         dataTextView = itemView.findViewById(R.id.dataTextView);
         idTextView = itemView.findViewById(R.id.idTextView);
