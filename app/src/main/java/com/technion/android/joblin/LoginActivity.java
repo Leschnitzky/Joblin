@@ -93,6 +93,8 @@ public class LoginActivity extends AppCompatActivity {
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mGoogleSignInClient.signOut();
+        mAuth.signOut();
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -127,10 +129,10 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
+                Log.d("BLABLA", "GOT ACCOUNT!");
                 mUserFirstName = account.getGivenName();
                 mUserLastName = account.getFamilyName();
                 mUserPhoto = account.getPhotoUrl();
-                account.getPhotoUrl();
 
                 firebaseAuthWithGoogle(account);
 
