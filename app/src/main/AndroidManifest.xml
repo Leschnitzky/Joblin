@@ -27,6 +27,12 @@
         <activity android:name=".RecrProfPrefActivity">
         </activity>
         <activity android:name=".CandProfPrefActivity" />
+        <activity
+            android:name=".RecrEditActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".CandEditActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

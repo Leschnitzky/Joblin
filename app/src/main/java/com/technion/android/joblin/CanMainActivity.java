@@ -1,6 +1,7 @@
 package com.technion.android.joblin;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -45,6 +47,7 @@ public class CanMainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     RotateLoading rl;
     private String email;
+    private ImageButton mProfileButton;
 
     void getRecruitersForSwipingScreen_MainFunction(final String candidateMail) {
         getRecruitersForSwipingScreen_CollectDataAboutCandidate(candidateMail);
@@ -151,8 +154,10 @@ public class CanMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe);
 
+
         //Database initialization
         db = FirebaseFirestore.getInstance();
+        mProfileButton = findViewById(R.id.profile_Button);
         candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
         recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
         usersCollection = db.collection(USERS_COLLECTION_NAME);
@@ -160,6 +165,13 @@ public class CanMainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         email = mAuth.getCurrentUser().getEmail();
         //swipeView initialization
+        mProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CanMainActivity.this,CandEditActivity.class);
+                startActivity(intent);
+            }
+        });
         mSwipeView = findViewById(R.id.swipeView);
         mContext = getApplicationContext();
         int bottomMargin = Utils.dpToPx(150);

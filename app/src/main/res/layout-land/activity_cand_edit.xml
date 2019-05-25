@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CandEditActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_cand"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
+        android:background="@color/colorPrimary"
+        tools:targetApi="lollipop">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:src="@drawable/baseline_person_green_18"
+            />
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="right"
+            android:layout_marginRight="20dp"
+            android:src="@drawable/logojoblin_64x64_green"
+            />
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottom_background_cand"
+        android:layout_below="@id/toolbar_cand"
+        android:orientation="horizontal"
+        android:background="@color/colorDivider"
+        >
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/logojoblin_64x64_green"
+            app:civ_border_width="8dp"
+            app:civ_border_color="@color/colorTextOrIcons"
+            android:layout_above="@id/bottom_background_cand"
+            android:layout_below="@id/toolbar_cand"
+            android:layout_toLeftOf="@id/info_cand"
+            android:layout_weight="1"
+            />
+
+        <TextView
+            android:id="@+id/info_cand"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Test"
+            android:textColor="@color/colorTextOrIcons"
+            android:textSize="20dp"
+            android:gravity="center"
+            />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/bottom_background_cand"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:layout_below="@id/bottom_background_cand"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary" />
+
+    <ImageView
+        android:id="@+id/gearwheel_cand"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/baseline_settings_green_48" />
+</RelativeLayout>

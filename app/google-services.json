@@ -15,11 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "599503618186-mc5db10k2vcbva4ag1bd11546bhqlq86.apps.googleusercontent.com",
+          "client_id": "599503618186-c703ncgeqpmooeor642b46fj1p1msdhs.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.technion.android.joblin",
-            "certificate_hash": "1f6da00bab59cb7b9d7bdd779faff568fb9e7392"
+            "certificate_hash": "384159b6c5f06713c863643a60b6137486a24c7b"
+          }
+        },
+        {
+          "client_id": "599503618186-2s1a30mg2uugtp8t51sb61ko8nlq5lch.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.technion.android.joblin",
+            "certificate_hash": "d6345b3dcbe2b1c69f32532cd215545f68d0e0cd"
           }
         },
         {
