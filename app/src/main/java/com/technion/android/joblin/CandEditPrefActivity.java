@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
@@ -18,6 +19,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 import com.thejuki.kformmaster.helper.FormBuildHelper;
@@ -39,13 +41,9 @@ import java.util.Map;
 
 import kotlin.Unit;
 
-import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.EMAIL_KEY;
-import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.*;
 
-public class CandProfPrefActivity extends AppCompatActivity implements OnFormElementValueChangedListener {
+public class CandEditPrefActivity extends AppCompatActivity implements OnFormElementValueChangedListener {
 
     private FormBuildHelper formBuilder = null;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -56,6 +54,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
     Intent thisIntent;
     ProgressDialog dialog;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    Candidate candidate;
 
     @Override
 
@@ -63,9 +62,9 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        dialog = new ProgressDialog(CandProfPrefActivity.this);
+        dialog = new ProgressDialog(CandEditPrefActivity.this);
         thisIntent = getIntent();
-        setupForm();
+        getCandidate(mAuth.getCurrentUser().getEmail());
     }
 
 
@@ -130,8 +129,29 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 dialog.hide();
-                Intent intent = new Intent(CandProfPrefActivity.this,CanMainActivity.class);
+                Intent intent = new Intent(CandEditPrefActivity.this,CanMainActivity.class);
                 startActivity(intent);
+            }
+        });
+    }
+
+    void getCandidate(final String email) {
+        DocumentReference docRef = candidatesCollection.document(email);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        candidate = document.toObject(Candidate.class);
+                        setupForm();
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
             }
         });
     }
@@ -158,22 +178,25 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         FormSingleLineEditTextElement name = new FormSingleLineEditTextElement(Tag.Name.ordinal());
         name.setTitle("First Name");
         name.setHint("Enter first name here");
-        name.setValue(thisIntent.getStringExtra(LoginActivity.FIRST_NAME_KEY));
+        name.setValue(candidate.getName());
         name.setCenterText(true);
         name.setRequired(true);
+        name.setEnabled(false);
         elements.add(name);
 
         FormSingleLineEditTextElement lastname = new FormSingleLineEditTextElement(Tag.LastName.ordinal());
         lastname.setTitle("Last Name");
         lastname.setHint("Enter last name here");
-        lastname.setValue(thisIntent.getStringExtra(LoginActivity.LAST_NAME_KEY));
+        lastname.setValue(candidate.getLastName());
         lastname.setCenterText(true);
         lastname.setRequired(true);
+        lastname.setEnabled(false);
         elements.add(lastname);
 
         FormPickerDateElement birthdate = new FormPickerDateElement(Tag.BirthDate.ordinal());
         birthdate.setTitle("Date of birth");
         birthdate.setHint("Click here to pick date");
+        birthdate.setValue(candidate.getBirthday().toDate());
         birthdate.setCenterText(true);
         birthdate.setRequired(true);
         elements.add(birthdate);
@@ -182,6 +205,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
 
         education.setTitle("Education");
         education.setHint("Enter education here");
+        education.setValue(candidate.getEducation());
         education.setCenterText(true);
         education.setRequired(true);
         elements.add(education);
@@ -191,10 +215,13 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         skills.setCenterText(true);
         elements.add(skills);
 
+        List<String> skill_list = candidate.getSkillsList();
+
         FormSingleLineEditTextElement skill1 = new FormSingleLineEditTextElement(Tag.Skill1.ordinal());
 
         skill1.setTitle("Skill 1");
         skill1.setHint("Enter skill here");
+        skill1.setValue(skill_list.get(0));
         skill1.setCenterText(true);
         skill1.setRequired(true);
         elements.add(skill1);
@@ -203,6 +230,8 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
 
         skill2.setTitle("Skill 2");
         skill2.setHint("Enter skill here");
+        if(skill_list.size()>1)
+            skill2.setValue(skill_list.get(1));
         skill2.setCenterText(true);
         elements.add(skill2);
 
@@ -210,6 +239,8 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
 
         skill3.setTitle("Skill 3");
         skill3.setHint("Enter skill here");
+        if(skill_list.size()>2)
+            skill3.setValue(skill_list.get(2));
         skill3.setCenterText(true);
         elements.add(skill3);
     }
@@ -224,6 +255,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
 
         location.setTitle("Location");
         location.setHint("Enter location here");
+        location.setValue(candidate.getJobLocation());
         location.setCenterText(true);
         location.setRequired(true);
         elements.add(location);
@@ -245,6 +277,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
                 support_simple_spinner_dropdown_item,jobCategories));
         dropDown.setHint("Click here to choose");
         dropDown.setCenterText(true);
+        dropDown.setValue(candidate.getJobCategory());
         dropDown.setRequired(true);
         elements.add(dropDown);
 
@@ -252,6 +285,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
 
         scope.setTitle("Scope");
         scope.setHint("Enter scope here");
+        scope.setValue(candidate.getScope());
         scope.setCenterText(true);
         scope.setRequired(true);
         elements.add(scope);
@@ -264,6 +298,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         description.setMaxLines(6);
         description.setHint("Enter description here");
         description.setDisplayTitle(false);
+        description.setValue(candidate.getMoreInfo());
         description.setCenterText(true);
         description.setRequired(true);
         elements.add(description);
@@ -300,7 +335,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
                         mAuth.getCurrentUser().getEmail(),
                         name.getValueAsString(),
                         lastname.getValueAsString(),
-                        thisIntent.getStringExtra(LoginActivity.URI_KEY),
+                        mAuth.getCurrentUser().getPhotoUrl().toString(),
                         birthday,
                         location.getValueAsString(),
                         scope.getValueAsString(),
