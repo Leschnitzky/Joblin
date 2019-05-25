@@ -290,14 +290,13 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
                 dialog.setCancelable(false);
                 dialog.setInverseBackgroundForced(false);
                 dialog.show();
-                Timestamp birthday = new Timestamp(birthdate.getDateValue());
+                Timestamp birthday = new Timestamp(birthdate.getValue().getTime());
                 skills.add(skill1.getValueAsString());
                 if(!elements.get(Tag.Skill2.ordinal()).getValueAsString().isEmpty())
                     skills.add(elements.get(Tag.Skill2.ordinal()).getValueAsString());
                 if(!elements.get(Tag.Skill3.ordinal()).getValueAsString().isEmpty())
                     skills.add(elements.get(Tag.Skill3.ordinal()).getValueAsString());
                 Candidate cand = new Candidate(
-
                         mAuth.getCurrentUser().getEmail(),
                         name.getValueAsString(),
                         lastname.getValueAsString(),
