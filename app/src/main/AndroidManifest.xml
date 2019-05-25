@@ -12,17 +12,23 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".RecMainActivity"
-        android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"></activity>
         <activity android:name=".ChooseUserTypeActivity"></activity>
         <activity android:name=".LoginActivity">
-            <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
+            <intent-filter >
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".CanMainActivity"/>
         <activity android:name=".CandProfPrefActivity" />
         <activity android:name=".RecrProfPrefActivity" />
+        <activity
+            android:name=".RecrEditActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".CandEditActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
