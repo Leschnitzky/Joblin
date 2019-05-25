@@ -12,9 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cardUseCompatPadding="true"
-        android:layout_margin="10dp"
-        app:cardCornerRadius="7dp"
-        app:cardElevation="4dp">
+        android:layout_margin="@dimen/_5sdp"
+        app:cardCornerRadius="@dimen/_2sdp"
+        app:cardElevation="@dimen/_1sdp">
 
         <com.sothree.slidinguppanel.SlidingUpPanelLayout
             android:id="@+id/slidingpanel"
