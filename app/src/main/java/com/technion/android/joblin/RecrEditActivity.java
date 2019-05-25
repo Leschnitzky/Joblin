@@ -3,12 +3,12 @@ package com.technion.android.joblin;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,8 +21,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-
 
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
@@ -45,6 +43,7 @@ public class RecrEditActivity extends AppCompatActivity {
     TextView mUserEducation;
     ImageView mProfileBackButton;
     TextView mUserJobCategory;
+    ImageView mProfileEditButton;
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -68,11 +67,20 @@ public class RecrEditActivity extends AppCompatActivity {
         mUserJobCategory = findViewById(R.id.recr_job_category);
         mContext = this;
         mProfileBackButton = findViewById(R.id.recr_edit_back_button);
+        mProfileEditButton = findViewById(R.id.bottom_background_recr);
 
         mProfileBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(RecrEditActivity.this,RecMainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        mProfileEditButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RecrEditActivity.this,RecrEditPrefActivity.class);
                 startActivity(intent);
             }
         });

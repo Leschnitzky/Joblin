@@ -62,7 +62,7 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
         setContentView(R.layout.activity_register);
         dialog = new ProgressDialog(RecrEditPrefActivity.this);
         thisIntent = getIntent();
-        setupForm();
+        getRecruiter(mAuth.getCurrentUser().getEmail());
     }
 
 
@@ -127,7 +127,7 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 dialog.hide();
-                Intent intent = new Intent(RecrEditPrefActivity.this,RecMainActivity.class);
+                Intent intent = new Intent(RecrEditPrefActivity.this,RecrEditActivity.class);
                 startActivity(intent);
             }
         });
@@ -139,7 +139,6 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
 
         formBuilder = new FormBuildHelper(this, this, (RecyclerView)findViewById(R.id.recyclerView), true, formLayouts);
         List<BaseFormElement<?>> elements = new ArrayList<>();
-        getRecruiter(mAuth.getCurrentUser().getEmail());
         addJobInfo(elements);
         addRequirements(elements);
         addDescription(elements);
@@ -157,7 +156,7 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
                     if (document.exists()) {
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         recruiter = document.toObject(Recruiter.class);
-
+                        setupForm();
                     } else {
                         Log.d(TAG, "No such document");
                     }
@@ -185,7 +184,7 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
         lastname.setHint("Enter last name here");
         lastname.setValue(recruiter.getLastName());
         lastname.setCenterText(true);
-        name.setEnabled(false);
+        lastname.setEnabled(false);
         elements.add(lastname);
 
         FormSingleLineEditTextElement placename = new FormSingleLineEditTextElement(Tag.JobName.ordinal());
@@ -194,7 +193,7 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
         placename.setCenterText(true);
         placename.setValue(recruiter.getName());
         placename.setRequired(true);
-        elements.add(name);
+        elements.add(placename);
 
 
         FormSingleLineEditTextElement location = new FormSingleLineEditTextElement(Tag.Location.ordinal());
@@ -304,6 +303,8 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
         submit.setValue("Submit");
         submit.setBackgroundColor(R.color.colorPrimaryDark);
         submit.setValueTextColor(Color.WHITE);
+        BaseFormElement firstname = elements.get(Tag.Name.ordinal());
+        BaseFormElement lastname = elements.get(Tag.LastName.ordinal());
         BaseFormElement placename = elements.get(Tag.JobName.ordinal());
         BaseFormElement category = elements.get(Tag.Category.ordinal());
         BaseFormElement scope = elements.get(Tag.Scope.ordinal());
@@ -324,11 +325,10 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
                 if(!elements.get(Tag.Skill3.ordinal()).getValueAsString().isEmpty())
                     skills.add(elements.get(Tag.Skill3.ordinal()).getValueAsString());
                 Recruiter recr = new Recruiter(
-
                         mAuth.getCurrentUser().getEmail(),
-                        thisIntent.getStringExtra(LoginActivity.FIRST_NAME_KEY),
-                        thisIntent.getStringExtra(LoginActivity.LAST_NAME_KEY),
-                        thisIntent.getStringExtra(LoginActivity.URI_KEY),
+                        firstname.getValueAsString(),
+                        lastname.getValueAsString(),
+                        mAuth.getCurrentUser().getPhotoUrl().toString(),
                         category.getValueAsString(),
                         scope.getValueAsString(),
                         location.getValueAsString(),

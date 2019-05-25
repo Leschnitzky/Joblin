@@ -174,7 +174,7 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
         placename.setHint("Enter name here");
         placename.setCenterText(true);
         placename.setRequired(true);
-        elements.add(name);
+        elements.add(placename);
 
 
         FormSingleLineEditTextElement location = new FormSingleLineEditTextElement(Tag.Location.ordinal());
