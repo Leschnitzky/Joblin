@@ -82,6 +82,8 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
 
     private enum Tag {
         JobInfo,
+        Name,
+        LastName,
         JobName,
         Location,
         Category,
@@ -151,11 +153,27 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
 
         elements.add(new FormHeader("Job Info"));
 
-        FormSingleLineEditTextElement name = new FormSingleLineEditTextElement(Tag.JobName.ordinal());
-        name.setTitle("Name of workplace");
-        name.setHint("Enter name here");
+        FormSingleLineEditTextElement name = new FormSingleLineEditTextElement(Tag.Name.ordinal());
+        name.setTitle("First Name");
+        name.setHint("Enter first name here");
+        name.setValue(thisIntent.getStringExtra(LoginActivity.FIRST_NAME_KEY));
         name.setCenterText(true);
         name.setRequired(true);
+        elements.add(name);
+
+        FormSingleLineEditTextElement lastname = new FormSingleLineEditTextElement(Tag.LastName.ordinal());
+        lastname.setTitle("Last Name");
+        lastname.setHint("Enter last name here");
+        lastname.setValue(thisIntent.getStringExtra(LoginActivity.LAST_NAME_KEY));
+        lastname.setCenterText(true);
+        lastname.setRequired(true);
+        elements.add(lastname);
+
+        FormSingleLineEditTextElement placename = new FormSingleLineEditTextElement(Tag.JobName.ordinal());
+        placename.setTitle("Name of workplace");
+        placename.setHint("Enter name here");
+        placename.setCenterText(true);
+        placename.setRequired(true);
         elements.add(name);
 
 
@@ -254,6 +272,7 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
         submit.setValue("Submit");
         submit.setBackgroundColor(R.color.colorPrimaryDark);
         submit.setValueTextColor(Color.WHITE);
+        BaseFormElement placename = elements.get(Tag.JobName.ordinal());
         BaseFormElement category = elements.get(Tag.Category.ordinal());
         BaseFormElement scope = elements.get(Tag.Scope.ordinal());
         BaseFormElement location = elements.get(Tag.Location.ordinal());
@@ -289,6 +308,8 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
             }
             else
             {
+                if(!placename.isValid())
+                    placename.setError("workplace name is required");
                 if(!education.isValid())
                     education.setError("Education is required");
                 if(!desc.isValid())
