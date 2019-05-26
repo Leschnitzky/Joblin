@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.aminography.redirectglide.GlideApp;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -35,7 +35,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.technion.android.joblin.DatabaseUtils.*;
+import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.EMAIL_KEY;
+import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.MATCHES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SWIPES_LEFT_KEY;
+import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.SIDE_KEY;
+import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.TAG;
+import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
 @Layout(R.layout.reccard_view)
 public class RecruiterCard {
@@ -116,7 +125,7 @@ public class RecruiterCard {
 
     @Resolve
     public void onResolved(){
-        Glide.with(mContext).load(mProfile.getImageUrl()).into(profileImageView);
+        GlideApp.with(mContext).load(mProfile.getImageUrl()).into(profileImageView);
         nameTxt.setText(String.format("%s %s", mProfile.getName(), mProfile.getLastName()));
         placeTxt.setText(mProfile.getWorkPlace());
         positionScopeTxt.setText(mProfile.getRequiredScope());
