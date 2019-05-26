@@ -1,23 +1,22 @@
-package com.thejuki.kformmasterexample.custom.view
+package com.technion.android.joblin
 
 import android.content.Context
+import android.support.annotation.LayoutRes
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentActivity
+import android.support.v7.widget.AppCompatTextView
 import android.text.InputType
 import android.view.View
 import android.widget.LinearLayout
-import androidx.annotation.LayoutRes
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import com.github.vivchar.rendererrecyclerviewadapter.ViewHolder
 import com.github.vivchar.rendererrecyclerviewadapter.ViewState
 import com.github.vivchar.rendererrecyclerviewadapter.ViewStateProvider
 import com.github.vivchar.rendererrecyclerviewadapter.binder.ViewBinder
+import com.google.android.libraries.places.api.model.TypeFilter
 import com.google.android.libraries.places.widget.Autocomplete
 import com.thejuki.kformmaster.helper.FormBuildHelper
 import com.thejuki.kformmaster.state.FormEditTextViewState
 import com.thejuki.kformmaster.view.BaseFormViewBinder
-import com.thejuki.kformmasterexample.R
-import com.thejuki.kformmasterexample.custom.model.FormPlacesAutoCompleteElement
 
 /**
  * Form Custom ViewBinder
@@ -55,6 +54,7 @@ class FormPlacesAutoCompleteViewBinder(private val context: Context, private val
                 if (activity is FragmentActivity) {
                     val intent = Autocomplete.IntentBuilder(
                             model.autocompleteActivityMode, model.placeFields)
+                            .setTypeFilter(TypeFilter.CITIES).setCountry("IL")
                             .build(activity)
                     if (fragment != null) {
                         fragment.startActivityForResult(intent, model.tag)

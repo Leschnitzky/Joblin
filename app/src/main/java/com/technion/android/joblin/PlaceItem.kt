@@ -1,4 +1,4 @@
-package com.thejuki.kformmasterexample.item
+package com.technion.android.joblin
 
 import android.net.Uri
 import com.google.android.gms.maps.model.LatLng

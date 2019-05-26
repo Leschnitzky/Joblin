@@ -1,4 +1,4 @@
-package com.thejuki.kformmasterexample.custom.model
+package com.technion.android.joblin
 
 import com.thejuki.kformmaster.model.BaseFormElement
 

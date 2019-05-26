@@ -1,8 +1,6 @@
-package com.thejuki.kformmasterexample.custom.helper
+package com.technion.android.joblin
 
 import com.thejuki.kformmaster.helper.FormBuildHelper
-import com.thejuki.kformmasterexample.custom.model.FormCustomElement
-import com.thejuki.kformmasterexample.custom.model.FormPlacesAutoCompleteElement
 
 /**
  * Form Builder Extensions

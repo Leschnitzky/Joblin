@@ -1,4 +1,4 @@
-package com.thejuki.kformmasterexample.custom.model
+package com.technion.android.joblin
 
 import android.app.Activity
 import android.content.Intent
@@ -8,7 +8,6 @@ import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.thejuki.kformmaster.helper.FormBuildHelper
 import com.thejuki.kformmaster.model.BaseFormElement
-import com.thejuki.kformmasterexample.item.PlaceItem
 
 /**
  * Form Places AutoComplete Element
@@ -18,7 +17,7 @@ import com.thejuki.kformmasterexample.item.PlaceItem
  * @author **TheJuki** ([GitHub](https://github.com/TheJuki))
  * @version 1.0
  */
-class FormPlacesAutoCompleteElement(tag: Int = -1) : BaseFormElement<PlaceItem>(tag) {
+class FormPlacesAutoCompleteElement(tag: Int = -1) : BaseFormElement<String>(tag) {
 
     /**
      * List of Place Fields returned
@@ -40,7 +39,7 @@ class FormPlacesAutoCompleteElement(tag: Int = -1) : BaseFormElement<PlaceItem>(
         data?.let {
             if (resultCode == Activity.RESULT_OK) {
                 val place = Autocomplete.getPlaceFromIntent(it)
-                value = PlaceItem(place)
+                value = PlaceItem(place).toString()
                 formBuilder.onValueChanged(this)
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
                 val status = Autocomplete.getStatusFromIntent(it)
