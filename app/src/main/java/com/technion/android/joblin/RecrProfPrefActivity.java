@@ -292,11 +292,11 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
                 if(!elements.get(Tag.Skill3.ordinal()).getValueAsString().isEmpty())
                     skills.add(elements.get(Tag.Skill3.ordinal()).getValueAsString());
                 Recruiter recr = new Recruiter(
-
                         mAuth.getCurrentUser().getEmail(),
                         thisIntent.getStringExtra(LoginActivity.FIRST_NAME_KEY),
                         thisIntent.getStringExtra(LoginActivity.LAST_NAME_KEY),
                         thisIntent.getStringExtra(LoginActivity.URI_KEY),
+                        placename.getValueAsString(),
                         category.getValueAsString(),
                         scope.getValueAsString(),
                         location.getValueAsString(),
