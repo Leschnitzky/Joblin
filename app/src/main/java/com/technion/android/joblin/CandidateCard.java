@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.aminography.redirectglide.GlideApp;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -136,7 +136,7 @@ public class CandidateCard {
 
     @Resolve
     public void onResolved(){
-        Glide.with(mContext).load(mProfile.getImageUrl()).into(profileImageView);
+        GlideApp.with(mContext).load(mProfile.getImageUrl()).into(profileImageView);
         Integer age = getAge(mProfile.getBirthday().toDate(), Timestamp.now().toDate());
         nameTxt.setText(String.format("%s %s, %s", mProfile.getName(), mProfile.getLastName(), age.toString()));
         positionScopeTxt.setText(mProfile.getScope());
