@@ -108,9 +108,6 @@ public class LoginActivity extends AppCompatActivity {
                 signIn();
             }
         });
-
-        DatabaseAPI databaseAPI = new DatabaseAPI();
-        databaseAPI.initializeDBWithSomeData();
     }
 
 
