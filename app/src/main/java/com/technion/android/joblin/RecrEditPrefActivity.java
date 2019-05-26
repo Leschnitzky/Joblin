@@ -329,6 +329,7 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
                         firstname.getValueAsString(),
                         lastname.getValueAsString(),
                         mAuth.getCurrentUser().getPhotoUrl().toString(),
+                        placename.getValueAsString(),
                         category.getValueAsString(),
                         scope.getValueAsString(),
                         location.getValueAsString(),

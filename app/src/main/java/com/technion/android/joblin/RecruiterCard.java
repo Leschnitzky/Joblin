@@ -45,6 +45,9 @@ public class RecruiterCard {
     @View(R.id.nameTxt)
     TextView nameTxt;
 
+    @View(R.id.workplaceTxt)
+    TextView placeTxt;
+
     @View(R.id.locationNameTxt)
     TextView locationNameTxt;
 
@@ -115,6 +118,7 @@ public class RecruiterCard {
     public void onResolved(){
         Glide.with(mContext).load(mProfile.getImageUrl()).into(profileImageView);
         nameTxt.setText(String.format("%s %s", mProfile.getName(), mProfile.getLastName()));
+        placeTxt.setText(mProfile.getWorkPlace());
         positionScopeTxt.setText(mProfile.getRequiredScope());
         EducationTxt.setText(mProfile.getRequiredEducation());
         fullEducationTxt.setText(mProfile.getRequiredEducation());

@@ -3,6 +3,7 @@ package com.technion.android.joblin;
 import java.util.List;
 
 public class Recruiter extends User {
+    private String workPlace;
     private String jobCategory;
     private String requiredScope;
     private String requiredEducation;
@@ -16,6 +17,7 @@ public class Recruiter extends User {
                      String name,
                      String lastName,
                      String imageUrl,
+                     String workplace,
                      String jobCategory,
                      String requiredScope,
                      String jobLocation,
@@ -24,6 +26,7 @@ public class Recruiter extends User {
                      List<String> requiredSkillsList) {
 
         super(email, name, lastName, imageUrl);
+        this.workPlace = workplace;
         this.jobCategory = jobCategory;
         this.requiredScope = requiredScope;
         this.jobLocation = jobLocation;
@@ -34,12 +37,21 @@ public class Recruiter extends User {
 
     public Recruiter(Recruiter other) {
         super(other);
+        this.workPlace = other.workPlace;
         this.jobCategory = other.jobCategory;
         this.requiredScope = other.requiredScope;
         this.requiredEducation = other.requiredEducation;
         this.jobLocation = other.jobLocation;
         this.jobDescription = other.jobDescription;
         this.requiredSkillsList = other.requiredSkillsList;
+    }
+
+    public String getWorkPlace() {
+        return workPlace;
+    }
+
+    public void setWorkPlace(String workPlace) {
+        this.workPlace = workPlace;
     }
 
     public String getJobCategory() {
