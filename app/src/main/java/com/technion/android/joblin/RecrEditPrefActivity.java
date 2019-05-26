@@ -191,7 +191,7 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
         placename.setTitle("Name of workplace");
         placename.setHint("Enter name here");
         placename.setCenterText(true);
-        placename.setValue(recruiter.getName());
+        placename.setValue(recruiter.getWorkPlace());
         placename.setRequired(true);
         elements.add(placename);
 
