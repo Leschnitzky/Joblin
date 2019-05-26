@@ -149,6 +149,8 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
         addRequirements(elements);
         addDescription(elements);
         addButtons(elements);
+        FormPlacesAutoCompleteViewBinder vb = new FormPlacesAutoCompleteViewBinder(this,formBuilder,null,null);
+        formBuilder.registerCustomViewBinder(vb.getViewBinder());
         formBuilder.addFormElements(elements);
     }
 
@@ -341,4 +343,11 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
 
     }
 
+    @Override
+    public void onActivityResult(int requestCode,int resultCode, Intent data) {
+        if (requestCode == Tag.Location.ordinal()) {
+            FormPlacesAutoCompleteElement placesElement = formBuilder.getFormElement(Tag.Location.ordinal());
+            placesElement.handleActivityResult(formBuilder, resultCode, data);
+        }
+    }
 }

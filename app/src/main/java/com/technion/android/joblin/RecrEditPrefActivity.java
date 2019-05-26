@@ -15,6 +15,9 @@ import android.widget.ArrayAdapter;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -33,13 +36,19 @@ import com.thejuki.kformmaster.model.FormPickerDropDownElement;
 import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import kotlin.Unit;
 
-import static com.technion.android.joblin.DatabaseUtils.*;
+import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.EMAIL_KEY;
+import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.TAG;
+import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
 public class RecrEditPrefActivity extends AppCompatActivity implements OnFormElementValueChangedListener {
 
@@ -63,6 +72,7 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
         dialog = new ProgressDialog(RecrEditPrefActivity.this);
         thisIntent = getIntent();
         getRecruiter(mAuth.getCurrentUser().getEmail());
+        Places.initialize(this, "AIzaSyBz1HHQ4v-4wifOcikbPGOqetSzt2vSFPY");
     }
 
 
@@ -143,6 +153,8 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
         addRequirements(elements);
         addDescription(elements);
         addButtons(elements);
+        FormPlacesAutoCompleteViewBinder vb = new FormPlacesAutoCompleteViewBinder(this,formBuilder,null,null);
+        formBuilder.registerCustomViewBinder(vb.getViewBinder());
         formBuilder.addFormElements(elements);
     }
 
@@ -196,13 +208,15 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
         elements.add(placename);
 
 
-        FormSingleLineEditTextElement location = new FormSingleLineEditTextElement(Tag.Location.ordinal());
+        FormPlacesAutoCompleteElement location = new FormPlacesAutoCompleteElement(Tag.Location.ordinal());
 
-        location.setTitle("Job Location");
+        location.setTitle("Location");
         location.setHint("Enter location here");
-        location.setValue(recruiter.getJobLocation());
+        location.setPlaceFields(Collections.singletonList(Place.Field.NAME));
         location.setCenterText(true);
         location.setRequired(true);
+        location.setValue(recruiter.getJobLocation());
+        location.setAutocompleteActivityMode(AutocompleteActivityMode.OVERLAY);
         elements.add(location);
 
         FormPickerDropDownElement<ListItem> dropDown = new FormPickerDropDownElement<>(Tag.Category.ordinal());
@@ -366,4 +380,11 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
 
     }
 
+    @Override
+    public void onActivityResult(int requestCode,int resultCode, Intent data) {
+        if (requestCode == Tag.Location.ordinal()) {
+            FormPlacesAutoCompleteElement placesElement = formBuilder.getFormElement(Tag.Location.ordinal());
+            placesElement.handleActivityResult(formBuilder, resultCode, data);
+        }
+    }
 }
