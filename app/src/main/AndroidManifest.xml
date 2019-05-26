@@ -34,6 +34,7 @@
         <activity
             android:name=".CandEditActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".RecrEditPrefActivity" />
     </application>
 
 </manifest>

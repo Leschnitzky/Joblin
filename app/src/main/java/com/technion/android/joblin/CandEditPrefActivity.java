@@ -9,14 +9,17 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 import com.thejuki.kformmaster.helper.FormBuildHelper;
@@ -27,6 +30,7 @@ import com.thejuki.kformmaster.model.FormButtonElement;
 import com.thejuki.kformmaster.model.FormHeader;
 import com.thejuki.kformmaster.model.FormLabelElement;
 import com.thejuki.kformmaster.model.FormMultiLineEditTextElement;
+import com.thejuki.kformmaster.model.FormPickerDateElement;
 import com.thejuki.kformmaster.model.FormPickerDropDownElement;
 import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
 
@@ -37,13 +41,9 @@ import java.util.Map;
 
 import kotlin.Unit;
 
-import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.EMAIL_KEY;
-import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.*;
 
-public class RecrProfPrefActivity extends AppCompatActivity implements OnFormElementValueChangedListener {
+public class CandEditPrefActivity extends AppCompatActivity implements OnFormElementValueChangedListener {
 
     private FormBuildHelper formBuilder = null;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -54,6 +54,7 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
     Intent thisIntent;
     ProgressDialog dialog;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    Candidate candidate;
 
     @Override
 
@@ -61,9 +62,9 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        dialog = new ProgressDialog(RecrProfPrefActivity.this);
+        dialog = new ProgressDialog(CandEditPrefActivity.this);
         thisIntent = getIntent();
-        setupForm();
+        getCandidate(mAuth.getCurrentUser().getEmail());
     }
 
 
@@ -81,25 +82,25 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
 
 
     private enum Tag {
-        JobInfo,
+        Info,
         Name,
         LastName,
-        JobName,
-        Location,
-        Category,
-        Requirements,
-        Scope,
+        BirthDate,
         Education,
         Skills,
         Skill1,
         Skill2,
         Skill3,
+        Pref,
+        Location,
+        Category,
+        Scope,
         DescTitle,
         Desc,
         Submit
     }
 
-    void insertRecruiter(Recruiter recruiter) {
+    void insertCandidate(Candidate candidate) {
 //        Map<String, Object> candidateMapData = new HashMap<>();
 //        candidateMapData.put(AGE_KEY, candidate.getAge());
 //        candidateMapData.put(EMAIL_KEY, candidate.getEmail());
@@ -114,22 +115,43 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
 
         WriteBatch batch = db.batch();
 
-        DocumentReference candidateDocumentReference = recruitersCollection.document(recruiter.getEmail());
-        batch.set(candidateDocumentReference, recruiter);
+        DocumentReference candidateDocumentReference = candidatesCollection.document(candidate.getEmail());
+        batch.set(candidateDocumentReference, candidate);
 
         Map<String, Object> userMapData = new HashMap<>();
-        userMapData.put(EMAIL_KEY, recruiter.getEmail());
+        userMapData.put(EMAIL_KEY, candidate.getEmail());
 
 
-        DocumentReference userDocumentReference = usersCollection.document(recruiter.getEmail());
+        DocumentReference userDocumentReference = usersCollection.document(candidate.getEmail());
         batch.set(userDocumentReference, userMapData);
 
         batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 dialog.hide();
-                Intent intent = new Intent(RecrProfPrefActivity.this,RecMainActivity.class);
+                Intent intent = new Intent(CandEditPrefActivity.this,CanMainActivity.class);
                 startActivity(intent);
+            }
+        });
+    }
+
+    void getCandidate(final String email) {
+        DocumentReference docRef = candidatesCollection.document(email);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        candidate = document.toObject(Candidate.class);
+                        setupForm();
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
             }
         });
     }
@@ -140,8 +162,8 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
 
         formBuilder = new FormBuildHelper(this, this, (RecyclerView)findViewById(R.id.recyclerView), true, formLayouts);
         List<BaseFormElement<?>> elements = new ArrayList<>();
-        addJobInfo(elements);
-        addRequirements(elements);
+        addCandInfo(elements);
+        addPreferences(elements);
         addDescription(elements);
         addButtons(elements);
         formBuilder.addFormElements(elements);
@@ -149,45 +171,98 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
 
 
 
-    private void addJobInfo(List<BaseFormElement<?>> elements) {
+    private void addCandInfo(List<BaseFormElement<?>> elements) {
 
-        elements.add(new FormHeader("Job Info"));
+        elements.add(new FormHeader("Personal Details"));
 
         FormSingleLineEditTextElement name = new FormSingleLineEditTextElement(Tag.Name.ordinal());
         name.setTitle("First Name");
         name.setHint("Enter first name here");
-        name.setValue(thisIntent.getStringExtra(LoginActivity.FIRST_NAME_KEY));
+        name.setValue(candidate.getName());
         name.setCenterText(true);
         name.setRequired(true);
+        name.setEnabled(false);
         elements.add(name);
 
         FormSingleLineEditTextElement lastname = new FormSingleLineEditTextElement(Tag.LastName.ordinal());
         lastname.setTitle("Last Name");
         lastname.setHint("Enter last name here");
-        lastname.setValue(thisIntent.getStringExtra(LoginActivity.LAST_NAME_KEY));
+        lastname.setValue(candidate.getLastName());
         lastname.setCenterText(true);
         lastname.setRequired(true);
+        lastname.setEnabled(false);
         elements.add(lastname);
 
-        FormSingleLineEditTextElement placename = new FormSingleLineEditTextElement(Tag.JobName.ordinal());
-        placename.setTitle("Name of workplace");
-        placename.setHint("Enter name here");
-        placename.setCenterText(true);
-        placename.setRequired(true);
-        elements.add(placename);
+        FormPickerDateElement birthdate = new FormPickerDateElement(Tag.BirthDate.ordinal());
+        birthdate.setTitle("Date of birth");
+        birthdate.setHint("Click here to pick date");
+        birthdate.setValue(candidate.getBirthday().toDate());
+        birthdate.setCenterText(true);
+        birthdate.setRequired(true);
+        elements.add(birthdate);
+
+        FormSingleLineEditTextElement education = new FormSingleLineEditTextElement(Tag.Education.ordinal());
+
+        education.setTitle("Education");
+        education.setHint("Enter education here");
+        education.setValue(candidate.getEducation());
+        education.setCenterText(true);
+        education.setRequired(true);
+        elements.add(education);
+
+        FormLabelElement skills = new FormLabelElement();
+        skills.setTitle("Skills: (One at least)");
+        skills.setCenterText(true);
+        elements.add(skills);
+
+        List<String> skill_list = candidate.getSkillsList();
+
+        FormSingleLineEditTextElement skill1 = new FormSingleLineEditTextElement(Tag.Skill1.ordinal());
+
+        skill1.setTitle("Skill 1");
+        skill1.setHint("Enter skill here");
+        skill1.setValue(skill_list.get(0));
+        skill1.setCenterText(true);
+        skill1.setRequired(true);
+        elements.add(skill1);
+
+        FormSingleLineEditTextElement skill2 = new FormSingleLineEditTextElement(Tag.Skill2.ordinal());
+
+        skill2.setTitle("Skill 2");
+        skill2.setHint("Enter skill here");
+        if(skill_list.size()>1)
+            skill2.setValue(skill_list.get(1));
+        skill2.setCenterText(true);
+        elements.add(skill2);
+
+        FormSingleLineEditTextElement skill3 = new FormSingleLineEditTextElement(Tag.Skill3.ordinal());
+
+        skill3.setTitle("Skill 3");
+        skill3.setHint("Enter skill here");
+        if(skill_list.size()>2)
+            skill3.setValue(skill_list.get(2));
+        skill3.setCenterText(true);
+        elements.add(skill3);
+    }
+
+
+    private void addPreferences(List<BaseFormElement<?>> elements) {
+
+        elements.add(new FormHeader("Job Preferences"));
 
 
         FormSingleLineEditTextElement location = new FormSingleLineEditTextElement(Tag.Location.ordinal());
 
-        location.setTitle("Job Location");
+        location.setTitle("Location");
         location.setHint("Enter location here");
+        location.setValue(candidate.getJobLocation());
         location.setCenterText(true);
         location.setRequired(true);
         elements.add(location);
 
         FormPickerDropDownElement<ListItem> dropDown = new FormPickerDropDownElement<>(Tag.Category.ordinal());
-        dropDown.setTitle("Job Category");
-        dropDown.setDialogTitle("Job Category");
+        dropDown.setTitle("Category");
+        dropDown.setDialogTitle("Category");
 
         List<String> jobCategories = new ArrayList<>();
         jobCategories.add( "Accounting");
@@ -202,66 +277,28 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
                 support_simple_spinner_dropdown_item,jobCategories));
         dropDown.setHint("Click here to choose");
         dropDown.setCenterText(true);
+        dropDown.setValue(candidate.getJobCategory());
         dropDown.setRequired(true);
         elements.add(dropDown);
-    }
-
-
-    private void addRequirements(List<BaseFormElement<?>> elements) {
-
-        elements.add(new FormHeader("Requirements"));
 
         FormSingleLineEditTextElement scope = new FormSingleLineEditTextElement(Tag.Scope.ordinal());
 
-        scope.setTitle("Job Scope");
+        scope.setTitle("Scope");
         scope.setHint("Enter scope here");
+        scope.setValue(candidate.getScope());
         scope.setCenterText(true);
         scope.setRequired(true);
         elements.add(scope);
-
-        FormSingleLineEditTextElement education = new FormSingleLineEditTextElement(Tag.Education.ordinal());
-
-        education.setTitle("Required education");
-        education.setHint("Enter education here");
-        education.setCenterText(true);
-        education.setRequired(true);
-        elements.add(education);
-
-        FormLabelElement skills = new FormLabelElement();
-        skills.setTitle("Required Skills: (One at least)");
-        skills.setCenterText(true);
-        elements.add(skills);
-
-        FormSingleLineEditTextElement skill1 = new FormSingleLineEditTextElement(Tag.Skill1.ordinal());
-
-        skill1.setTitle("Skill 1");
-        skill1.setHint("Enter skill here");
-        skill1.setCenterText(true);
-        skill1.setRequired(true);
-        elements.add(skill1);
-
-        FormSingleLineEditTextElement skill2 = new FormSingleLineEditTextElement(Tag.Skill2.ordinal());
-
-        skill2.setTitle("Skill 2");
-        skill2.setHint("Enter skill here");
-        skill2.setCenterText(true);
-        elements.add(skill2);
-
-        FormSingleLineEditTextElement skill3 = new FormSingleLineEditTextElement(Tag.Skill3.ordinal());
-
-        skill3.setTitle("Skill 3");
-        skill3.setHint("Enter skill here");
-        skill3.setCenterText(true);
-        elements.add(skill3);
     }
 
     private void addDescription(List<BaseFormElement<?>> elements) {
-        elements.add(new FormHeader("Description"));
+        elements.add(new FormHeader("About me"));
         FormMultiLineEditTextElement description = new FormMultiLineEditTextElement(Tag.Desc.ordinal());
 
         description.setMaxLines(6);
         description.setHint("Enter description here");
         description.setDisplayTitle(false);
+        description.setValue(candidate.getMoreInfo());
         description.setCenterText(true);
         description.setRequired(true);
         elements.add(description);
@@ -272,7 +309,9 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
         submit.setValue("Submit");
         submit.setBackgroundColor(R.color.colorPrimaryDark);
         submit.setValueTextColor(Color.WHITE);
-        BaseFormElement placename = elements.get(Tag.JobName.ordinal());
+        BaseFormElement name = elements.get(Tag.Name.ordinal());
+        BaseFormElement lastname = elements.get(Tag.LastName.ordinal());
+        FormPickerDateElement birthdate = (FormPickerDateElement)elements.get(Tag.BirthDate.ordinal());
         BaseFormElement category = elements.get(Tag.Category.ordinal());
         BaseFormElement scope = elements.get(Tag.Scope.ordinal());
         BaseFormElement location = elements.get(Tag.Location.ordinal());
@@ -286,38 +325,43 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
                 dialog.setCancelable(false);
                 dialog.setInverseBackgroundForced(false);
                 dialog.show();
+                Timestamp birthday = new Timestamp(birthdate.getValue().getTime());
                 skills.add(skill1.getValueAsString());
                 if(!elements.get(Tag.Skill2.ordinal()).getValueAsString().isEmpty())
                     skills.add(elements.get(Tag.Skill2.ordinal()).getValueAsString());
                 if(!elements.get(Tag.Skill3.ordinal()).getValueAsString().isEmpty())
                     skills.add(elements.get(Tag.Skill3.ordinal()).getValueAsString());
-                Recruiter recr = new Recruiter(
-
+                Candidate cand = new Candidate(
                         mAuth.getCurrentUser().getEmail(),
-                        thisIntent.getStringExtra(LoginActivity.FIRST_NAME_KEY),
-                        thisIntent.getStringExtra(LoginActivity.LAST_NAME_KEY),
-                        thisIntent.getStringExtra(LoginActivity.URI_KEY),
-                        category.getValueAsString(),
-                        scope.getValueAsString(),
+                        name.getValueAsString(),
+                        lastname.getValueAsString(),
+                        mAuth.getCurrentUser().getPhotoUrl().toString(),
+                        birthday,
                         location.getValueAsString(),
-                        desc.getValueAsString(),
+                        scope.getValueAsString(),
                         education.getValueAsString(),
-                        skills
+                        skills,
+                        desc.getValueAsString(),
+                        category.getValueAsString()
                 );
-                insertRecruiter(recr);
+                insertCandidate(cand);
             }
             else
             {
-                if(!placename.isValid())
-                    placename.setError("workplace name is required");
+                if(!name.isValid())
+                    name.setError("Name is required");
+                if(!lastname.isValid())
+                    lastname.setError("Last name is required");
+                if(!birthdate.isValid())
+                    birthdate.setError("Date of birth is required");
                 if(!education.isValid())
                     education.setError("Education is required");
+                if(!category.isValid())
+                    category.setError("Category is required");
                 if(!desc.isValid())
                     desc.setError("Description is required");
                 if(!location.isValid())
                     location.setError("Location is required");
-                if(!category.isValid())
-                    category.setError("Category is required");
                 if(!scope.isValid())
                     scope.setError("Scope is required");
                 if(!skill1.isValid())
