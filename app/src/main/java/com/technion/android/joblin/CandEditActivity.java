@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -77,7 +76,7 @@ public class CandEditActivity extends AppCompatActivity {
             }
         });
 
-        mProfileEditButton.setOnClickListener(new OnClickListener() {
+        mProfileEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(CandEditActivity.this,CandEditPrefActivity.class);
