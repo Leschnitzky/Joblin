@@ -34,13 +34,16 @@ import com.thejuki.kformmaster.model.FormHeader;
 import com.thejuki.kformmaster.model.FormLabelElement;
 import com.thejuki.kformmaster.model.FormMultiLineEditTextElement;
 import com.thejuki.kformmaster.model.FormPickerDateElement;
+import com.thejuki.kformmaster.model.FormPickerDateElement.DateHolder;
 import com.thejuki.kformmaster.model.FormPickerDropDownElement;
 import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import kotlin.Unit;
@@ -208,7 +211,8 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         FormPickerDateElement birthdate = new FormPickerDateElement(Tag.BirthDate.ordinal());
         birthdate.setTitle("Date of birth");
         birthdate.setHint("Click here to pick date");
-        birthdate.setValue(candidate.getBirthday().toDate());
+        birthdate.setValue(new DateHolder(candidate.getBirthday().toDate(),
+                new SimpleDateFormat("dd/MM/yyyy", Locale.US)));
         birthdate.setCenterText(true);
         birthdate.setRequired(true);
         elements.add(birthdate);
