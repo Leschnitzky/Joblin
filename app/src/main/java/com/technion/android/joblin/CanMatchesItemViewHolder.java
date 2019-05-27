@@ -37,12 +37,13 @@ public class CanMatchesItemViewHolder extends RecyclerView.ViewHolder {
     CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
 
     View itemView;
+    Context mContext;
 
-    public CanMatchesItemViewHolder(View itemView) {
+    public CanMatchesItemViewHolder(View itemView,Context context) {
         super(itemView);
         recImage = itemView.findViewById(R.id.recImage);
         recName = itemView.findViewById(R.id.recName);
-        this.itemView = itemView;
+        this.mContext = context;
     }
 
     public void bindToItem(MatchesItem item) {
@@ -66,9 +67,9 @@ public class CanMatchesItemViewHolder extends RecyclerView.ViewHolder {
                         recName.setText(recNameToSet);
 
                         String imageUrl = recruiter.getImageUrl();
-//                        recImage.setMaxHeight(50);
-//                        GlideApp.with(itemView).load(imageUrl).into(recImage);
-                        new DownLoadImageTask(recImage).execute(imageUrl);
+                        recImage.setMaxHeight(50);
+                        GlideApp.with(mContext).load(imageUrl).into(recImage);
+//                        new DownLoadImageTask(recImage).execute(imageUrl);
 
                     } else {
                         Log.d(TAG, "No such document");

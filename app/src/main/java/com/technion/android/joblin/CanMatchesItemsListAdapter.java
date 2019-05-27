@@ -22,7 +22,7 @@ public class CanMatchesItemsListAdapter extends FirestoreRecyclerAdapter<Matches
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.activity_can_matches_list_adapter, parent, false);
 
-        return new CanMatchesItemViewHolder(view);
+        return new CanMatchesItemViewHolder(view,parent.getContext());
     }
 
 }
