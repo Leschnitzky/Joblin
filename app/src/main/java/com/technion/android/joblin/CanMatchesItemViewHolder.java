@@ -59,7 +59,6 @@ public class CanMatchesItemViewHolder extends RecyclerView.ViewHolder {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         Recruiter recruiter = document.toObject(Recruiter.class);
                         String name = recruiter.getName();
                         String lastName = recruiter.getLastName();
@@ -72,10 +71,8 @@ public class CanMatchesItemViewHolder extends RecyclerView.ViewHolder {
 //                        new DownLoadImageTask(recImage).execute(imageUrl);
 
                     } else {
-                        Log.d(TAG, "No such document");
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });

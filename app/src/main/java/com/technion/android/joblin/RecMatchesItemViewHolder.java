@@ -53,7 +53,6 @@ public class RecMatchesItemViewHolder extends RecyclerView.ViewHolder {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         Candidate candidate = document.toObject(Candidate.class);
                         String name = candidate.getName();
                         String lastName = candidate.getLastName();
@@ -64,10 +63,8 @@ public class RecMatchesItemViewHolder extends RecyclerView.ViewHolder {
                         new DownLoadImageTask(canImage).execute(imageUrl);
 
                     } else {
-                        Log.d(TAG, "No such document");
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });

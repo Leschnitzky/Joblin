@@ -66,7 +66,6 @@ public class LoginActivity extends AppCompatActivity {
     CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d("Init", "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -106,8 +105,6 @@ public class LoginActivity extends AppCompatActivity {
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        mGoogleSignInClient.signOut();
-        mAuth.signOut();
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -151,7 +148,6 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                Log.d("BLABLA", "GOT ACCOUNT!");
                 mUserFirstName = account.getGivenName();
                 mUserLastName = account.getFamilyName();
                 mUserPhoto = account.getPhotoUrl();
@@ -161,7 +157,6 @@ public class LoginActivity extends AppCompatActivity {
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 // ...
-                Log.d("ANOTHER", e.getMessage());
             }
         }
     }
@@ -195,7 +190,6 @@ public class LoginActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         // Already a candidate
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         dialog.hide();
                         Intent intent = new Intent(LoginActivity.this, CanMainActivity.class);
                         startActivity(intent);
@@ -204,7 +198,6 @@ public class LoginActivity extends AppCompatActivity {
                         isRecruiterInDB(email);
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
@@ -220,7 +213,6 @@ public class LoginActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         // Tis a recruiter
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         dialog.hide();
 
                         Intent intent = new Intent(LoginActivity.this, RecMainActivity.class);
@@ -228,7 +220,6 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         // Not a Cand nor Recr
                         // Logged in with google, just need to choose
-                        Log.d(TAG, "No such document");
 
 
                         Intent intent = new Intent(LoginActivity.this, ChooseUserTypeActivity.class);
@@ -239,7 +230,6 @@ public class LoginActivity extends AppCompatActivity {
                         dialog.hide();
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });

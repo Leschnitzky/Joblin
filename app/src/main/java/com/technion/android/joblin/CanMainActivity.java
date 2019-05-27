@@ -62,14 +62,11 @@ public class CanMainActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         String candidateJobCategory = (String) document.get(JOB_CATEGORY_KEY);
                         getRecruitersForSwipingScreen_FindRelevantRecruiters(candidateMail, candidateJobCategory);
                     } else {
-                        Log.d(TAG, "No such document");
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
@@ -88,13 +85,11 @@ public class CanMainActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             List<Recruiter> listOfRecruiters = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
                                 Recruiter recruiter = document.toObject(Recruiter.class);
                                 listOfRecruiters.add(recruiter);
                             }
                             getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);
                         } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
                 });
@@ -110,12 +105,10 @@ public class CanMainActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             List<String> listOfRecruitersMailStrings = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
                                 listOfRecruitersMailStrings.add(document.getId());
                             }
                             getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped_Final(listOfRecruiters, listOfRecruitersMailStrings);
                         } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
                 });

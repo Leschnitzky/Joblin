@@ -74,12 +74,9 @@ class DatabaseAPI {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                     } else {
-                        Log.d(TAG, "No such document");
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
@@ -93,12 +90,9 @@ class DatabaseAPI {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                     } else {
-                        Log.d(TAG, "No such document");
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
@@ -112,12 +106,9 @@ class DatabaseAPI {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                     } else {
-                        Log.d(TAG, "No such document");
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
@@ -131,15 +122,12 @@ class DatabaseAPI {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         Candidate candidate = document.toObject(Candidate.class);
 
 
                     } else {
-                        Log.d(TAG, "No such document");
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
@@ -153,15 +141,12 @@ class DatabaseAPI {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         Recruiter recruiter = document.toObject(Recruiter.class);
 
 
                     } else {
-                        Log.d(TAG, "No such document");
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
@@ -276,19 +261,15 @@ class DatabaseAPI {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         Recruiter recruiter = document.toObject(Recruiter.class);
                         if((side == Side.RIGHT) && (recruiter.getNumberOfSwipesLeft() == 0)) {
-                            Log.d(TAG, "number of swipes is 0");
                             //TODO: message for no more swipes
                         } else {
                             addSwipeDataForRecruiter(recruiterMail, candidateMail, side);
                         }
                     } else {
-                        Log.d(TAG, "No such document");
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                     //TODO: add general toast for failure.
                 }
             }
@@ -304,19 +285,14 @@ class DatabaseAPI {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         Candidate candidate = document.toObject(Candidate.class);
                         if((side == Side.RIGHT) && (candidate.getNumberOfSwipesLeft() == 0)) {
-                            Log.d(TAG, "number of swipes is 0");
-                            //TODO: message for no more swipes
                         } else {
                             addSwipeDataForCandidate(candidateMail, recruiterMail, side);
                         }
                     } else {
-                        Log.d(TAG, "No such document");
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
@@ -386,7 +362,6 @@ class DatabaseAPI {
                         transaction.set(swipeDocRefOfFirst, firstSwipesMapData);
                     }
 
-                    Log.d(TAG, "DocumentSnapshot data: " + snapshotMainFirst.getData());
                     if(snapshotMainFirst.exists()) {
                         long numberOfSwipesLeft = snapshotMainFirst.getLong(NUMBER_OF_SWIPES_LEFT_KEY);
                         transaction.update(mainDocRefOfFirst, NUMBER_OF_SWIPES_LEFT_KEY, numberOfSwipesLeft - 1);
@@ -397,9 +372,7 @@ class DatabaseAPI {
             }).addOnSuccessListener(new OnSuccessListener<Boolean>() {
                 @Override
                 public void onSuccess(Boolean isMatch) {
-                    Log.d(TAG, "Transaction success!");
                     if(isMatch) {
-                        Log.d(TAG, "It is a match!");
                     }
                 }
             })
@@ -416,7 +389,6 @@ class DatabaseAPI {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Log.d(TAG, "DocumentSnapshot successfully updated!");
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -748,14 +720,11 @@ class DatabaseAPI {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         String candidateJobCategory = (String) document.get(JOB_CATEGORY_KEY);
                         getRecruitersForSwipingScreen_FindRelevantRecruiters(candidateMail, candidateJobCategory);
                     } else {
-                        Log.d(TAG, "No such document");
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
@@ -774,13 +743,11 @@ class DatabaseAPI {
                         if (task.isSuccessful()) {
                             List<Recruiter> listOfRecruiters = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
                                 Recruiter recruiter = document.toObject(Recruiter.class);
                                 listOfRecruiters.add(recruiter);
                             }
                             getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);
                         } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
                 });
@@ -796,12 +763,10 @@ class DatabaseAPI {
                         if (task.isSuccessful()) {
                             List<String> listOfRecruitersMailStrings = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
                                 listOfRecruitersMailStrings.add(document.getId());
                             }
                             getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped_Final(listOfRecruiters, listOfRecruitersMailStrings);
                         } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
                 });
@@ -841,14 +806,11 @@ class DatabaseAPI {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         String recruiterJobCategory = (String) document.get(JOB_CATEGORY_KEY);
                         getCandidatesForSwipingScreen_FindRelevantCandidates(recruiterMail, recruiterJobCategory);
                     } else {
-                        Log.d(TAG, "No such document");
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
@@ -866,13 +828,11 @@ class DatabaseAPI {
                         if (task.isSuccessful()) {
                             List<Candidate> listOfCandidates = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
                                 Candidate candidate = document.toObject(Candidate.class);
                                 listOfCandidates.add(candidate);
                             }
                             getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped(recruiterMail, listOfCandidates);
                         } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
                 });
@@ -889,12 +849,10 @@ class DatabaseAPI {
                         if (task.isSuccessful()) {
                             List<String> listOfCandidatesMailStrings = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
                                 listOfCandidatesMailStrings.add(document.getId());
                             }
                             getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped_Final(listOfCandidates, listOfCandidatesMailStrings);
                         } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
                 });
