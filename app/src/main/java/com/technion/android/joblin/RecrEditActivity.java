@@ -80,7 +80,7 @@ public class RecrEditActivity extends AppCompatActivity {
         dialog.setInverseBackgroundForced(false);
         dialog.show();
 
-        rec_profile = findViewById(R.id.rec_cardprofile);
+        rec_profile = findViewById(R.id.recr_cardprofile);
         rec_card = findViewById(R.id.rec_cardview);
         View child = LayoutInflater.from(this).inflate(R.layout.reccard_view,rec_card);
         rec_profile.addView(child);

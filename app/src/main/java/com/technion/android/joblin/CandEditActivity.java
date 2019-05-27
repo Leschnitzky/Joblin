@@ -6,20 +6,31 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.GridLayout;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aminography.redirectglide.GlideApp;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
@@ -35,15 +46,27 @@ public class CandEditActivity extends AppCompatActivity {
     CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
     CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
 
-    ImageView userImage;
-    TextView mUserName;
-    Context mContext;
-    TextView mUserSkills;
-    TextView mUserEducation;
+
+    CardView can_profile;
+    CardView can_card;
+    ImageView profileImageView;
+    TextView nameTxt;
+    TextView locationNameTxt;
+    TextView positionScopeTxt;
+    TextView EducationTxt;
+    TextView fullEducationTxt;
+    TextView SkillsTxt;
+    TextView fullSkillsTxt;
+    TextView descTxt;
+    LinearLayout moreButtonLayout;
+    GridLayout detailsLayout;
+    LinearLayout descLayout;
+    ImageView detailsImage;
+    TextView moreDetailsTxtView;
+    SlidingUpPanelLayout slidingPanel;
     ImageView mProfileBackButton;
-    TextView mUserJobCategory;
-    TextView mUserLocation;
     ImageView mProfileEditButton;
+    Context mContext;
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -62,7 +85,26 @@ public class CandEditActivity extends AppCompatActivity {
         dialog.show();
 
 
+        can_profile = findViewById(R.id.can_cardprofile);
+        can_card = findViewById(R.id.can_cardview);
+        View child = LayoutInflater.from(this).inflate(R.layout.cancard_view,can_card);
+        can_profile.addView(child);
         mContext = this;
+        profileImageView = child.findViewById(R.id.profileImageView);
+        nameTxt = child.findViewById(R.id.nameTxt);
+        locationNameTxt = child.findViewById(R.id.locationNameTxt);
+        positionScopeTxt = child.findViewById(R.id.positionScopeTxt);
+        EducationTxt = child.findViewById(R.id.EducationTxt);
+        fullEducationTxt = child.findViewById(R.id.fullEducationTxt);
+        SkillsTxt = child.findViewById(R.id.SkillsTxt);
+        fullSkillsTxt = child.findViewById(R.id.fullSkillsTxt);
+        descTxt = child.findViewById(R.id.descriptionTxt);
+        moreButtonLayout = child.findViewById(R.id.moreButtonLayout);
+        detailsLayout = child.findViewById(R.id.detailsLayout);
+        descLayout = child.findViewById(R.id.moreDescLayout);
+        detailsImage = child.findViewById(R.id.detailsImage);
+        moreDetailsTxtView = child.findViewById(R.id.moreDetailsTxtView);
+        slidingPanel = child.findViewById(R.id.slidingpanel);
         mProfileBackButton = findViewById(R.id.profile_back_button);
         mProfileEditButton = findViewById(R.id.bottom_background_cand);
 
@@ -87,6 +129,25 @@ public class CandEditActivity extends AppCompatActivity {
         getCandidate(email);
     }
 
+    private String getSkillsString(List<String> skills, int maxLength)
+    {
+        StringBuilder skillsString = new StringBuilder();
+        for (String skill:skills) {
+            if(skill.length()<=maxLength)
+                skillsString.append(skill).append(", ");
+        }
+        return skillsString.toString().substring(0,skillsString.toString().length()-2);
+    }
+
+    public int getAge(
+            Date birthDate,
+            Date currentDate) {
+        DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+        int d1 = Integer.parseInt(formatter.format(birthDate));
+        int d2 = Integer.parseInt(formatter.format(currentDate));
+        int age = (d2 - d1) / 10000;
+        return age;
+    }
 
     void getCandidate(final String email) {
         DocumentReference docRef = candidatesCollection.document(email);
@@ -96,21 +157,35 @@ public class CandEditActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Candidate candidate = document.toObject(Candidate.class);
+                        Candidate mProfile = document.toObject(Candidate.class);
+                        GlideApp.with(mContext).load(mProfile.getImageUrl()).into(profileImageView);
+                        Integer age = getAge(mProfile.getBirthday().toDate(), Timestamp.now().toDate());
+                        nameTxt.setText(String.format("%s %s, %s", mProfile.getName(), mProfile.getLastName(), age.toString()));
+                        positionScopeTxt.setText(mProfile.getScope());
+                        EducationTxt.setText(mProfile.getEducation());
+                        fullEducationTxt.setText(mProfile.getEducation());
+                        SkillsTxt.setText(getSkillsString(mProfile.getSkillsList(),10));
+                        fullSkillsTxt.setText(getSkillsString(mProfile.getSkillsList(),20));
+                        locationNameTxt.setText(mProfile.getJobLocation());
+                        descTxt.setText(mProfile.getMoreInfo());
 
-                        String skillText = "";
-                        for(String skill : candidate.getSkillsList()){
-                            skillText += skill;
-                            skillText += ", ";
-                        }
-                        skillText = skillText.substring(0,skillText.length() - 2);
-                        skillText += ".";
-                        mUserSkills.setText(skillText);
-                        mUserEducation.setText(candidate.getEducation());
-                        mUserName.setText(candidate.getName() +" "+ candidate.getLastName());
-                        mUserJobCategory.setText(candidate.getJobCategory());
-                        mUserLocation.setText(candidate.getJobLocation());
-                        GlideApp.with(mContext).load(candidate.getImageUrl()).into(userImage);
+                        slidingPanel.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+                            @Override
+                            public void onPanelSlide(android.view.View panel, float slideOffset) {
+                                if(slideOffset>0) {
+                                    detailsImage.setRotation(180);
+                                    moreDetailsTxtView.setVisibility(TextView.GONE);
+                                }
+                                else {
+                                    detailsImage.setRotation(0);
+                                    moreDetailsTxtView.setVisibility(TextView.VISIBLE);
+                                }
+                            }
+
+                            @Override
+                            public void onPanelStateChanged(android.view.View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
+                            }
+                        });
                         dialog.hide();
                     } else {
                         dialog.hide();
