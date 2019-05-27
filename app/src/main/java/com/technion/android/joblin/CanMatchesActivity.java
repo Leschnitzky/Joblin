@@ -52,6 +52,7 @@ public class CanMatchesActivity extends AppCompatActivity {
 
         recyclerViewList = findViewById(R.id.RecyclerViewOfCanMatches);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+//        recyclerViewList.setHasFixedSize(true);
         recyclerViewList.setLayoutManager(layoutManager);
 
         Query query = candidatesCollection.document(currentUserMail).collection(MATCHES_COLLECTION_NAME);
@@ -67,6 +68,7 @@ public class CanMatchesActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        adapter.startListening();
     }
 
     @Override

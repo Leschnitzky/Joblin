@@ -1,5 +1,6 @@
 package com.technion.android.joblin;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.view.View;
 
+import com.aminography.redirectglide.GlideApp;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,10 +36,14 @@ public class CanMatchesItemViewHolder extends RecyclerView.ViewHolder {
     CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
     CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
 
-    public CanMatchesItemViewHolder(View itemView) {
+    View itemView;
+    Context mContext;
+
+    public CanMatchesItemViewHolder(View itemView,Context context) {
         super(itemView);
         recImage = itemView.findViewById(R.id.recImage);
         recName = itemView.findViewById(R.id.recName);
+        this.mContext = context;
     }
 
     public void bindToItem(MatchesItem item) {
@@ -61,7 +67,9 @@ public class CanMatchesItemViewHolder extends RecyclerView.ViewHolder {
                         recName.setText(recNameToSet);
 
                         String imageUrl = recruiter.getImageUrl();
-                        new DownLoadImageTask(recImage).execute(imageUrl);
+                        recImage.setMaxHeight(50);
+                        GlideApp.with(mContext).load(imageUrl).into(recImage);
+//                        new DownLoadImageTask(recImage).execute(imageUrl);
 
                     } else {
                         Log.d(TAG, "No such document");
