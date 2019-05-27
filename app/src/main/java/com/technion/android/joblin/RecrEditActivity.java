@@ -6,10 +6,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.GridLayout;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +24,9 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+
+import java.util.List;
 
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
@@ -36,14 +42,27 @@ public class RecrEditActivity extends AppCompatActivity {
     CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
     CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
 
-    ImageView userImage;
-    TextView mUserName;
-    Context mContext;
-    TextView mUserSkills;
-    TextView mUserEducation;
-    ImageView mProfileBackButton;
-    TextView mUserJobCategory;
+    CardView rec_profile;
+    CardView rec_card;
+    ImageView profileImageView;
+    TextView nameTxt;
+    TextView placeTxt;
+    TextView locationNameTxt;
+    TextView positionScopeTxt;
+    TextView EducationTxt;
+    TextView fullEducationTxt;
+    TextView SkillsTxt;
+    TextView fullSkillsTxt;
+    TextView descTxt;
+    LinearLayout moreButtonLayout;
+    GridLayout detailsLayout;
+    LinearLayout descLayout;
+    ImageView detailsImage;
+    TextView moreDetailsTxtView;
+    SlidingUpPanelLayout slidingPanel;
     ImageView mProfileEditButton;
+    Context mContext;
+    ImageView mProfileBackButton;
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -61,11 +80,27 @@ public class RecrEditActivity extends AppCompatActivity {
         dialog.setInverseBackgroundForced(false);
         dialog.show();
 
-        mUserSkills = findViewById(R.id.recr_skills);
-        mUserName = findViewById(R.id.recr_nameText);
-        mUserEducation = findViewById(R.id.recr_education);
-        mUserJobCategory = findViewById(R.id.recr_job_category);
+        rec_profile = findViewById(R.id.recr_cardprofile);
+        rec_card = findViewById(R.id.rec_cardview);
+        View child = LayoutInflater.from(this).inflate(R.layout.reccard_view,rec_card);
+        rec_profile.addView(child);
         mContext = this;
+        profileImageView = child.findViewById(R.id.profileImageView);
+        nameTxt = child.findViewById(R.id.nameTxt);
+        placeTxt = child.findViewById(R.id.workplaceTxt);
+        locationNameTxt = child.findViewById(R.id.locationNameTxt);
+        positionScopeTxt = child.findViewById(R.id.positionScopeTxt);
+        EducationTxt = child.findViewById(R.id.EducationTxt);
+        fullEducationTxt = child.findViewById(R.id.fullEducationTxt);
+        SkillsTxt = child.findViewById(R.id.SkillsTxt);
+        fullSkillsTxt = child.findViewById(R.id.fullSkillsTxt);
+        descTxt = child.findViewById(R.id.descriptionTxt);
+        moreButtonLayout = child.findViewById(R.id.moreButtonLayout);
+        detailsLayout = child.findViewById(R.id.detailsLayout);
+        descLayout = child.findViewById(R.id.moreDescLayout);
+        detailsImage = child.findViewById(R.id.detailsImage);
+        moreDetailsTxtView = child.findViewById(R.id.moreDetailsTxtView);
+        slidingPanel = child.findViewById(R.id.slidingpanel);
         mProfileBackButton = findViewById(R.id.recr_edit_back_button);
         mProfileEditButton = findViewById(R.id.bottom_background_recr);
 
@@ -77,7 +112,7 @@ public class RecrEditActivity extends AppCompatActivity {
             }
         });
 
-        mProfileEditButton.setOnClickListener(new OnClickListener() {
+        mProfileEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(RecrEditActivity.this,RecrEditPrefActivity.class);
@@ -85,11 +120,19 @@ public class RecrEditActivity extends AppCompatActivity {
             }
         });
 
-        userImage = findViewById(R.id.recr_image);
         String email = mAuth.getCurrentUser().getEmail();
         getRecruiter(email);
     }
 
+    private String getSkillsString(List<String> skills, int maxLength)
+    {
+        StringBuilder skillsString = new StringBuilder();
+        for (String skill:skills) {
+            if(skill.length()<=maxLength)
+                skillsString.append(skill).append(", ");
+        }
+        return skillsString.toString().substring(0,skillsString.toString().length()-2);
+    }
 
     void getRecruiter(final String email) {
         DocumentReference docRef = recruitersCollection.document(email);
@@ -99,20 +142,35 @@ public class RecrEditActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Recruiter recruiter = document.toObject(Recruiter.class);
+                        Recruiter mProfile = document.toObject(Recruiter.class);
+                        GlideApp.with(mContext).load(mProfile.getImageUrl()).into(profileImageView);
+                        nameTxt.setText(String.format("%s %s", mProfile.getName(), mProfile.getLastName()));
+                        placeTxt.setText(mProfile.getWorkPlace());
+                        positionScopeTxt.setText(mProfile.getRequiredScope());
+                        EducationTxt.setText(mProfile.getRequiredEducation());
+                        fullEducationTxt.setText(mProfile.getRequiredEducation());
+                        SkillsTxt.setText(getSkillsString(mProfile.getRequiredSkillsList(),10));
+                        fullSkillsTxt.setText(getSkillsString(mProfile.getRequiredSkillsList(),20));
+                        locationNameTxt.setText(mProfile.getJobLocation());
+                        descTxt.setText(mProfile.getJobDescription());
 
-                        String skillText = "";
-                        for(String skill : recruiter.getRequiredSkillsList()){
-                            skillText += skill;
-                            skillText += ", ";
-                        }
-                        skillText = skillText.substring(0,skillText.length() - 2);
-                        skillText += ".";
-                        mUserSkills.setText(skillText);
-                        mUserEducation.setText(recruiter.getRequiredEducation());
-                        mUserName.setText(recruiter.getName() +" "+ recruiter.getLastName());
-                        mUserJobCategory.setText(recruiter.getJobCategory());
-                        GlideApp.with(mContext).load(recruiter.getImageUrl()).into(userImage);
+                        slidingPanel.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+                            @Override
+                            public void onPanelSlide(android.view.View panel, float slideOffset) {
+                                if(slideOffset>0) {
+                                    detailsImage.setRotation(180);
+                                    moreDetailsTxtView.setVisibility(TextView.GONE);
+                                }
+                                else {
+                                    detailsImage.setRotation(0);
+                                    moreDetailsTxtView.setVisibility(TextView.VISIBLE);
+                                }
+                            }
+
+                            @Override
+                            public void onPanelStateChanged(android.view.View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
+                            }
+                        });
                         dialog.hide();
                     } else {
                         dialog.hide();
