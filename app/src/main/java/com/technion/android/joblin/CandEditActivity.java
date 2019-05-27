@@ -61,11 +61,7 @@ public class CandEditActivity extends AppCompatActivity {
         dialog.setInverseBackgroundForced(false);
         dialog.show();
 
-        mUserSkills = findViewById(R.id.user_skills);
-        mUserName = findViewById(R.id.user_nameText);
-        mUserJobCategory = findViewById(R.id.user_job_category);
-        mUserLocation = findViewById(R.id.job_location_cand);
-        mUserEducation = findViewById(R.id.user_education);
+
         mContext = this;
         mProfileBackButton = findViewById(R.id.profile_back_button);
         mProfileEditButton = findViewById(R.id.bottom_background_cand);
@@ -86,7 +82,7 @@ public class CandEditActivity extends AppCompatActivity {
             }
         });
 
-        userImage = findViewById(R.id.user_image);
+
         String email = mAuth.getCurrentUser().getEmail();
         getCandidate(email);
     }
