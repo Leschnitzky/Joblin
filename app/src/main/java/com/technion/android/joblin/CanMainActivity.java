@@ -48,6 +48,7 @@ public class CanMainActivity extends AppCompatActivity {
     RotateLoading rl;
     private String email;
     private ImageButton mProfileButton;
+    private ImageButton mMatchesButton;
 
     void getRecruitersForSwipingScreen_MainFunction(final String candidateMail) {
         getRecruitersForSwipingScreen_CollectDataAboutCandidate(candidateMail);
@@ -158,6 +159,7 @@ public class CanMainActivity extends AppCompatActivity {
         //Database initialization
         db = FirebaseFirestore.getInstance();
         mProfileButton = findViewById(R.id.profile_Button);
+        mMatchesButton = findViewById(R.id.matches_Button);
         candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
         recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
         usersCollection = db.collection(USERS_COLLECTION_NAME);
@@ -169,6 +171,13 @@ public class CanMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(CanMainActivity.this,CandEditActivity.class);
+                startActivity(intent);
+            }
+        });
+        mMatchesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CanMainActivity.this,CanMatchesActivity.class);
                 startActivity(intent);
             }
         });

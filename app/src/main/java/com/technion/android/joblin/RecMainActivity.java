@@ -48,6 +48,7 @@ public class RecMainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     RotateLoading rl;
     private ImageButton imageButton;
+    private ImageButton matchButton;
     private String email;
 
     void getCandidatesForSwipingScreen_MainFunction(final String recruiterMail) {
@@ -160,6 +161,15 @@ public class RecMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(RecMainActivity.this,RecrEditActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        matchButton = findViewById(R.id.matches_Button);
+        matchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RecMainActivity.this,RecMatchesActivity.class);
                 startActivity(intent);
             }
         });
