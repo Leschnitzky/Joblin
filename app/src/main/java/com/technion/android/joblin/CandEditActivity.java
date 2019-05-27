@@ -42,6 +42,7 @@ public class CandEditActivity extends AppCompatActivity {
     TextView mUserEducation;
     ImageView mProfileBackButton;
     TextView mUserJobCategory;
+    TextView mUserLocation;
     ImageView mProfileEditButton;
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -62,8 +63,9 @@ public class CandEditActivity extends AppCompatActivity {
 
         mUserSkills = findViewById(R.id.user_skills);
         mUserName = findViewById(R.id.user_nameText);
-        mUserEducation = findViewById(R.id.user_education);
         mUserJobCategory = findViewById(R.id.user_job_category);
+        mUserLocation = findViewById(R.id.job_location_cand);
+        mUserEducation = findViewById(R.id.user_education);
         mContext = this;
         mProfileBackButton = findViewById(R.id.profile_back_button);
         mProfileEditButton = findViewById(R.id.bottom_background_cand);
@@ -111,6 +113,7 @@ public class CandEditActivity extends AppCompatActivity {
                         mUserEducation.setText(candidate.getEducation());
                         mUserName.setText(candidate.getName() +" "+ candidate.getLastName());
                         mUserJobCategory.setText(candidate.getJobCategory());
+                        mUserLocation.setText(candidate.getJobLocation());
                         GlideApp.with(mContext).load(candidate.getImageUrl()).into(userImage);
                         dialog.hide();
                     } else {

@@ -142,7 +142,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 dialog.hide();
-                Intent intent = new Intent(CandEditPrefActivity.this,CanMainActivity.class);
+                Intent intent = new Intent(CandEditPrefActivity.this,CandEditActivity.class);
                 startActivity(intent);
             }
         });
