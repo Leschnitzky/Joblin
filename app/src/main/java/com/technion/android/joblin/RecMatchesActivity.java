@@ -64,6 +64,7 @@ public class RecMatchesActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        adapter.startListening();
     }
 
     @Override
