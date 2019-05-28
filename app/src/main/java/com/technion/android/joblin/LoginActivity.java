@@ -95,8 +95,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_screen_layout);
 
-        DatabaseAPI dbAPI = new DatabaseAPI();
-        dbAPI.initializeDBWithSomeData();
+//        DatabaseAPI dbAPI = new DatabaseAPI();
+//        dbAPI.initializeDBWithSomeData();
 
         dialog = new ProgressDialog(LoginActivity.this);
         FirebaseApp.initializeApp(this);
@@ -105,7 +105,6 @@ public class LoginActivity extends AppCompatActivity {
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-        dbAPI.initializeDBWithSwipes();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         mGoogleSignInClient.signOut();
         mAuth.signOut();

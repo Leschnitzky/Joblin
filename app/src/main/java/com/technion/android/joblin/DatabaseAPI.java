@@ -696,13 +696,13 @@ class DatabaseAPI {
         recruiterDoSwipe("john3@gmail.com", "leschinskysergey@gmail.com", Side.RIGHT);
         recruiterDoSwipe("libat@gmail.com", "leschinskysergey@gmail.com", Side.RIGHT);
 
-        candidateDoSwipe("levi.weiss3@gmail.com", "gre4f@gmail.com", Side.RIGHT);
+//        candidateDoSwipe("levi.weiss3@gmail.com", "gre4f@gmail.com", Side.RIGHT);
 //        candidateDoSwipe("levi.weiss3@gmail.com", "libat@gmail.com", Side.RIGHT);
         candidateDoSwipe("hotty@walla.com", "gre4f@gmail.com", Side.RIGHT);
         candidateDoSwipe("macho@gmail.com", "john3@gmail.com", Side.RIGHT);
         candidateDoSwipe("asaf@gmail.com", "bar@gmail.com", Side.RIGHT);
-        candidateDoSwipe("leschinskysergey@gmail.com", "john3@gmail.com", Side.RIGHT);
-        candidateDoSwipe("leschinskysergey@gmail.com", "libat@gmail.com", Side.RIGHT);
+//        candidateDoSwipe("leschinskysergey@gmail.com", "john3@gmail.com", Side.RIGHT);
+//        candidateDoSwipe("leschinskysergey@gmail.com", "libat@gmail.com", Side.RIGHT);
 
     }
 
