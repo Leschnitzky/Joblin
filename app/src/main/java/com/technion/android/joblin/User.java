@@ -6,7 +6,7 @@ public class User {
     private String name;
     private String lastName;
     private String imageUrl;
-    static private long totalNumberOfSwipes = 10;
+    static long totalNumberOfSwipes = 10;
     private long numberOfSwipesLeft = 10;
 
     User() {}
