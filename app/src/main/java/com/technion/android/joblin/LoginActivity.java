@@ -109,7 +109,6 @@ public class LoginActivity extends AppCompatActivity {
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        mGoogleSignInClient.signOut();
         privatepolicy = findViewById(R.id.privacyPolicyLink);
         privatepolicy.setText(
                 Html.fromHtml(
