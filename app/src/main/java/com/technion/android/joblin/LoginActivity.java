@@ -9,8 +9,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -54,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
     private Uri mUserPhoto;
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
+    private TextView privatepolicy;
 
     Context context = this;
     public static final int ALARM_REQUEST_CODE = 101;
@@ -105,6 +109,12 @@ public class LoginActivity extends AppCompatActivity {
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mGoogleSignInClient.signOut();
+        privatepolicy = findViewById(R.id.privacyPolicyLink);
+        privatepolicy.setText(
+                Html.fromHtml(
+                        "<a href=\"https://joblin.flycricket.io/privacy.html\">Privacy Policy</a>"));
+        privatepolicy.setMovementMethod(LinkMovementMethod.getInstance());
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -125,7 +135,6 @@ public class LoginActivity extends AppCompatActivity {
         calendar.set(Calendar.MINUTE, 0);
 
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
-
 
     }
 

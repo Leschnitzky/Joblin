@@ -55,6 +55,18 @@
         app:civ_circle_background_color="@color/colorAccent" />
 
     <TextView
+        android:id="@+id/privacyPolicyLink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sign_in_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/_50sdp"
+        android:linksClickable="true"
+        android:textColor="@android:color/secondary_text_light"
+        android:textStyle="bold"
+        tools:ignore="HardcodedText" />
+
+    <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
