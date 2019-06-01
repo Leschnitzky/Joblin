@@ -338,7 +338,8 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         BaseFormElement skill1 = elements.get(Tag.Skill1.ordinal());
         List<String> skills = new ArrayList<>();
         submit.getValueObservers().add((newValue, element) -> {
-            if(formBuilder.isValidForm()) {
+            boolean min_age = Utils.getAge(birthdate.getDateValue(),Timestamp.now().toDate())>=13;
+            if(formBuilder.isValidForm() && min_age) {
                 dialog.setMessage("Please wait...");
                 dialog.setCancelable(false);
                 dialog.setInverseBackgroundForced(false);
@@ -372,6 +373,8 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
                     lastname.setError("Last name is required");
                 if(!birthdate.isValid())
                     birthdate.setError("Date of birth is required");
+                if(!min_age)
+                    birthdate.setError("Minimum age is 13");
                 if(!education.isValid())
                     education.setError("Education is required");
                 if(!category.isValid())
