@@ -48,8 +48,7 @@ public class CanMatchesActivity extends AppCompatActivity {
         toProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CanMatchesActivity.this, CanMainActivity.class);
-                startActivity(intent);
+                finish();
             }
         });
 

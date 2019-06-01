@@ -41,8 +41,7 @@ public class RecMatchesActivity extends AppCompatActivity {
         toProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(RecMatchesActivity.this, RecMainActivity.class);
-                startActivity(intent);
+                finish();
             }
         });
 
