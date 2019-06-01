@@ -111,8 +111,7 @@ public class CandEditActivity extends AppCompatActivity {
         mProfileBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CandEditActivity.this,CanMainActivity.class);
-                startActivity(intent);
+                finish();
             }
         });
 
@@ -197,6 +196,14 @@ public class CandEditActivity extends AppCompatActivity {
                 }
             }
         });
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        getCandidate(mAuth.getCurrentUser().getEmail());
     }
 
 }

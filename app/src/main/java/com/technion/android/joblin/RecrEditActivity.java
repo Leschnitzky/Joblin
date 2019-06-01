@@ -184,5 +184,12 @@ public class RecrEditActivity extends AppCompatActivity {
         });
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        getRecruiter(mAuth.getCurrentUser().getEmail());
+    }
 }
 

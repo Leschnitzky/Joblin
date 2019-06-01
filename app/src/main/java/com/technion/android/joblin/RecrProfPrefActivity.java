@@ -135,6 +135,8 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
                 dialog.hide();
                 Intent intent = new Intent(RecrProfPrefActivity.this,RecMainActivity.class);
                 startActivity(intent);
+
+                finish();
             }
         });
     }
@@ -349,5 +351,12 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
             FormPlacesAutoCompleteElement placesElement = formBuilder.getFormElement(Tag.Location.ordinal());
             placesElement.handleActivityResult(formBuilder, resultCode, data);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        mAuth.signOut();
     }
 }

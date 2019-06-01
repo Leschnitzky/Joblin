@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
@@ -57,6 +58,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
     CollectionReference recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
     CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
     CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
+
     Intent thisIntent;
     ProgressDialog dialog;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -138,6 +140,8 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
                 dialog.hide();
                 Intent intent = new Intent(CandProfPrefActivity.this,CanMainActivity.class);
                 startActivity(intent);
+
+                finish();
             }
         });
     }
@@ -358,5 +362,13 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
             FormPlacesAutoCompleteElement placesElement = formBuilder.getFormElement(Tag.Location.ordinal());
             placesElement.handleActivityResult(formBuilder, resultCode, data);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        mAuth.signOut();
+
     }
 }
