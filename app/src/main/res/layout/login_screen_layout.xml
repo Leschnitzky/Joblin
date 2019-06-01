@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/welcome_text"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/_8sdp"
         android:text="@string/greeting_text_2"
         android:textAlignment="center"
         android:textColor="@color/colorPrimary"

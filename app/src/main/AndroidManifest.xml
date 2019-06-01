@@ -34,18 +34,26 @@
         </activity>
         <activity android:name=".CanMainActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".CandProfPrefActivity" />
-        <activity android:name=".RecrProfPrefActivity" />
-        <activity android:name=".CanMatchesActivity" />
-        <activity android:name=".RecMatchesActivity" />
+        <activity android:name=".CandProfPrefActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".RecrProfPrefActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".CanMatchesActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".RecMatchesActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".RecrEditActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".CandEditActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".RecrEditPrefActivity" />
-        <activity android:name=".CandEditPrefActivity" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".RecrEditPrefActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".CandEditPrefActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
