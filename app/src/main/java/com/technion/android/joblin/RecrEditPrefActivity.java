@@ -41,6 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import cn.pedant.SweetAlert.SweetAlertDialog.OnSweetClickListener;
 import kotlin.Unit;
 
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
@@ -373,6 +375,23 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
             return Unit.INSTANCE;
         });
         elements.add(submit);
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        new SweetAlertDialog(this,SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Are you sure?")
+                .setContentText("Your changes won't be saved")
+                .setConfirmText("Yes")
+                .setConfirmClickListener(new OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        finish();
+                    }
+                })
+                .setCancelText("No")
+                .show();
     }
 
     @Override

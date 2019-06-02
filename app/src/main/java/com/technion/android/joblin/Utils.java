@@ -56,4 +56,5 @@ public class Utils {
                 .setContentText(String.format("Something went wrong: %s",error))
                 .show();
     }
+
 }
