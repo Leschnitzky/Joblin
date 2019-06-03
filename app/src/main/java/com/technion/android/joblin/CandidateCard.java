@@ -30,11 +30,8 @@ import com.mindorks.placeholderview.annotations.swipe.SwipeInState;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOut;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOutState;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-import com.technion.android.joblin.DatabaseAPI.Side;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +46,7 @@ import static com.technion.android.joblin.DatabaseUtils.SIDE_KEY;
 import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.TAG;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.Side;
 
 @Layout(R.layout.cancard_view)
 public class CandidateCard {
@@ -124,20 +122,10 @@ public class CandidateCard {
         return skillsString.toString().substring(0,skillsString.toString().length()-2);
     }
 
-    public int getAge(
-            Date birthDate,
-            Date currentDate) {
-        DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-        int d1 = Integer.parseInt(formatter.format(birthDate));
-        int d2 = Integer.parseInt(formatter.format(currentDate));
-        int age = (d2 - d1) / 10000;
-        return age;
-    }
-
     @Resolve
     public void onResolved(){
         GlideApp.with(mContext).load(mProfile.getImageUrl()).into(profileImageView);
-        Integer age = getAge(mProfile.getBirthday().toDate(), Timestamp.now().toDate());
+        Integer age = Utils.getAge(mProfile.getBirthday().toDate(), Timestamp.now().toDate());
         nameTxt.setText(String.format("%s %s, %s", mProfile.getName(), mProfile.getLastName(), age.toString()));
         positionScopeTxt.setText(mProfile.getScope());
         EducationTxt.setText(mProfile.getEducation());
