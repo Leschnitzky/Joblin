@@ -29,7 +29,7 @@ import com.mindorks.placeholderview.annotations.swipe.SwipeInState;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOut;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOutState;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-import com.technion.android.joblin.DatabaseAPI.Side;
+import static com.technion.android.joblin.DatabaseUtils.Side;
 
 import java.util.HashMap;
 import java.util.List;

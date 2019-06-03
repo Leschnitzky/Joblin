@@ -30,7 +30,7 @@ import com.mindorks.placeholderview.annotations.swipe.SwipeInState;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOut;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOutState;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-import com.technion.android.joblin.DatabaseAPI.Side;
+
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -49,6 +49,7 @@ import static com.technion.android.joblin.DatabaseUtils.SIDE_KEY;
 import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.TAG;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.Side;
 
 @Layout(R.layout.cancard_view)
 public class CandidateCard {

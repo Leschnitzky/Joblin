@@ -22,6 +22,7 @@ class DatabaseUtils {
     static final String JOB_DESCRIPTION_KEY = "jobDescription";
     static final String SIDE_KEY = "side";
     static final String IMAGE_URL_KEY = "imageUrl";
+    static final String TOKEN_KEY = "token";
 
     static final String SWIPES_COLLECTION_NAME = "Swipes";
     static final String MATCHES_COLLECTION_NAME = "Matches";
@@ -29,6 +30,7 @@ class DatabaseUtils {
     static final String RECRUITERS_COLLECTION_NAME = "Recruiters";
     static final String JOB_CATEGORIES_COLLECTION_NAME = "JobCategories";
     static final String USERS_COLLECTION_NAME = "Users";
+    static final String TOKENS_COLLECTION_NAME = "Tokens";
 
     static final String TAG = "DatabaseAPI";
 
