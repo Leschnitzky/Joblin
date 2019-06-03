@@ -34,6 +34,7 @@ class DatabaseUtils {
     static final String USERS_COLLECTION_NAME = "Users";
     static final String TOKENS_COLLECTION_NAME = "Tokens";
     static final String ERRORS_COLLECTION_NAME = "Errors";
+    static final String SCOPES_COLLECTION_NAME = "Scopes";
 
     static final String TAG = "DatabaseAPI";
 

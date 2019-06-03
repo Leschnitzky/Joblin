@@ -148,8 +148,8 @@ public class LoginActivity extends AppCompatActivity {
 
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
 
-        DatabaseAPI dbAPI = new DatabaseAPI();
-        dbAPI.addErrorData("checking...");
+//        DatabaseAPI dbAPI = new DatabaseAPI();
+
     }
 
     private void signIn() {

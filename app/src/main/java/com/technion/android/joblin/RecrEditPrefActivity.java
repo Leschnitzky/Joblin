@@ -246,14 +246,25 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
 
         elements.add(new FormHeader("Requirements"));
 
-        FormSingleLineEditTextElement scope = new FormSingleLineEditTextElement(Tag.Scope.ordinal());
+        // scope
+        FormPickerDropDownElement<ListItem> scope = new FormPickerDropDownElement<>(Tag.Scope.ordinal());
 
-        scope.setTitle("Job Scope");
+        List<String> scopesList = new ArrayList<>();
+        scopesList.add("Full Time");
+        scopesList.add("20-30%");
+        scopesList.add("40-50%");
+        scopesList.add("60-70%");
+        scopesList.add("80-90%");
+
+        scope.setArrayAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item, scopesList));
+
+        scope.setTitle("Scope");
         scope.setHint("Enter scope here");
         scope.setValue(recruiter.getRequiredScope());
         scope.setCenterText(true);
         scope.setRequired(true);
         elements.add(scope);
+
 
         FormSingleLineEditTextElement education = new FormSingleLineEditTextElement(Tag.Education.ordinal());
 
