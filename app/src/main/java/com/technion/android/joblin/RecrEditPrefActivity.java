@@ -137,8 +137,8 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 dialog.hide();
-                Intent intent = new Intent(RecrEditPrefActivity.this,RecrEditActivity.class);
-                startActivity(intent);
+
+                finish();
             }
         });
     }

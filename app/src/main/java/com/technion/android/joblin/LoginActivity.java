@@ -1,5 +1,6 @@
 package com.technion.android.joblin;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -29,6 +30,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -60,13 +62,23 @@ public class LoginActivity extends AppCompatActivity {
     private TextView privatepolicy;
 
     Context context = this;
+
+    private static LoginActivity activity;
+
     public static final int ALARM_REQUEST_CODE = 101;
+
+
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
     CollectionReference recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
     CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
     CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
+
+
+    public static LoginActivity getInstance(){
+        return activity;
+    }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
 
@@ -103,6 +115,7 @@ public class LoginActivity extends AppCompatActivity {
         dialog = new ProgressDialog(LoginActivity.this);
         FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
+        activity = this;
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -174,15 +187,18 @@ public class LoginActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        GoogleSignInAccount currentUser = GoogleSignIn.getLastSignedInAccount(this);
+//        GoogleSignInAccount currentUser = GoogleSignIn.getLastSignedInAccount(this);
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
         if(currentUser != null) {
             dialog.setMessage("Please wait...");
             dialog.setCancelable(false);
             dialog.setInverseBackgroundForced(false);
             dialog.show();
-            mUserFirstName = currentUser.getGivenName();
-            mUserLastName = currentUser.getFamilyName();
+            mUserFirstName = account.getDisplayName();
+            mUserLastName = account.getFamilyName();
             mUserPhoto = currentUser.getPhotoUrl();
             isCandidateOrRecrInDB(currentUser.getEmail());
         }

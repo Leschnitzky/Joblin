@@ -13,6 +13,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
@@ -75,6 +78,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         dialog = new ProgressDialog(CandEditPrefActivity.this);
+
         thisIntent = getIntent();
         getCandidate(mAuth.getCurrentUser().getEmail());
         Places.initialize(this, "AIzaSyBz1HHQ4v-4wifOcikbPGOqetSzt2vSFPY");
@@ -143,8 +147,8 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 dialog.hide();
-                Intent intent = new Intent(CandEditPrefActivity.this,CandEditActivity.class);
-                startActivity(intent);
+
+                finish();
             }
         });
     }
@@ -401,4 +405,5 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
             placesElement.handleActivityResult(formBuilder, resultCode, data);
         }
     }
+
 }

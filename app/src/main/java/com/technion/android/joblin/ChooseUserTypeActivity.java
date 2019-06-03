@@ -6,6 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.auth.FirebaseAuth;
+
 public class ChooseUserTypeActivity extends AppCompatActivity {
 
     private Button mCandButton;
@@ -13,12 +18,20 @@ public class ChooseUserTypeActivity extends AppCompatActivity {
     private String mPhotoString;
     private String mFirstName;
     private String mLastName;
+    private GoogleSignInClient mGoogleSignInClient;
+    private FirebaseAuth mAuth;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_user_type);
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mAuth = FirebaseAuth.getInstance();
         mFirstName = getIntent().getStringExtra(LoginActivity.FIRST_NAME_KEY);
         mLastName = getIntent().getStringExtra(LoginActivity.LAST_NAME_KEY);
         mPhotoString = getIntent().getStringExtra(LoginActivity.URI_KEY);
@@ -36,6 +49,8 @@ public class ChooseUserTypeActivity extends AppCompatActivity {
                 intent.putExtra(LoginActivity.URI_KEY,mPhotoString);
 
                 startActivity(intent);
+
+                finish();
             }
         });
 
@@ -48,9 +63,17 @@ public class ChooseUserTypeActivity extends AppCompatActivity {
                 intent.putExtra(LoginActivity.URI_KEY,mPhotoString);
 
                 startActivity(intent);
+                finish();
 
             }
         });
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        mAuth.signOut();
     }
 }
