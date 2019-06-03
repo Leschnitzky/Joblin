@@ -2,6 +2,8 @@ package com.technion.android.joblin;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,6 +38,7 @@ class DatabaseAPI {
     CollectionReference recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
     CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
     CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
+    CollectionReference errorsCollection = db.collection(ERRORS_COLLECTION_NAME);
 
 
     void isUserInTheDB(final String email) {
@@ -898,6 +901,29 @@ class DatabaseAPI {
         userToken.put(TOKEN_KEY, token);
 
         usersCollection.document(email).collection(TOKENS_COLLECTION_NAME).document(token).set(userToken)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+    }
+
+    public void addErrorData(String errorDescription) {
+        Date currentDateTime = Calendar.getInstance().getTime();
+        Timestamp currentTimeTimeStamp = new Timestamp(currentDateTime);
+
+        Map<String, Object> errorData = new HashMap<>();
+        errorData.put(ERROR_KEY, errorDescription);
+        errorData.put(CURRENT_TIME_KEY, currentTimeTimeStamp);
+
+        errorsCollection.document().set(errorData)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
