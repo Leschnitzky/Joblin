@@ -27,9 +27,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
@@ -138,16 +135,6 @@ public class CandEditActivity extends AppCompatActivity {
         return skillsString.toString().substring(0,skillsString.toString().length()-2);
     }
 
-    public int getAge(
-            Date birthDate,
-            Date currentDate) {
-        DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-        int d1 = Integer.parseInt(formatter.format(birthDate));
-        int d2 = Integer.parseInt(formatter.format(currentDate));
-        int age = (d2 - d1) / 10000;
-        return age;
-    }
-
     void getCandidate(final String email) {
         DocumentReference docRef = candidatesCollection.document(email);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -158,7 +145,7 @@ public class CandEditActivity extends AppCompatActivity {
                     if (document.exists()) {
                         Candidate mProfile = document.toObject(Candidate.class);
                         GlideApp.with(mContext).load(mProfile.getImageUrl()).into(profileImageView);
-                        Integer age = getAge(mProfile.getBirthday().toDate(), Timestamp.now().toDate());
+                        Integer age = Utils.getAge(mProfile.getBirthday().toDate(), Timestamp.now().toDate());
                         nameTxt.setText(String.format("%s %s, %s", mProfile.getName(), mProfile.getLastName(), age.toString()));
                         positionScopeTxt.setText(mProfile.getScope());
                         EducationTxt.setText(mProfile.getEducation());
