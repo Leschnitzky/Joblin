@@ -23,6 +23,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthCredential;
@@ -47,6 +49,8 @@ import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NA
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.TAG;
+import static com.technion.android.joblin.DatabaseUtils.TOKENS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.TOKEN_KEY;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
 public class LoginActivity extends AppCompatActivity {
@@ -194,6 +198,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
 //        GoogleSignInAccount currentUser = GoogleSignIn.getLastSignedInAccount(this);
+        initFCM();
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
@@ -266,16 +271,29 @@ public class LoginActivity extends AppCompatActivity {
 
 
 //    This is the insertion of the FCM Token
-    private void sendRegistrationToServer(String token) {
-        Log.d(TAG, "sendRegistrationToServer: sending token to server: " + token);
-        //TODO: add the token adding logic
+public void addTokenData(String email, String token) {
+    Map<String, Object> userToken = new HashMap<>();
+    userToken.put(TOKEN_KEY, token);
+
+    usersCollection.document(email).collection(TOKENS_COLLECTION_NAME).document(token).set(userToken)
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d(TAG, "DocumentSnapshot successfully written!");
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.w(TAG, "Error writing document", e);
+                }
+            });
 }
 
 
     private void initFCM(){
         String token = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, "initFCM: token: " + token);
-        sendRegistrationToServer(token);
-
+        addTokenData(mAuth.getCurrentUser().getEmail(),token);
     }
 }
