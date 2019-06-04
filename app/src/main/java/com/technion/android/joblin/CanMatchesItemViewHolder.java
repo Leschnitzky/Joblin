@@ -1,15 +1,16 @@
 package com.technion.android.joblin;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.view.View;
 
 import com.aminography.redirectglide.GlideApp;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,7 +24,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.io.InputStream;
 import java.net.URL;
 
-import static com.technion.android.joblin.DatabaseUtils.*;
+import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.TAG;
+import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
 public class CanMatchesItemViewHolder extends RecyclerView.ViewHolder {
     private ImageView recImage;
@@ -41,6 +46,7 @@ public class CanMatchesItemViewHolder extends RecyclerView.ViewHolder {
 
     public CanMatchesItemViewHolder(View itemView,Context context) {
         super(itemView);
+        this.itemView = itemView;
         recImage = itemView.findViewById(R.id.recImage);
         recName = itemView.findViewById(R.id.recName);
         this.mContext = context;
@@ -48,6 +54,15 @@ public class CanMatchesItemViewHolder extends RecyclerView.ViewHolder {
 
     public void bindToItem(MatchesItem item) {
         String email = item.getEmail();
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext,MessageActivity.class);
+                intent.putExtra("type","rec");
+                intent.putExtra("email",item.getEmail());
+                mContext.startActivity(intent);
+            }
+        });
         getRecruiter(email);
     }
 
