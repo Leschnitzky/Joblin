@@ -297,12 +297,23 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         dropDown.setArrayAdapter(new ArrayAdapter<>(this,R.layout.
                 support_simple_spinner_dropdown_item,jobCategories));
         dropDown.setHint("Click here to choose");
+
         dropDown.setCenterText(true);
         dropDown.setValue(candidate.getJobCategory());
         dropDown.setRequired(true);
         elements.add(dropDown);
 
-        FormSingleLineEditTextElement scope = new FormSingleLineEditTextElement(Tag.Scope.ordinal());
+        // scope
+        FormPickerDropDownElement<ListItem> scope = new FormPickerDropDownElement<>(Tag.Scope.ordinal());
+
+        List<String> scopesList = new ArrayList<>();
+        scopesList.add("Full Time");
+        scopesList.add("20-30%");
+        scopesList.add("40-50%");
+        scopesList.add("60-70%");
+        scopesList.add("80-90%");
+
+        scope.setArrayAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item, scopesList));
 
         scope.setTitle("Scope");
         scope.setHint("Enter scope here");
@@ -341,7 +352,8 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         BaseFormElement skill1 = elements.get(Tag.Skill1.ordinal());
         List<String> skills = new ArrayList<>();
         submit.getValueObservers().add((newValue, element) -> {
-            if(formBuilder.isValidForm()) {
+            boolean min_age = Utils.getAge(birthdate.getDateValue(),Timestamp.now().toDate())>=13;
+            if(formBuilder.isValidForm() && min_age) {
                 dialog.setMessage("Please wait...");
                 dialog.setCancelable(false);
                 dialog.setInverseBackgroundForced(false);
@@ -375,6 +387,8 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
                     lastname.setError("Last name is required");
                 if(!birthdate.isValid())
                     birthdate.setError("Date of birth is required");
+                if(!min_age)
+                    birthdate.setError("Minimum age is 13");
                 if(!education.isValid())
                     education.setError("Education is required");
                 if(!category.isValid())

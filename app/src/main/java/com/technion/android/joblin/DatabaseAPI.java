@@ -2,6 +2,8 @@ package com.technion.android.joblin;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -25,37 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.technion.android.joblin.DatabaseUtils.*;
 
 class DatabaseAPI {
-
-    enum Side {
-        LEFT, RIGHT
-    }
-
-    static final String BIRTHDAY_KEY = "birthday";
-    static final String EMAIL_KEY = "email";
-    static final String JOB_CATEGORY_KEY = "jobCategory";
-    static final String JOB_LOCATION_KEY = "jobLocation";
-    static final String LAST_NAME_KEY = "lastName";
-    static final String MORE_INFO_KEY = "moreInfo";
-    static final String NAME_KEY = "name";
-    static final String SCOPE_KEY = "scope";
-    static final String SKILLS_KEY = "skillList";
-    static final String EDUCATION_KEY = "education";
-    static final String NUMBER_OF_SWIPES_LEFT_KEY = "numberOfSwipesLeft";
-    static final String REQUIRED_EDUCATION = "requiredEducation";
-    static final String REQUIRED_SCOPE_KEY = "requiredScope";
-    static final String REQUIRED_SKILLS_KEY = "requiredSkillsList";
-    static final String JOB_DESCRIPTION_KEY = "jobDescription";
-    static final String SIDE_KEY = "side";
-    static final String IMAGE_URL_KEY = "imageUrl";
-
-    static final String SWIPES_COLLECTION_NAME = "Swipes";
-    static final String MATCHES_COLLECTION_NAME = "Matches";
-    static final String CANDIDATES_COLLECTION_NAME = "Candidates";
-    static final String RECRUITERS_COLLECTION_NAME = "Recruiters";
-    static final String JOB_CATEGORIES_COLLECTION_NAME = "JobCategories";
-    static final String USERS_COLLECTION_NAME = "Users";
 
     private static final String TAG = "DatabaseAPI";
 
@@ -64,9 +38,11 @@ class DatabaseAPI {
     CollectionReference recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
     CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
     CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
+    CollectionReference errorsCollection = db.collection(ERRORS_COLLECTION_NAME);
+    CollectionReference scopesCollection = db.collection(SCOPES_COLLECTION_NAME);
 
 
-    void isUserInTheDB(final String email) {
+    public void isUserInTheDB(final String email) {
         DocumentReference docRef = usersCollection.document(email);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -85,7 +61,7 @@ class DatabaseAPI {
         });
     }
 
-    void isCandidateInDB(final String email) {
+    public void isCandidateInDB(final String email) {
         DocumentReference docRef = candidatesCollection.document(email);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -104,7 +80,7 @@ class DatabaseAPI {
         });
     }
 
-    void isRecruiterInDB(final String email) {
+    public void isRecruiterInDB(final String email) {
         DocumentReference docRef = recruitersCollection.document(email);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -123,7 +99,7 @@ class DatabaseAPI {
         });
     }
 
-    void getCandidate(final String email) {
+    public void getCandidate(final String email) {
         DocumentReference docRef = candidatesCollection.document(email);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -145,7 +121,7 @@ class DatabaseAPI {
         });
     }
 
-    void getRecruiter(final String email) {
+    public void getRecruiter(final String email) {
         DocumentReference docRef = recruitersCollection.document(email);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -167,7 +143,7 @@ class DatabaseAPI {
         });
     }
 
-    void insertCandidate(Candidate candidate) {
+    public void insertCandidate(Candidate candidate) {
 //        Map<String, Object> candidateMapData = new HashMap<>();
 //        candidateMapData.put(BIRTHDAY_KEY, candidate.getBirthday());
 //        candidateMapData.put(EMAIL_KEY, candidate.getEmail());
@@ -199,7 +175,7 @@ class DatabaseAPI {
         });
     }
 
-    void insertRecruiter(Recruiter recruiter) {
+    public void insertRecruiter(Recruiter recruiter) {
 //        Map<String, Object> recruiterMapData = new HashMap<>();
 //        recruiterMapData.put(EMAIL_KEY, recruiter.getEmail());
 //        recruiterMapData.put(NAME_KEY, recruiter.getName());
@@ -230,7 +206,7 @@ class DatabaseAPI {
         });
     }
 
-    void insertSampleCandidate() {
+    public void insertSampleCandidate() {
         List<String> skillsList = new ArrayList<>(Arrays.asList("Java", "C++"));
 
         Candidate candidate = new Candidate(
@@ -249,7 +225,7 @@ class DatabaseAPI {
         insertCandidate(candidate);
     }
 
-    void insertSampleRecruiter() {
+    public void insertSampleRecruiter() {
         List<String> skillsList = new ArrayList<>(Arrays.asList("Java", "C++"));
 
         Recruiter recruiter = new Recruiter(
@@ -268,7 +244,7 @@ class DatabaseAPI {
         insertRecruiter(recruiter);
     }
 
-    void recruiterDoSwipe(final String recruiterMail, final String candidateMail, final Side side) {
+    public void recruiterDoSwipe(final String recruiterMail, final String candidateMail, final Side side) {
         DocumentReference docRef = recruitersCollection.document(recruiterMail);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -295,7 +271,7 @@ class DatabaseAPI {
         });
     }
 
-    void candidateDoSwipe(final String candidateMail, final String recruiterMail, final Side side) {
+    public void candidateDoSwipe(final String candidateMail, final String recruiterMail, final Side side) {
 
         DocumentReference docRef = candidatesCollection.document(candidateMail);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -322,15 +298,15 @@ class DatabaseAPI {
         });
     }
 
-    void addSwipeDataForRecruiter(String recruiterMail, String candidateMail, Side side) {
+    public void addSwipeDataForRecruiter(String recruiterMail, String candidateMail, Side side) {
         addSwipeData(recruitersCollection, candidatesCollection, recruiterMail, candidateMail, side);
     }
 
-    void addSwipeDataForCandidate(String candidateMail, String recruiterMail, Side side) {
+    public void addSwipeDataForCandidate(String candidateMail, String recruiterMail, Side side) {
         addSwipeData(candidatesCollection, recruitersCollection, candidateMail, recruiterMail, side);
     }
 
-    void addSwipeData(CollectionReference firstCollection,
+    public void addSwipeData(CollectionReference firstCollection,
                       CollectionReference secondCollection,
                       String firstMail,
                       String secondMail,
@@ -435,6 +411,7 @@ class DatabaseAPI {
         initializeDBWithCandidates();
         initializeDBWithSwipes();
         initializeJobCategories();
+        initializeScopes();
     }
 
 //    public void initializeDBWithUsers() {
@@ -706,7 +683,7 @@ class DatabaseAPI {
 
     }
 
-    void initializeJobCategories() {
+    public void initializeJobCategories() {
 
         List<String> jobCategories = new ArrayList<>();
         jobCategories.add("Accounting");
@@ -736,11 +713,39 @@ class DatabaseAPI {
         });
     }
 
-    void getRecruitersForSwipingScreen_MainFunction(final String candidateMail) {
+    public void initializeScopes() {
+
+        List<String> scopes = new ArrayList<>();
+        scopes.add("Full Time");
+        scopes.add("20-30%");
+        scopes.add("40-50%");
+        scopes.add("60-70%");
+        scopes.add("80-90%");
+
+        WriteBatch batch = db.batch();
+        DocumentReference scopeDocumentReference;
+        Map<String, Object> scopeMapData = new HashMap<>();
+
+        for(String scope : scopes) {
+            scopeDocumentReference = scopesCollection.document(scope);
+            scopeMapData.clear();
+            scopeMapData.put(SCOPE_KEY, scope);
+            batch.set(scopeDocumentReference, scopeMapData);
+        }
+
+        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+            }
+        });
+    }
+
+    public void getRecruitersForSwipingScreen_MainFunction(final String candidateMail) {
         getRecruitersForSwipingScreen_CollectDataAboutCandidate(candidateMail);
     }
 
-    void getRecruitersForSwipingScreen_CollectDataAboutCandidate(final String candidateMail) {
+    public void getRecruitersForSwipingScreen_CollectDataAboutCandidate(final String candidateMail) {
         DocumentReference docRef = candidatesCollection.document(candidateMail);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -762,7 +767,7 @@ class DatabaseAPI {
 
     }
 
-    void getRecruitersForSwipingScreen_FindRelevantRecruiters(final String candidateMail,
+    public void getRecruitersForSwipingScreen_FindRelevantRecruiters(final String candidateMail,
                                                               final String candidateJobCategory) {
 
         recruitersCollection
@@ -786,7 +791,7 @@ class DatabaseAPI {
                 });
     }
 
-    void getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(final String candidateMail,
+    public void getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(final String candidateMail,
                                                                                   final List<Recruiter> listOfRecruiters) {
 
         candidatesCollection.document(candidateMail).collection(SWIPES_COLLECTION_NAME).get()
@@ -808,7 +813,7 @@ class DatabaseAPI {
 
     }
 
-    void getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped_Final(final List<Recruiter> listOfRecruiters,
+    public void getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped_Final(final List<Recruiter> listOfRecruiters,
                                                                                         final List<String> listOfRecruitersMailStrings) {
 
         List<Recruiter> finalListOfRecruiters = new ArrayList<>();
@@ -824,16 +829,16 @@ class DatabaseAPI {
 
     }
 
-    void getRecruitersForSwipingScreen(List<Recruiter> listOfRecruiters) {
+    public void getRecruitersForSwipingScreen(List<Recruiter> listOfRecruiters) {
 
     }
 
 
-    void getCandidatesForSwipingScreen_MainFunction(final String recruiterMail) {
+    public void getCandidatesForSwipingScreen_MainFunction(final String recruiterMail) {
         getCandidatesForSwipingScreen_CollectDataAboutRecruiter(recruiterMail);
     }
 
-    void getCandidatesForSwipingScreen_CollectDataAboutRecruiter(final String recruiterMail) {
+    public void getCandidatesForSwipingScreen_CollectDataAboutRecruiter(final String recruiterMail) {
         DocumentReference docRef = recruitersCollection.document(recruiterMail);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -854,7 +859,7 @@ class DatabaseAPI {
         });
     }
 
-    void getCandidatesForSwipingScreen_FindRelevantCandidates(final String recruiterMail,
+    public void getCandidatesForSwipingScreen_FindRelevantCandidates(final String recruiterMail,
                                                               final String recruiterJobCategory) {
 
         candidatesCollection
@@ -879,7 +884,7 @@ class DatabaseAPI {
 
     }
 
-    void getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped(final String recruiterMail,
+    public void getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped(final String recruiterMail,
                                                                                   final List<Candidate> listOfCandidates) {
 
         recruitersCollection.document(recruiterMail).collection(SWIPES_COLLECTION_NAME).get()
@@ -902,7 +907,7 @@ class DatabaseAPI {
 
     }
 
-    void getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped_Final(final List<Candidate> listOfCandidates,
+    public void getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped_Final(final List<Candidate> listOfCandidates,
                                                                                         final List<String> listOfCandidatesMailStrings) {
 
         List<Candidate> finalListOfCandidates = new ArrayList<>();
@@ -917,8 +922,50 @@ class DatabaseAPI {
         getCandidatesForSwipingScreen(finalListOfCandidates);
     }
 
-    void getCandidatesForSwipingScreen(List<Candidate> listOfCandidates) {
+    public void getCandidatesForSwipingScreen(List<Candidate> listOfCandidates) {
 
+    }
+
+    public void addTokenData(String email, String token) {
+        Map<String, Object> userToken = new HashMap<>();
+        userToken.put(TOKEN_KEY, token);
+
+        usersCollection.document(email).collection(TOKENS_COLLECTION_NAME).document(token).set(userToken)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+    }
+
+    public void addErrorData(String errorDescription) {
+        Date currentDateTime = Calendar.getInstance().getTime();
+        Timestamp currentTimeTimeStamp = new Timestamp(currentDateTime);
+
+        Map<String, Object> errorData = new HashMap<>();
+        errorData.put(ERROR_KEY, errorDescription);
+        errorData.put(CURRENT_TIME_KEY, currentTimeTimeStamp);
+
+        errorsCollection.document().set(errorData)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
     }
 
 }

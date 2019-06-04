@@ -8,6 +8,10 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class Utils {
@@ -57,4 +61,13 @@ public class Utils {
                 .show();
     }
 
+    public static int getAge(
+            Date birthDate,
+            Date currentDate) {
+        DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+        int d1 = Integer.parseInt(formatter.format(birthDate));
+        int d2 = Integer.parseInt(formatter.format(currentDate));
+        int age = (d2 - d1) / 10000;
+        return age;
+    }
 }
