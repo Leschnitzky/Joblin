@@ -37,6 +37,7 @@ import java.util.List;
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORY_KEY;
+import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SWIPES_LEFT_KEY;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.TAG;
@@ -54,6 +55,7 @@ public class CanMainActivity extends AppCompatActivity {
     private String email;
     private ImageButton mProfileButton;
     private ImageButton mMatchesButton;
+    private TextView swipesLeftTxt;
 
     void getRecruitersForSwipingScreen_MainFunction(final String candidateMail) {
         getRecruitersForSwipingScreen_CollectDataAboutCandidate(candidateMail);
@@ -153,6 +155,21 @@ public class CanMainActivity extends AppCompatActivity {
         }
     }
 
+    void SwipesLeftUpdate(final String candidateMail)
+    {
+        candidatesCollection.document(candidateMail)
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
+                        swipesLeftTxt.setText(String.format("%d Left",documentSnapshot.getLong(NUMBER_OF_SWIPES_LEFT_KEY)));
+                    }
+                });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -171,6 +188,7 @@ public class CanMainActivity extends AppCompatActivity {
         jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
         mAuth = FirebaseAuth.getInstance();
         email = mAuth.getCurrentUser().getEmail();
+
         //swipeView initialization
         mProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -187,6 +205,8 @@ public class CanMainActivity extends AppCompatActivity {
             }
         });
         mSwipeView = findViewById(R.id.swipeView);
+        swipesLeftTxt = findViewById(R.id.leftSwipedTxt);
+        SwipesLeftUpdate(email);
         mContext = getApplicationContext();
         int bottomMargin = Utils.dpToPx(150);
         Point windowSize = Utils.getDisplaySize(getWindowManager());
