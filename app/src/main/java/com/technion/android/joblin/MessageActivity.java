@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,6 +32,7 @@ public class MessageActivity extends AppCompatActivity {
     ImageView profileImage;
     TextView profileName;
     String otherEmail;
+    ImageView backButton;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
@@ -49,11 +52,19 @@ public class MessageActivity extends AppCompatActivity {
         intent = getIntent();
         profileName = findViewById(R.id.profileMessageName);
         profileImage = findViewById(R.id.profileMessageImage);
+        backButton = findViewById(R.id.profile_back_button);
+        backButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         otherEmail = intent.getStringExtra("email");
         if(intent.getStringExtra("type").equals("rec"))
             getRecruiter(otherEmail);
         else
             getCandidate(otherEmail);
+
     }
     void getCandidate(final String email) {
         DocumentReference docRef = candidatesCollection.document(email);
