@@ -13,9 +13,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
@@ -49,6 +46,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import cn.pedant.SweetAlert.SweetAlertDialog.OnSweetClickListener;
 import kotlin.Unit;
 
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
@@ -114,7 +113,8 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         Scope,
         DescTitle,
         Desc,
-        Submit
+        Submit,
+        Cancel
     }
 
     void insertCandidate(Candidate candidate) {
@@ -146,7 +146,6 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 dialog.hide();
-
                 finish();
             }
         });
@@ -406,6 +405,23 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
             return Unit.INSTANCE;
         });
         elements.add(submit);
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        new SweetAlertDialog(this,SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Are you sure?")
+                .setContentText("Your changes won't be saved")
+                .setConfirmText("Yes")
+                .setConfirmClickListener(new OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        finish();
+                    }
+                })
+                .setCancelText("No")
+                .show();
     }
 
     @Override
