@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -20,7 +21,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mindorks.placeholderview.SwipeDecor;
@@ -34,6 +37,7 @@ import java.util.List;
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORY_KEY;
+import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SWIPES_LEFT_KEY;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.TAG;
@@ -51,6 +55,7 @@ public class CanMainActivity extends AppCompatActivity {
     private String email;
     private ImageButton mProfileButton;
     private ImageButton mMatchesButton;
+    private TextView swipesLeftTxt;
 
     void getRecruitersForSwipingScreen_MainFunction(final String candidateMail) {
         getRecruitersForSwipingScreen_CollectDataAboutCandidate(candidateMail);
@@ -80,24 +85,22 @@ public class CanMainActivity extends AppCompatActivity {
 
     void getRecruitersForSwipingScreen_FindRelevantRecruiters(final String candidateMail,
                                                               final String candidateJobCategory) {
-
         recruitersCollection
                 .whereEqualTo(JOB_CATEGORY_KEY, candidateJobCategory)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            List<Recruiter> listOfRecruiters = new ArrayList<>();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                Recruiter recruiter = document.toObject(Recruiter.class);
-                                listOfRecruiters.add(recruiter);
-                            }
-                            getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
                         }
+                        List<Recruiter> listOfRecruiters = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            Log.d(TAG, document.getId() + " => " + document.getData());
+                            Recruiter recruiter = document.toObject(Recruiter.class);
+                            listOfRecruiters.add(recruiter);
+                        }
+                        getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);
                     }
                 });
     }
@@ -152,6 +155,21 @@ public class CanMainActivity extends AppCompatActivity {
         }
     }
 
+    void SwipesLeftUpdate(final String candidateMail)
+    {
+        candidatesCollection.document(candidateMail)
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
+                        swipesLeftTxt.setText(String.format("%d Left",documentSnapshot.getLong(NUMBER_OF_SWIPES_LEFT_KEY)));
+                    }
+                });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -170,6 +188,7 @@ public class CanMainActivity extends AppCompatActivity {
         jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
         mAuth = FirebaseAuth.getInstance();
         email = mAuth.getCurrentUser().getEmail();
+
         //swipeView initialization
         mProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,6 +205,8 @@ public class CanMainActivity extends AppCompatActivity {
             }
         });
         mSwipeView = findViewById(R.id.swipeView);
+        swipesLeftTxt = findViewById(R.id.leftSwipedTxt);
+        SwipesLeftUpdate(email);
         mContext = getApplicationContext();
         int bottomMargin = Utils.dpToPx(150);
         Point windowSize = Utils.getDisplaySize(getWindowManager());
