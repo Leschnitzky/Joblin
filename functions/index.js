@@ -8,82 +8,100 @@ admin.initializeApp();
  * Followers add a flag to `/followers/{followedUid}/{followerUid}`.
  * Users save their device notification tokens to `/Users/{userEmail}/Token/{notificationToken}`.
  */
-exports.sendFollowerNotificationRecr = functions.database.ref('/Candidates/{candEmail}/Matches/{recrEmail}')
-    .onWrite(async (change, context) => {
-      const recruiterEmail = context.params.recrEmail;
-      const candEmail = context.params.candEmail;
+exports.sendFollowerNotificationCand = functions.firestore.document('/Recruiters/{recruiterEmail}/Matches/{candidateEmail}')
+    .onCreate((snap, context) => {
+
+      const recrEmail = context.params.recruiterEmail;
+      const candEmail = snap.data().email;
+
+      console.log(`CAND_LOG : CAND : ${candEmail}, RECR: ${recrEmail}`)
       // If un-follow we exit the function.
 
 
-      // Get the device's notification tokens.
-      const getDeviceTokensPromise = admin.database()
-          .ref(`/Users/${recruiterEmail}/Tokens`).once('value');
+      const db = admin.firestore();
 
-      // The snapshot to the user's tokens.
-      let tokensSnapshot;
+      var tokens = []; 
+      return db.collection("Users").doc(candEmail).collection("Tokens").get().then(snapshot => {
+        snapshot.forEach(doc => {
+            var newelement = doc.data()['token'];
+            console.log("ADDING ELEMENT "+ newelement);
+            tokens.push(newelement);
+        });
+      console.log(tokens);
 
-      // The array containing all the user's tokens.
-      let tokens;
-
-      const results = await Promise.all([getDeviceTokensPromise]);
-      tokensSnapshot = results[0];
-
-      // Check if there are any device tokens.
-      if (!tokensSnapshot.hasChildren()) {
-        return console.log('There are no notification tokens to send to.');
-      }
-      console.log('There are', tokensSnapshot.numChildren(), 'tokens to send notifications to.');
+        const name = db.collection("Recruiters").doc(recrEmail).then( 
+      		snapshot => {
+      			return snapshot.data()['name'];
+      		}
+      	).catch(function(error) {
+    	console.log("Error sending message:", error);
+    });
 
       // Notification details.
       const payload = {
-        notification: {
+      	// notification: {
+       //    title: 'You have a new match!',
+       //    body: `${recrEmail} is now matched with you.`,
+       //  },
+        data: {
           title: 'You have a new match!',
-          body: `${candEmail} is now following you.`,
+          body: `${name} is now matched with you.`,
         }
       };
 
-      // Listing all tokens as an array.
-      tokens = Object.keys(tokensSnapshot.val());
       // Send notifications to all tokens.
-      const response = await admin.messaging().sendToDevice(tokens, payload);
+
+      return admin.messaging().sendToDevice(tokens, payload);
+    }).catch(reason => {
+    });
 });
 
-exports.sendFollowerNotificationCand = functions.database.ref('/Recruiters/{recrEmail}/Matches/{candEmail}')
-    .onWrite(async (change, context) => {
-      const recruiterEmail = context.params.recrEmail;
-      const candEmail = context.params.candEmail;
+exports.sendFollowerNotificationRecr = functions.firestore.document('/Candidates/{candidateEmail}/Matches/{recruiterEmail}')
+    .onCreate((snap, context) => {
+
+      const candEmail = context.params.candidateEmail;
+      const recrEmail = snap.data()['email'];
+
+      console.log(recrEmail)
+
+      console.log(`CAND_LOG : CAND : ${candEmail}, RECR: ${recrEmail}`)
       // If un-follow we exit the function.
 
 
-      // Get the device's notification tokens.
-      const getDeviceTokensPromise = admin.database()
-          .ref(`/Users/${candEmail}/Tokens`).once('value');
+      const db = admin.firestore();
+      var name = "";
 
-      // The snapshot to the user's tokens.
-      let tokensSnapshot;
+      var tokens = []; 
+      console.log(`/Users/${recrEmail}/Tokens`);
+      return Promise.all([db.collection("Users").doc(recrEmail).collection("Tokens").get(),
+      		 db.collection('Candidates').doc(candEmail).get()]
+      	).then(values => {
+      		console.log(values);
+        values[0].forEach(doc => {
+            var newelement = doc.data()['token'];
+            console.log("ADDING ELEMENT "+ newelement);
+            tokens.push(newelement);
+        });
+        name = values[1].data()['name'];
+      console.log(tokens);
 
-      // The array containing all the user's tokens.
-      let tokens;
-
-      const results = await Promise.all([getDeviceTokensPromise]);
-      tokensSnapshot = results[0];
-
-      // Check if there are any device tokens.
-      if (!tokensSnapshot.hasChildren()) {
-        return console.log('There are no notification tokens to send to.');
-      }
-      console.log('There are', tokensSnapshot.numChildren(), 'tokens to send notifications to.');
 
       // Notification details.
       const payload = {
-        notification: {
+      	 // notification: {
+        //   title: 'You have a new match!',
+        //   body: `${candEmail} is now matched with you.`,
+        // },
+        data: {
           title: 'You have a new match!',
-          body: `${recrEmail} is now matched with you you.`,
+          body: `${name} is now matched with you.`,
         }
       };
 
-      // Listing all tokens as an array.
-      tokens = Object.keys(tokensSnapshot.val());
       // Send notifications to all tokens.
-      const response = await admin.messaging().sendToDevice(tokens, payload);
+
+      return admin.messaging().sendToDevice(tokens, payload);
+    }).catch(function(error) {
+    	console.log("Error sending message:", error);
+    });
 });

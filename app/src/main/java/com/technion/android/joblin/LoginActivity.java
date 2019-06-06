@@ -160,6 +160,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signIn() {
+        initFCM();
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         dialog.setMessage("Please wait...");
         dialog.setCancelable(false);
@@ -198,10 +199,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
 //        GoogleSignInAccount currentUser = GoogleSignIn.getLastSignedInAccount(this);
-        initFCM();
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+
 
         if(currentUser != null) {
             dialog.setMessage("Please wait...");
@@ -211,7 +212,7 @@ public class LoginActivity extends AppCompatActivity {
             mUserFirstName = account.getDisplayName();
             mUserLastName = account.getFamilyName();
             mUserPhoto = currentUser.getPhotoUrl();
-            isCandidateOrRecrInDB(currentUser.getEmail());
+            initFCM();
         }
     }
 
@@ -280,6 +281,7 @@ public void addTokenData(String email, String token) {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Log.d(TAG, "DocumentSnapshot successfully written!");
+                    isCandidateOrRecrInDB(email);
                 }
             })
             .addOnFailureListener(new OnFailureListener() {
@@ -292,8 +294,22 @@ public void addTokenData(String email, String token) {
 
 
     private void initFCM(){
-        String token = FirebaseInstanceId.getInstance().getToken();
-        Log.d(TAG, "initFCM: token: " + token);
-        addTokenData(mAuth.getCurrentUser().getEmail(),token);
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+
+                        // Log and toast
+                        addTokenData(mAuth.getCurrentUser().getEmail(),token);
+                    }
+                });
     }
 }

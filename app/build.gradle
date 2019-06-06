@@ -89,3 +89,7 @@ apply plugin: 'com.google.gms.google-services'
 repositories {
     mavenCentral()
 }
+
+dependencies {
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+}
