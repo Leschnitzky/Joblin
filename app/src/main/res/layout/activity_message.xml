@@ -17,7 +17,6 @@
             android:id="@+id/toolbar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/topPanel"
             android:layout_weight="1"
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
@@ -35,9 +34,9 @@
                 android:layout_width="@dimen/_40sdp"
                 android:layout_height="@dimen/_40sdp"
                 android:layout_marginLeft="@dimen/_20sdp"
+                android:scaleType="centerCrop"
                 app:civ_border_color="@color/colorAccent"
-                app:civ_border_width="@dimen/_1sdp"
-                android:scaleType="centerCrop" />
+                app:civ_border_width="@dimen/_1sdp" />
 
             <TextView
                 android:id="@+id/profileMessageName"
@@ -51,5 +50,40 @@
         </android.support.v7.widget.Toolbar>
 
     </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerViewMessages"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/topPanel"
+        android:layout_above="@id/message_panel"/>
+
+    <RelativeLayout
+        android:id="@+id/message_panel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/white"
+        android:padding="@dimen/_2sdp" >
+
+        <EditText
+            android:id="@+id/messageTxt"
+            android:layout_width="match_parent"
+            android:background="@android:color/transparent"
+            android:hint="@string/type_a_message"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/_16sdp"
+            android:layout_toLeftOf="@id/sendMessageBtn"
+            android:layout_centerVertical="true"/>
+
+        <ImageButton
+            android:id="@+id/sendMessageBtn"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_send_black_24dp" />
+    </RelativeLayout>
 
 </RelativeLayout>

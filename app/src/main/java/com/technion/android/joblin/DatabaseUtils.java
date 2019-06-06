@@ -31,6 +31,7 @@ class DatabaseUtils {
     static final String CANDIDATES_COLLECTION_NAME = "Candidates";
     static final String RECRUITERS_COLLECTION_NAME = "Recruiters";
     static final String JOB_CATEGORIES_COLLECTION_NAME = "JobCategories";
+    static final String CHATS_COLLECTION_NAME = "Chats";
     static final String USERS_COLLECTION_NAME = "Users";
     static final String TOKENS_COLLECTION_NAME = "Tokens";
     static final String ERRORS_COLLECTION_NAME = "Errors";

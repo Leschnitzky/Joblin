@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,9 +19,10 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.CHATS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
@@ -33,12 +36,14 @@ public class MessageActivity extends AppCompatActivity {
     TextView profileName;
     String otherEmail;
     ImageView backButton;
+    EditText messageTxt;
+    ImageButton sendButton;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
     CollectionReference recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
     CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
-    CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
+    CollectionReference chatsCollection = db.collection(CHATS_COLLECTION_NAME);
 
     private ImageView toProfileButton;
 
@@ -65,6 +70,15 @@ public class MessageActivity extends AppCompatActivity {
         else
             getCandidate(otherEmail);
 
+        messageTxt = findViewById(R.id.messageTxt);
+        sendButton = findViewById(R.id.sendMessageBtn);
+        sendButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Message message = new Message(currentUserMail,otherEmail,messageTxt.getText().toString());
+                sendMessage(message);
+            }
+        });
     }
     void getCandidate(final String email) {
         DocumentReference docRef = candidatesCollection.document(email);
@@ -98,4 +112,20 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
     }
+
+    void sendMessage(Message message) {
+
+        WriteBatch batch = db.batch();
+
+        DocumentReference chatDocumentReference = chatsCollection.document();
+        batch.set(chatDocumentReference, message);
+
+        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                messageTxt.setText("");
+            }
+        });
+    }
+
 }
