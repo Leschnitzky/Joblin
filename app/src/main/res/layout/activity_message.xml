@@ -56,7 +56,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/topPanel"
-        android:layout_above="@id/message_panel"/>
+        android:layout_above="@id/message_panel"
+        android:layout_marginBottom="@dimen/_5sdp"/>
 
     <RelativeLayout
         android:id="@+id/message_panel"
@@ -68,6 +69,7 @@
 
         <EditText
             android:id="@+id/messageTxt"
+            android:layout_marginLeft="@dimen/_5sdp"
             android:layout_width="match_parent"
             android:background="@android:color/transparent"
             android:hint="@string/type_a_message"
