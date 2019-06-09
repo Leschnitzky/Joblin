@@ -66,21 +66,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
-        Log.d(pushNotForDebug,"NANANA");
-
-        String notificationBody = "";
-        String notificationTitle = "";
-        String notificationData = "";
-        try{
-            notificationData = remoteMessage.getData().toString();
-            notificationTitle = remoteMessage.getData().get("title");
-            notificationBody = remoteMessage.getData().get("body");
-        }catch (NullPointerException e){
-            Log.e(TAG, "onMessageReceived: NullPointerException: " + e.getMessage() );
-        }
-        Log.d(TAG, "onMessageReceived: data: " + notificationData);
-        Log.d(TAG, "onMessageReceived: notification body: " + notificationBody);
-        Log.d(TAG, "onMessageReceived: notification title: " + notificationTitle);
 
         try {
             boolean foregroud = new ForegroundCheckTask().execute(getApplicationContext()).get();
@@ -91,9 +76,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 sendNotification(remoteMessage.getData().get("title"),remoteMessage.getData().get("body"));
             }
         } catch (ExecutionException e) {
-            e.printStackTrace();
         } catch (InterruptedException e) {
-            e.printStackTrace();
         }
 
 
@@ -137,7 +120,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
         mNotificationManager.notify(1, notificationBuilder.build());
 
-        Log.d("NOTIFICAION BUILT!","SENT!");
     }
 
     @Override
@@ -157,13 +139,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error writing document", e);
                     }
                 });
     }

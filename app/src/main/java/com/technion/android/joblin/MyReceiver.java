@@ -30,7 +30,6 @@ public class MyReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         Toast.makeText(context, "Alarm Triggered", Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
 
         recruitersCollection.get()
             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -38,24 +37,20 @@ public class MyReceiver extends BroadcastReceiver {
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            Log.d(TAG, document.getId() + " => " + document.getData());
                             document.getReference().update(NUMBER_OF_SWIPES_LEFT_KEY, User.totalNumberOfSwipes)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
                                         }
                                     })
                                     .addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "Error updating document", e);
                                         }
                                     });
 
                         }
                     } else {
-                        Log.d(TAG, "Error getting documents: ", task.getException());
                     }
                 }
             });
@@ -71,19 +66,16 @@ public class MyReceiver extends BroadcastReceiver {
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
-                                                Log.d(TAG, "DocumentSnapshot successfully updated!");
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
-                                                Log.w(TAG, "Error updating document", e);
                                             }
                                         });
 
                             }
                         } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
                 });

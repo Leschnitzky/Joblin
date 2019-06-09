@@ -21,7 +21,6 @@ public class CurrentActivityReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context sender, Intent intent) {
-        Log.v(TAG, "onReceive: finishing:" + receivingActivity.getClass().getSimpleName());
 
         //Should display pop up
         String title = intent.getStringExtra("Title");
