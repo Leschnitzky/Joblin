@@ -1,11 +1,13 @@
 package com.technion.android.joblin;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -69,14 +71,11 @@ public class CanMainActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         String candidateJobCategory = (String) document.get(JOB_CATEGORY_KEY);
                         getRecruitersForSwipingScreen_FindRelevantRecruiters(candidateMail, candidateJobCategory);
                     } else {
-                        Log.d(TAG, "No such document");
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
@@ -96,7 +95,6 @@ public class CanMainActivity extends AppCompatActivity {
                         }
                         List<Recruiter> listOfRecruiters = new ArrayList<>();
                         for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                            Log.d(TAG, document.getId() + " => " + document.getData());
                             Recruiter recruiter = document.toObject(Recruiter.class);
                             listOfRecruiters.add(recruiter);
                         }
@@ -115,12 +113,10 @@ public class CanMainActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             List<String> listOfRecruitersMailStrings = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
                                 listOfRecruitersMailStrings.add(document.getId());
                             }
                             getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped_Final(listOfRecruiters, listOfRecruitersMailStrings);
                         } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
                 });
@@ -281,6 +277,25 @@ public class CanMainActivity extends AppCompatActivity {
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+    }
+
+    private BroadcastReceiver currentActivityReceiver;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        currentActivityReceiver = new CurrentActivityReceiver(this);
+        LocalBroadcastManager.getInstance(this).
+                registerReceiver(currentActivityReceiver, CurrentActivityReceiver.CURRENT_ACTIVITY_RECEIVER_FILTER);
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).
+                unregisterReceiver(currentActivityReceiver);
+        currentActivityReceiver = null;
+        super.onPause();
     }
 
 

@@ -31,9 +31,18 @@
     <!--For recruiter-->
     <string name="location_recr">Please write the location your job will be in</string>
     <string name="required_scope">Please write your required job scope:</string>
-    <string name="category_recr" >Please choose the field of your job: </string>
-    <string name="education_recr" >Please write the required education level:</string>
+    <string name="category_recr">Please choose the field of your job: </string>
+    <string name="education_recr">Please write the required education level:</string>
     <string name="skills_recr">Please list your required skills for the job </string>
     <string name="description_recr">Please write a short description about your job</string>
+
+
+    <!--For FMC-->
+    <string name="fcm_message">FCM Message</string>
+    <string name="data_title">title</string>
+    <string name="data_body">body</string>
+    <string name="default_notification_channel_id">default</string>
+    <string name="title_activity_match_alert">MatchAlertActivity</string>
+    <string name="title_activity_match_alert_activty">MatchAlertActivty</string>
     <string name="type_a_message">Type a message</string>
 </resources>

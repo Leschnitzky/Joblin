@@ -118,8 +118,9 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
     }
 
     void insertCandidate(Candidate candidate) {
-//        Map<String, Object> candidateMapData = new HashMap<>();
-//        candidateMapData.put(AGE_KEY, candidate.getAge());
+//
+//
+//         candidateMapData.put(AGE_KEY, candidate.getAge());
 //        candidateMapData.put(EMAIL_KEY, candidate.getEmail());
 //        candidateMapData.put(JOB_CATEGORY_KEY, candidate.getJobCategory());
 //        candidateMapData.put(JOB_LOCATION_KEY, candidate.getJobLocation());
@@ -159,14 +160,11 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         candidate = document.toObject(Candidate.class);
                         setupForm();
                     } else {
-                        Log.d(TAG, "No such document");
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });

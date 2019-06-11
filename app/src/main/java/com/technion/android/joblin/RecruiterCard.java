@@ -157,7 +157,6 @@ public class RecruiterCard {
 
     @SwipeCancelState
     public void onSwipeCancelState(){
-        Log.d("EVENT", "onSwipeCancelState");
     }
 
     void candidateDoSwipe(final String candidateMail, final String recruiterMail, final Side side) {
@@ -169,21 +168,17 @@ public class RecruiterCard {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         Candidate candidate = document.toObject(Candidate.class);
                         if((side == Side.RIGHT) && (candidate.getNumberOfSwipesLeft() == 0)) {
-                            Log.d(TAG, "number of swipes is 0");
                             Utils.noMoreSwipesPopUp(mSwipeView.getContext());
                             mSwipeView.undoLastSwipe();
                         } else {
                             addSwipeDataForCandidate(candidateMail, recruiterMail, side);
                         }
                     } else {
-                        Log.d(TAG, "No such document");
                         Utils.errorPopUp(mSwipeView.getContext(),"");
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                     Utils.errorPopUp(mSwipeView.getContext(),"");
                 }
             }
@@ -251,7 +246,6 @@ public class RecruiterCard {
                         transaction.set(swipeDocRefOfFirst, firstSwipesMapData);
                     }
 
-                    Log.d(TAG, "DocumentSnapshot data: " + snapshotMainFirst.getData());
                     if(snapshotMainFirst.exists()) {
                         long numberOfSwipesLeft = snapshotMainFirst.getLong(NUMBER_OF_SWIPES_LEFT_KEY);
                         transaction.update(mainDocRefOfFirst, NUMBER_OF_SWIPES_LEFT_KEY, numberOfSwipesLeft - 1);
@@ -262,9 +256,7 @@ public class RecruiterCard {
             }).addOnSuccessListener(new OnSuccessListener<Boolean>() {
                 @Override
                 public void onSuccess(Boolean isMatch) {
-                    Log.d(TAG, "Transaction success!");
                     if(isMatch) {
-                        Log.d(TAG, "It is a match!");
                         Utils.matchPopUp(mSwipeView.getContext(),"recruiter");
                     }
                 }
@@ -282,8 +274,8 @@ public class RecruiterCard {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Log.d(TAG, "DocumentSnapshot successfully updated!");
                         }
+
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -298,24 +290,20 @@ public class RecruiterCard {
 
     @SwipeIn
     public void onSwipeIn(){
-        Log.d("EVENT", "onSwipedIn");
         candidateDoSwipe(swiper,mProfile.getEmail(),Side.RIGHT);
     }
 
     @SwipeOut
     public void onSwipedOut(){
-        Log.d("EVENT", "onSwipedOut");
         candidateDoSwipe(swiper,mProfile.getEmail(),Side.LEFT);
     }
 
     @SwipeInState
     public void onSwipeInState(){
-        Log.d("EVENT", "onSwipeInState");
     }
 
     @SwipeOutState
     public void onSwipeOutState(){
-        Log.d("EVENT", "onSwipeOutState");
     }
 
 }

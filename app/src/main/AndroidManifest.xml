@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.technion.android.joblin">
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -14,46 +14,70 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <receiver android:name=".MyReceiver"
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
+
+        <receiver
+            android:name=".MyReceiver"
             android:enabled="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <activity android:name=".RecMainActivity"
-        android:screenOrientation="portrait"></activity>
-        <activity android:name=".ChooseUserTypeActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".LoginActivity"
+        <activity
+            android:name=".RecMainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ChooseUserTypeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LoginActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CanMainActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".CandProfPrefActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".RecrProfPrefActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".CanMatchesActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".RecMatchesActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".CanMainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CandProfPrefActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".RecrProfPrefActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CanMatchesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".RecMatchesActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".RecrEditActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".CandEditActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".RecrEditPrefActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".CandEditPrefActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".RecrEditPrefActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CandEditPrefActivity"
+            android:screenOrientation="portrait" />
+
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
         <activity android:name=".MessageActivity" />
     </application>
 

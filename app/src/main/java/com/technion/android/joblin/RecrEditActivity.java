@@ -1,10 +1,12 @@
 package com.technion.android.joblin;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayout;
@@ -190,6 +192,25 @@ public class RecrEditActivity extends AppCompatActivity {
         super.onStart();
 
         getRecruiter(mAuth.getCurrentUser().getEmail());
+    }
+
+    private BroadcastReceiver currentActivityReceiver;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        currentActivityReceiver = new CurrentActivityReceiver(this);
+        LocalBroadcastManager.getInstance(this).
+                registerReceiver(currentActivityReceiver, CurrentActivityReceiver.CURRENT_ACTIVITY_RECEIVER_FILTER);
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).
+                unregisterReceiver(currentActivityReceiver);
+        currentActivityReceiver = null;
+        super.onPause();
     }
 }
 

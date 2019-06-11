@@ -1,11 +1,13 @@
 package com.technion.android.joblin;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -69,14 +71,11 @@ public class RecMainActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         String recruiterJobCategory = (String) document.get(JOB_CATEGORY_KEY);
                         getCandidatesForSwipingScreen_FindRelevantCandidates(recruiterMail, recruiterJobCategory);
                     } else {
-                        Log.d(TAG, "No such document");
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
@@ -91,12 +90,10 @@ public class RecMainActivity extends AppCompatActivity {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                         if (e != null) {
-                            Log.w(TAG, "Listen failed.", e);
                             return;
                         }
                         List<Candidate> listOfCandidates = new ArrayList<>();
                         for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                            Log.d(TAG, document.getId() + " => " + document.getData());
                             Candidate candidate = document.toObject(Candidate.class);
                             listOfCandidates.add(candidate);
                         }
@@ -115,12 +112,10 @@ public class RecMainActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             List<String> listOfCandidatesMailStrings = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
                                 listOfCandidatesMailStrings.add(document.getId());
                             }
                             getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped_Final(listOfCandidates, listOfCandidatesMailStrings);
                         } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
                 });
@@ -162,7 +157,6 @@ public class RecMainActivity extends AppCompatActivity {
                     @Override
                     public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                         if (e != null) {
-                            Log.w(TAG, "Listen failed.", e);
                             return;
                         }
                         swipesLeftTxt.setText(String.format("%d Left",documentSnapshot.getLong(NUMBER_OF_SWIPES_LEFT_KEY)));
@@ -175,7 +169,7 @@ public class RecMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe);
 
-        LoginActivity.getInstance().finish();
+//        LoginActivity.getInstance().finish();
 
         imageButton = findViewById(R.id.profile_Button);
         imageButton.setOnClickListener(new View.OnClickListener() {
@@ -280,5 +274,25 @@ public class RecMainActivity extends AppCompatActivity {
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+    }
+
+
+    private BroadcastReceiver currentActivityReceiver;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        currentActivityReceiver = new CurrentActivityReceiver(this);
+        LocalBroadcastManager.getInstance(this).
+                registerReceiver(currentActivityReceiver, CurrentActivityReceiver.CURRENT_ACTIVITY_RECEIVER_FILTER);
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).
+                unregisterReceiver(currentActivityReceiver);
+        currentActivityReceiver = null;
+        super.onPause();
     }
 }

@@ -168,14 +168,11 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         recruiter = document.toObject(Recruiter.class);
                         setupForm();
                     } else {
-                        Log.d(TAG, "No such document");
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });

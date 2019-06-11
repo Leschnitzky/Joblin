@@ -23,6 +23,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthCredential;
@@ -35,13 +37,20 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.TAG;
+import static com.technion.android.joblin.DatabaseUtils.TOKENS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.TOKEN_KEY;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
 public class LoginActivity extends AppCompatActivity {
@@ -81,7 +90,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d("Init", "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -153,6 +161,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signIn() {
+        initFCM();
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         dialog.setMessage("Please wait...");
         dialog.setCancelable(false);
@@ -171,7 +180,6 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                Log.d("BLABLA", "GOT ACCOUNT!");
                 mUserFirstName = account.getGivenName();
                 mUserLastName = account.getFamilyName();
                 mUserPhoto = account.getPhotoUrl();
@@ -181,7 +189,6 @@ public class LoginActivity extends AppCompatActivity {
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 // ...
-                Log.d("ANOTHER", e.getMessage());
             }
         }
     }
@@ -197,7 +204,9 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
+
         if(currentUser != null) {
+            initFCM();
             dialog.setMessage("Please wait...");
             dialog.setCancelable(false);
             dialog.setInverseBackgroundForced(false);
@@ -205,7 +214,7 @@ public class LoginActivity extends AppCompatActivity {
             mUserFirstName = account.getDisplayName();
             mUserLastName = account.getFamilyName();
             mUserPhoto = currentUser.getPhotoUrl();
-            isCandidateOrRecrInDB(currentUser.getEmail());
+            initFCM();
         }
     }
 
@@ -218,7 +227,6 @@ public class LoginActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         // Already a candidate
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         dialog.hide();
                         Intent intent = new Intent(LoginActivity.this, CanMainActivity.class);
                         startActivity(intent);
@@ -227,7 +235,6 @@ public class LoginActivity extends AppCompatActivity {
                         isRecruiterInDB(email);
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
@@ -243,7 +250,6 @@ public class LoginActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         // Tis a recruiter
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         dialog.hide();
 
                         Intent intent = new Intent(LoginActivity.this, RecMainActivity.class);
@@ -251,7 +257,6 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         // Not a Cand nor Recr
                         // Logged in with google, just need to choose
-                        Log.d(TAG, "No such document");
 
 
                         Intent intent = new Intent(LoginActivity.this, ChooseUserTypeActivity.class);
@@ -262,9 +267,49 @@ public class LoginActivity extends AppCompatActivity {
                         dialog.hide();
                     }
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
                 }
             }
         });
+    }
+
+
+//    This is the insertion of the FCM Token
+public void addTokenData(String email, String token) {
+    Map<String, Object> userToken = new HashMap<>();
+    userToken.put(TOKEN_KEY, token);
+
+    usersCollection.document(email).collection(TOKENS_COLLECTION_NAME).document(token).set(userToken)
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    isCandidateOrRecrInDB(email);
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                }
+            });
+}
+
+
+    private void initFCM(){
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+
+                        // Log and toast
+                        addTokenData(mAuth.getCurrentUser().getEmail(),token);
+                    }
+                });
     }
 }
