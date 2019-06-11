@@ -172,7 +172,7 @@ public class RecMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe);
 
-        LoginActivity.getInstance().finish();
+//        LoginActivity.getInstance().finish();
 
         imageButton = findViewById(R.id.profile_Button);
         imageButton.setOnClickListener(new View.OnClickListener() {
