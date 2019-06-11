@@ -22,7 +22,7 @@ public class RecMatchesItemsListAdapter extends FirestoreRecyclerAdapter<Matches
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.activity_rec_matches_list_adapter, parent, false);
 
-        return new RecMatchesItemViewHolder(view);
+        return new RecMatchesItemViewHolder(view,parent.getContext());
     }
 
 }

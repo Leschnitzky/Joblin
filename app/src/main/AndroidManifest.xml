@@ -54,6 +54,7 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".CandEditPrefActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".MessageActivity" />
     </application>
 
 </manifest>

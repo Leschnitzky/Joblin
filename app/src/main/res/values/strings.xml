@@ -35,4 +35,5 @@
     <string name="education_recr" >Please write the required education level:</string>
     <string name="skills_recr">Please list your required skills for the job </string>
     <string name="description_recr">Please write a short description about your job</string>
+    <string name="type_a_message">Type a message</string>
 </resources>
