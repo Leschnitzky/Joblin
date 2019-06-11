@@ -90,12 +90,10 @@ public class RecMainActivity extends AppCompatActivity {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                         if (e != null) {
-                            Log.w(TAG, "Listen failed.", e);
                             return;
                         }
                         List<Candidate> listOfCandidates = new ArrayList<>();
                         for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                            Log.d(TAG, document.getId() + " => " + document.getData());
                             Candidate candidate = document.toObject(Candidate.class);
                             listOfCandidates.add(candidate);
                         }
@@ -159,7 +157,6 @@ public class RecMainActivity extends AppCompatActivity {
                     @Override
                     public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                         if (e != null) {
-                            Log.w(TAG, "Listen failed.", e);
                             return;
                         }
                         swipesLeftTxt.setText(String.format("%d Left",documentSnapshot.getLong(NUMBER_OF_SWIPES_LEFT_KEY)));

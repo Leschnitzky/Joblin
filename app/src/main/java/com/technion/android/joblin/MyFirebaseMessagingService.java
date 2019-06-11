@@ -80,7 +80,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
 
-        Log.d(pushNotForDebug,"SENT");
     }
 
     private void sendAlert(String title, String body) {

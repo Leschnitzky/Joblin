@@ -95,7 +95,6 @@ public class CanMainActivity extends AppCompatActivity {
                         }
                         List<Recruiter> listOfRecruiters = new ArrayList<>();
                         for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                            Log.d(TAG, document.getId() + " => " + document.getData());
                             Recruiter recruiter = document.toObject(Recruiter.class);
                             listOfRecruiters.add(recruiter);
                         }

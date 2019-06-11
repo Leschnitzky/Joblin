@@ -206,6 +206,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
         if(currentUser != null) {
+            initFCM();
             dialog.setMessage("Please wait...");
             dialog.setCancelable(false);
             dialog.setInverseBackgroundForced(false);
@@ -281,14 +282,12 @@ public void addTokenData(String email, String token) {
             .addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    Log.d(TAG, "DocumentSnapshot successfully written!");
                     isCandidateOrRecrInDB(email);
                 }
             })
             .addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Log.w(TAG, "Error writing document", e);
                 }
             });
 }
