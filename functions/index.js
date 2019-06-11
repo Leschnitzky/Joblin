@@ -21,28 +21,25 @@ exports.sendFollowerNotificationCand = functions.firestore.document('/Recruiters
       const db = admin.firestore();
 
       var tokens = []; 
-      return db.collection("Users").doc(candEmail).collection("Tokens").get().then(snapshot => {
-        snapshot.forEach(doc => {
+      return Promise.all([db.collection("Users").doc(recrEmail).collection("Tokens").get(),
+      		 db.collection('Recruiters').doc(recrEmail).get()]
+      	).then(values => {
+      		console.log(values);
+        values[0].forEach(doc => {
             var newelement = doc.data()['token'];
             console.log("ADDING ELEMENT "+ newelement);
             tokens.push(newelement);
         });
+        name = values[1].data()['name'];
       console.log(tokens);
 
-        const name = db.collection("Recruiters").doc(recrEmail).then( 
-      		snapshot => {
-      			return snapshot.data()['name'];
-      		}
-      	).catch(function(error) {
-    	console.log("Error sending message:", error);
-    });
 
       // Notification details.
       const payload = {
-      	// notification: {
-       //    title: 'You have a new match!',
-       //    body: `${recrEmail} is now matched with you.`,
-       //  },
+      	 // notification: {
+        //   title: 'You have a new match!',
+        //   body: `${candEmail} is now matched with you.`,
+        // },
         data: {
           title: 'You have a new match!',
           body: `${name} is now matched with you.`,
@@ -52,7 +49,8 @@ exports.sendFollowerNotificationCand = functions.firestore.document('/Recruiters
       // Send notifications to all tokens.
 
       return admin.messaging().sendToDevice(tokens, payload);
-    }).catch(reason => {
+    }).catch(function(error) {
+    	console.log("Error sending message:", error);
     });
 });
 
@@ -95,6 +93,63 @@ exports.sendFollowerNotificationRecr = functions.firestore.document('/Candidates
         data: {
           title: 'You have a new match!',
           body: `${name} is now matched with you.`,
+        }
+      };
+
+      // Send notifications to all tokens.
+
+      return admin.messaging().sendToDevice(tokens, payload);
+    }).catch(function(error) {
+    	console.log("Error sending message:", error);
+    });
+});
+
+
+exports.sendMessageToUser = functions.firestore.document('/Chats/{addedChat}')
+    .onCreate((snap, context) => {
+
+      const recieverMail = snap.data()['receiver'];
+      const senderMail = snap.data()['sender'];
+
+      console.log(recieverMail)
+
+      console.log(`REC_MAIL :${recieverMail}, SENDER_MAIL: ${senderMail}`)
+      // If un-follow we exit the function.
+
+
+      const db = admin.firestore();
+      var name = "";
+
+      var tokens = []; 
+      console.log(`/Users/${recieverMail}/Tokens`);
+      return Promise.all([db.collection("Users").doc(recieverMail).collection("Tokens").get(),
+      		 db.collection('Candidates').doc(senderMail).get(),
+      		 db.collection('Recruiters').doc(senderMail).get()
+      		 ]
+      	).then(values => {
+      		console.log(values);
+        values[0].forEach(doc => {
+            var newelement = doc.data()['token'];
+            console.log("ADDING ELEMENT "+ newelement);
+            tokens.push(newelement);
+        });
+        if(values[1].exists) {
+        	name = values[1].data()['name'];
+        } else if(values[2].exists) {
+        	name = values[2].data()['name'];
+        }
+      console.log(tokens);
+
+
+      // Notification details.
+      const payload = {
+      	 // notification: {
+        //   title: 'You have a new match!',
+        //   body: `${candEmail} is now matched with you.`,
+        // },
+        data: {
+          title: 'You have a new message!',
+          body: `${name} sent your a message`,
         }
       };
 
