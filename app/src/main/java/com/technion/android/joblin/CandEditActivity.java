@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayout;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -107,12 +108,16 @@ public class CandEditActivity extends AppCompatActivity {
         mProfileBackButton = findViewById(R.id.profile_back_button);
         mProfileEditButton = findViewById(R.id.bottom_background_cand);
 
+        Log.d("FIRST_BUTTON",mProfileBackButton.toString());
+
         mProfileBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
+
+        Log.d("SECOND_BUTTON",mProfileEditButton.toString());
 
         mProfileEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,7 +129,7 @@ public class CandEditActivity extends AppCompatActivity {
 
 
         String email = mAuth.getCurrentUser().getEmail();
-        getCandidate(email);
+//        getCandidate(email);
     }
 
     private String getSkillsString(List<String> skills, int maxLength)

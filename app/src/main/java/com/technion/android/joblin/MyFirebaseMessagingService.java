@@ -97,7 +97,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void sendNotification(String title, String body) {
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(getApplicationContext(), "default");
-        Intent ii = new Intent(getApplicationContext(), CanMainActivity.class);
+        Intent ii = new Intent(getApplicationContext(), LoginActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, ii, 0);
 
         notificationBuilder

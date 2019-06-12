@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayout;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -104,7 +105,8 @@ public class RecrEditActivity extends AppCompatActivity {
         moreDetailsTxtView = child.findViewById(R.id.moreDetailsTxtView);
         slidingPanel = child.findViewById(R.id.slidingpanel);
         mProfileBackButton = findViewById(R.id.recr_edit_back_button);
-        mProfileEditButton = findViewById(R.id.bottom_background_recr);
+        mProfileEditButton = findViewById(R.id.gearwheel_recr);
+
 
         mProfileBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,6 +115,7 @@ public class RecrEditActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
 
         mProfileEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,7 +126,7 @@ public class RecrEditActivity extends AppCompatActivity {
         });
 
         String email = mAuth.getCurrentUser().getEmail();
-        getRecruiter(email);
+//        getRecruiter(email);      We use this twice, once in onCreate and once in onStart
     }
 
     private String getSkillsString(List<String> skills, int maxLength)
