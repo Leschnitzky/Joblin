@@ -73,15 +73,17 @@ public class RecrEditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recr_edit);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_recr);
-        toolbar.setTitle("");
-        setSupportActionBar(toolbar);
 
-        dialog = new ProgressDialog(RecrEditActivity.this);
+        dialog = new ProgressDialog(this);
         dialog.setMessage("Retrieving user information...");
         dialog.setCancelable(false);
         dialog.setInverseBackgroundForced(false);
         dialog.show();
+
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_recr);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
 
         rec_profile = findViewById(R.id.recr_cardprofile);
         rec_card = findViewById(R.id.rec_cardview);
@@ -176,17 +178,16 @@ public class RecrEditActivity extends AppCompatActivity {
                             public void onPanelStateChanged(android.view.View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
                             }
                         });
-                        dialog.hide();
                     } else {
-                        dialog.hide();
                         Toast.makeText(RecrEditActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    dialog.hide();
                     Toast.makeText(RecrEditActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
+        dialog.hide();
     }
 
 

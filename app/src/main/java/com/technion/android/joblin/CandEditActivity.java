@@ -190,6 +190,7 @@ public class CandEditActivity extends AppCompatActivity {
                 }
             }
         });
+        dialog.hide();
 
     }
 
