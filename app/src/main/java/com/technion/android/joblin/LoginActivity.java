@@ -1,6 +1,5 @@
 package com.technion.android.joblin;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -32,12 +31,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.auth.UserInfo;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
@@ -99,7 +96,6 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
-
                             //Will check and advance the user to choose if that's his first time
                             isCandidateOrRecrInDB(user.getEmail());
 //
@@ -161,7 +157,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signIn() {
-        initFCM();
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         dialog.setMessage("Please wait...");
         dialog.setCancelable(false);
@@ -183,7 +178,6 @@ public class LoginActivity extends AppCompatActivity {
                 mUserFirstName = account.getGivenName();
                 mUserLastName = account.getFamilyName();
                 mUserPhoto = account.getPhotoUrl();
-
                 firebaseAuthWithGoogle(account);
 
             } catch (ApiException e) {
@@ -206,7 +200,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
         if(currentUser != null) {
-            initFCM();
             dialog.setMessage("Please wait...");
             dialog.setCancelable(false);
             dialog.setInverseBackgroundForced(false);
@@ -215,6 +208,7 @@ public class LoginActivity extends AppCompatActivity {
             mUserLastName = account.getFamilyName();
             mUserPhoto = currentUser.getPhotoUrl();
             initFCM();
+            isCandidateOrRecrInDB(currentUser.getEmail());
         }
     }
 
@@ -234,7 +228,6 @@ public class LoginActivity extends AppCompatActivity {
                         // Not a Cand, check if recruiter
                         isRecruiterInDB(email);
                     }
-                } else {
                 }
             }
         });
@@ -251,14 +244,12 @@ public class LoginActivity extends AppCompatActivity {
                     if (document.exists()) {
                         // Tis a recruiter
                         dialog.hide();
-
                         Intent intent = new Intent(LoginActivity.this, RecMainActivity.class);
                         startActivity(intent);
                     } else {
                         // Not a Cand nor Recr
                         // Logged in with google, just need to choose
-
-
+                        initFCM();
                         Intent intent = new Intent(LoginActivity.this, ChooseUserTypeActivity.class);
                         intent.putExtra(FIRST_NAME_KEY,mUserFirstName);
                         intent.putExtra(LAST_NAME_KEY,mUserLastName);
@@ -266,7 +257,6 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(intent);
                         dialog.hide();
                     }
-                } else {
                 }
             }
         });
@@ -282,7 +272,6 @@ public void addTokenData(String email, String token) {
             .addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    isCandidateOrRecrInDB(email);
                 }
             })
             .addOnFailureListener(new OnFailureListener() {
