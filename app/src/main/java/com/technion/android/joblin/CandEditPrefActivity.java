@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
@@ -54,7 +53,6 @@ import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NA
 import static com.technion.android.joblin.DatabaseUtils.EMAIL_KEY;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.TAG;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
 public class CandEditPrefActivity extends AppCompatActivity implements OnFormElementValueChangedListener {
@@ -314,7 +312,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         scope.setArrayAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item, scopesList));
 
         scope.setTitle("Scope");
-        scope.setHint("Enter scope here");
+        scope.setHint("Click here to choose");
         scope.setValue(candidate.getScope());
         scope.setCenterText(true);
         scope.setRequired(true);
@@ -350,7 +348,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         BaseFormElement skill1 = elements.get(Tag.Skill1.ordinal());
         List<String> skills = new ArrayList<>();
         submit.getValueObservers().add((newValue, element) -> {
-            boolean min_age = Utils.getAge(birthdate.getDateValue(),Timestamp.now().toDate())>=13;
+            boolean min_age = Utils.getAge(birthdate.getValue().getTime(),Timestamp.now().toDate())>=13;
             if(formBuilder.isValidForm() && min_age) {
                 dialog.setMessage("Please wait...");
                 dialog.setCancelable(false);
