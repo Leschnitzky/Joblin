@@ -25,6 +25,13 @@ public class CurrentActivityReceiver extends BroadcastReceiver {
         //Should display pop up
         String title = intent.getStringExtra("Title");
         String body = intent.getStringExtra("Body");
-        Toast.makeText(receivingActivity,body, Toast.LENGTH_SHORT).show();
+        
+        String[] splitted = title.split(" ");
+        //A new message
+        if( splitted[splitted.length - 1].equals("message"))  {
+            // Messages shouldn't recieve a pop-up
+        } else {
+            Toast.makeText(receivingActivity,body, Toast.LENGTH_SHORT).show();
+        }
     }
 }

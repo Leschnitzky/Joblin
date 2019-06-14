@@ -295,4 +295,7 @@ public class RecMainActivity extends AppCompatActivity {
         currentActivityReceiver = null;
         super.onPause();
     }
+
+
+
 }
