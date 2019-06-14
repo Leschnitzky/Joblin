@@ -12,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
@@ -309,7 +308,9 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         BaseFormElement skill1 = elements.get(Tag.Skill1.ordinal());
         List<String> skills = new ArrayList<>();
         submit.getValueObservers().add((newValue, element) -> {
-            boolean min_age = Utils.getAge(birthdate.getDateValue(),Timestamp.now().toDate())>=13;
+            boolean min_age = false;
+            if(birthdate.isValid())
+                min_age = Utils.getAge(birthdate.getValue().getTime(),Timestamp.now().toDate())>=13;
             if(formBuilder.isValidForm() && min_age) {
                 dialog.setMessage("Please wait...");
                 dialog.setCancelable(false);

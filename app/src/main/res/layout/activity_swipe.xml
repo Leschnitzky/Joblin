@@ -29,8 +29,8 @@
                 android:src="@drawable/ic_person_black_36dp" />
 
             <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center"
                 android:src="@drawable/logojoblin_64x64_green" />
 

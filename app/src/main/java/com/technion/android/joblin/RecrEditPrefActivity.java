@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
@@ -49,7 +48,6 @@ import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NA
 import static com.technion.android.joblin.DatabaseUtils.EMAIL_KEY;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.TAG;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
 public class RecrEditPrefActivity extends AppCompatActivity implements OnFormElementValueChangedListener {
@@ -258,7 +256,8 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
         scope.setArrayAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item, scopesList));
 
         scope.setTitle("Scope");
-        scope.setHint("Enter scope here");
+        scope.setDialogTitle("Scope");
+        scope.setHint("Click here to choose");
         scope.setValue(recruiter.getRequiredScope());
         scope.setCenterText(true);
         scope.setRequired(true);

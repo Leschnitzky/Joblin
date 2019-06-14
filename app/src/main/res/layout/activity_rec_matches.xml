@@ -22,15 +22,15 @@
             android:theme="?attr/actionBarTheme">
 
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_message_black_36dp" />
 
             <ImageView
                 android:id="@+id/profile_back_button"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
                 android:layout_gravity="left"
                 android:layout_marginRight="20dp"
                 android:src="@drawable/logojoblin_64x64_green" />

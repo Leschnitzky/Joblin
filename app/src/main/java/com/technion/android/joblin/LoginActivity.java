@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -130,6 +131,7 @@ public class LoginActivity extends AppCompatActivity {
         privatepolicy.setText(
                 Html.fromHtml(
                         "<a href=\"https://joblin.flycricket.io/privacy.html\">Privacy Policy</a>"));
+        privatepolicy.setLinkTextColor(Color.BLACK);
         privatepolicy.setMovementMethod(LinkMovementMethod.getInstance());
 
         // Configure sign-in to request the user's ID, email address, and basic
