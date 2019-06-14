@@ -53,6 +53,15 @@ public class Utils {
                 .show();
     }
 
+    public static void resetSwipesPopUp(Context context)
+    {
+        new SweetAlertDialog(context)
+                .setTitleText("It's a brand new day!")
+                .setContentText("Your swipes amount has been renewed")
+                .setConfirmText("Great!")
+                .show();
+    }
+
     public static void noMoreSwipesPopUp(Context context)
     {
         new SweetAlertDialog(context)
