@@ -25,7 +25,7 @@ public class CurrentActivityReceiver extends BroadcastReceiver {
         //Should display pop up
         String title = intent.getStringExtra("Title");
         String body = intent.getStringExtra("Body");
-        
+
         String[] splitted = title.split(" ");
         //A new message
         if( splitted[splitted.length - 1].equals("message"))  {
