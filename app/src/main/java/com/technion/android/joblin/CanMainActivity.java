@@ -1,14 +1,18 @@
 package com.technion.android.joblin;
 
+import android.Manifest.permission;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,7 +21,10 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -58,6 +65,7 @@ public class CanMainActivity extends AppCompatActivity {
     private ImageButton mProfileButton;
     private ImageButton mMatchesButton;
     private TextView swipesLeftTxt;
+    private FusedLocationProviderClient fusedLocationClient;
 
     void getRecruitersForSwipingScreen_MainFunction(final String candidateMail) {
         getRecruitersForSwipingScreen_CollectDataAboutCandidate(candidateMail);
@@ -127,9 +135,9 @@ public class CanMainActivity extends AppCompatActivity {
                                                                                         final List<String> listOfRecruitersMailStrings) {
 
         List<Recruiter> finalListOfRecruiters = new ArrayList<>();
-        for(Recruiter recruiter : listOfRecruiters) {
+        for (Recruiter recruiter : listOfRecruiters) {
             String recruiterMail = recruiter.getEmail();
-            if(! listOfRecruitersMailStrings.contains(recruiterMail)) {
+            if (!listOfRecruitersMailStrings.contains(recruiterMail)) {
                 Recruiter recruiterToAdd = new Recruiter(recruiter);
                 finalListOfRecruiters.add(recruiterToAdd);
             }
@@ -141,38 +149,38 @@ public class CanMainActivity extends AppCompatActivity {
 
 
     void getRecruitersForSwipingScreen(List<Recruiter> listofRecruiters) {
-        for(Recruiter profile : listofRecruiters){
-            if(rl.isStart())
-            {
+        for (Recruiter profile : listofRecruiters) {
+            if (rl.isStart()) {
                 rl.stop();
                 findViewById(R.id.nothingNewTxt).animate().scaleY(0).start();
             }
-            mSwipeView.addView(new RecruiterCard(mContext, profile, mSwipeView,email));
+            mSwipeView.addView(new RecruiterCard(mContext, profile, mSwipeView, email));
         }
     }
 
-    void SwipesLeftUpdate(final String candidateMail)
-    {
+    void SwipesLeftUpdate(final String candidateMail) {
         candidatesCollection.document(candidateMail)
                 .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
                     public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                         if (e != null) {
-                            Utils.errorPopUp(CanMainActivity.this,e.getMessage());
+                            Utils.errorPopUp(CanMainActivity.this, e.getMessage());
                             return;
                         }
-                        swipesLeftTxt.setText(String.format("%d Left",documentSnapshot.getLong(NUMBER_OF_SWIPES_LEFT_KEY)));
+                        swipesLeftTxt.setText(String.format("%d Left", documentSnapshot.getLong(NUMBER_OF_SWIPES_LEFT_KEY)));
                     }
                 });
+    }
+
+    void changeLocation(final String candidateMail) {
+
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe);
-
         LoginActivity.getInstance().finish();
-
 
         //Database initialization
         db = FirebaseFirestore.getInstance();
@@ -184,6 +192,23 @@ public class CanMainActivity extends AppCompatActivity {
         jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
         mAuth = FirebaseAuth.getInstance();
         email = mAuth.getCurrentUser().getEmail();
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+
+        if (ActivityCompat.checkSelfPermission(this, permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+
+                        }
+                    }
+                });
 
         //swipeView initialization
         mProfileButton.setOnClickListener(new View.OnClickListener() {
