@@ -5,8 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.util.Log;
-import android.widget.Toast;
 
 public class CurrentActivityReceiver extends BroadcastReceiver {
     private static final String TAG = CurrentActivityReceiver.class.getSimpleName();
@@ -31,7 +29,7 @@ public class CurrentActivityReceiver extends BroadcastReceiver {
         if( splitted[splitted.length - 1].equals("message"))  {
             // Messages shouldn't recieve a pop-up
         } else {
-            Toast.makeText(receivingActivity,body, Toast.LENGTH_SHORT).show();
+            Utils.newMatchPopUp(receivingActivity,title,splitted[0]);
         }
     }
 }

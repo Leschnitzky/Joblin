@@ -41,8 +41,8 @@ exports.sendFollowerNotificationCand = functions.firestore.document('/Recruiters
         //   body: `${candEmail} is now matched with you.`,
         // },
         data: {
-          title: 'You have a new match!',
-          body: `${name} is now matched with you.`,
+          title: 'recruiter match',
+          body: `${name} is now matched with you!`,
         }
       };
 
@@ -91,8 +91,8 @@ exports.sendFollowerNotificationRecr = functions.firestore.document('/Candidates
         //   body: `${candEmail} is now matched with you.`,
         // },
         data: {
-          title: 'You have a new match!',
-          body: `${name} is now matched with you.`,
+          title: 'candidate match',
+          body: `${name} is now matched with you!`,
         }
       };
 

@@ -39,7 +39,16 @@ public class Utils {
     {
         new SweetAlertDialog(context)
                 .setTitleText("It's a match!")
-                .setContentText("Now you can contact the " + type + ".")
+                .setContentText("You can contact this " + type + " now.")
+                .setConfirmText("Great!")
+                .show();
+    }
+
+    public static void newMatchPopUp(Context context, String title, String type)
+    {
+        new SweetAlertDialog(context)
+                .setTitleText(title)
+                .setContentText("You can contact this " + type + " now.")
                 .setConfirmText("Great!")
                 .show();
     }
