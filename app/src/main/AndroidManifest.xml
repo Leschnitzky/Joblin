@@ -8,9 +8,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/logojoblin_2"
+        android:icon="@mipmap/joblinicon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/joblinicon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
