@@ -158,7 +158,7 @@ public class CanMainActivity extends AppCompatActivity {
                     @Override
                     public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                         if (e != null) {
-                            Log.w(TAG, "Listen failed.", e);
+                            Utils.errorPopUp(CanMainActivity.this,e.getMessage());
                             return;
                         }
                         swipesLeftTxt.setText(String.format("%d Left",documentSnapshot.getLong(NUMBER_OF_SWIPES_LEFT_KEY)));

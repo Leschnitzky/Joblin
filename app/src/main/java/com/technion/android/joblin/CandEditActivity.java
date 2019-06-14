@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.aminography.redirectglide.GlideApp;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -182,11 +181,11 @@ public class CandEditActivity extends AppCompatActivity {
                         dialog.hide();
                     } else {
                         dialog.hide();
-                        Toast.makeText(CandEditActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Utils.errorPopUp(CandEditActivity.this,task.getException().getMessage());
                     }
                 } else {
                     dialog.hide();
-                    Toast.makeText(CandEditActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    Utils.errorPopUp(CandEditActivity.this,task.getException().getMessage());
                 }
             }
         });

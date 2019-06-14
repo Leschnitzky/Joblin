@@ -9,7 +9,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
@@ -40,7 +39,6 @@ import java.util.List;
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.CHATS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.TAG;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
 
@@ -162,7 +160,7 @@ public class MessageActivity extends AppCompatActivity {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                         if (e != null) {
-                            Log.w(TAG, "Listen failed.", e);
+                            Utils.errorPopUp(MessageActivity.this,e.getMessage());
                             return;
                         }
                         chat.clear();
