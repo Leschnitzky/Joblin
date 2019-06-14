@@ -16,19 +16,18 @@
         tools:targetApi="lollipop">
 
         <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="@dimen/_36sdp"
+            android:layout_height="@dimen/_36sdp"
             android:layout_gravity="center"
-            android:src="@drawable/baseline_person_green_18"
-            />
+            android:src="@drawable/ic_person_black_36dp" />
+
         <ImageView
             android:id="@+id/profile_back_button"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="@dimen/_26sdp"
+            android:layout_height="@dimen/_26sdp"
             android:layout_gravity="right"
             android:layout_marginRight="20dp"
-            android:src="@drawable/logojoblin_64x64_green"
-            />
+            android:src="@drawable/logojoblin_64x64_green" />
     </android.support.v7.widget.Toolbar>
 
 
@@ -50,11 +49,11 @@
 
     <ImageView
         android:id="@+id/gearwheel_cand"
-        android:layout_width="@dimen/_48sdp"
-        android:layout_height="@dimen/_48sdp"
+        android:layout_width="@dimen/_52sdp"
+        android:layout_height="@dimen/_52sdp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/_15sdp"
-        android:src="@drawable/baseline_settings_green_48" />
+        android:src="@drawable/ic_settings_black_24dp" />
 
 </RelativeLayout>
