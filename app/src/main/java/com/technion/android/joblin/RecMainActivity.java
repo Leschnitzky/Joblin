@@ -225,7 +225,7 @@ public class RecMainActivity extends AppCompatActivity {
         swipesLeftTxt = findViewById(R.id.leftSwipedTxt);
         SwipesLeftUpdate(email);
         mContext = getApplicationContext();
-        int bottomMargin = Utils.dpToPx(170);
+        int bottomMargin = getResources().getDimensionPixelSize(R.dimen._130sdp);
         Point windowSize = Utils.getDisplaySize(getWindowManager());
         int padding = getResources().getDimensionPixelSize(R.dimen._7sdp);
         mSwipeView.getBuilder()
