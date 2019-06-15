@@ -1,6 +1,7 @@
 package com.technion.android.joblin;
 
 import android.content.Context;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayout;
 import android.util.Log;
@@ -96,21 +97,27 @@ public class RecruiterCard {
     @View(R.id.slidingpanel)
     SlidingUpPanelLayout slidingPanel;
 
+    @View(R.id.distanceTxt)
+    TextView distanceTxt;
+
     private Recruiter mProfile;
     private Context mContext;
     private SwipePlaceHolderView mSwipeView;
     private final String swiper;
+    private final Location swiper_loc;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
     CollectionReference recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
     CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
     CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
 
-    public RecruiterCard(Context context, Recruiter profile, SwipePlaceHolderView swipeView, final String swiper_Email) {
+    public RecruiterCard(Context context, Recruiter profile, SwipePlaceHolderView swipeView,
+                         final String swiper_Email, final Location swiper_location) {
         mContext = context;
         mProfile = profile;
         mSwipeView = swipeView;
         swiper = swiper_Email;
+        swiper_loc = swiper_location;
     }
 
     private String getSkillsString(List<String> skills, int maxLength)
@@ -133,7 +140,13 @@ public class RecruiterCard {
         fullEducationTxt.setText(mProfile.getRequiredEducation());
         SkillsTxt.setText(getSkillsString(mProfile.getRequiredSkillsList(),10));
         fullSkillsTxt.setText(getSkillsString(mProfile.getRequiredSkillsList(),20));
+        /*double distance = Utils.distFrom(swiper_loc.getLatitude(),swiper_loc.getLongitude(),
+                mProfile.getJobPoint().getLatitude(),mProfile.getJobPoint().getLongitude()) / 1000;*/
+        float[] distance = new float[1];
+        Location.distanceBetween(swiper_loc.getLatitude(),swiper_loc.getLongitude(),
+                mProfile.getJobPoint().getLatitude(),mProfile.getJobPoint().getLongitude(),distance);
         locationNameTxt.setText(mProfile.getJobLocation());
+        distanceTxt.setText(Math.round(distance[0]/1000) + " km away.");
         descTxt.setText(mProfile.getJobDescription());
 
         slidingPanel.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
