@@ -15,12 +15,13 @@ import android.widget.ArrayAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.Place.Field;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.WriteBatch;
 import com.thejuki.kformmaster.helper.FormBuildHelper;
 import com.thejuki.kformmaster.helper.FormLayouts;
@@ -34,7 +35,6 @@ import com.thejuki.kformmaster.model.FormPickerDropDownElement;
 import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +58,7 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
     Intent thisIntent;
     ProgressDialog dialog;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    String[] locationParts;
 
     @Override
 
@@ -190,7 +191,10 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
 
         location.setTitle("Location");
         location.setHint("Enter location here");
-        location.setPlaceFields(Collections.singletonList(Place.Field.NAME));
+        List<Field> fields = new ArrayList<>();
+        fields.add(Field.NAME);
+        fields.add(Field.LAT_LNG);
+        location.setPlaceFields(fields);
         location.setCenterText(true);
         location.setRequired(true);
         location.setAutocompleteActivityMode(AutocompleteActivityMode.OVERLAY);
@@ -313,6 +317,7 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
                     skills.add(elements.get(Tag.Skill2.ordinal()).getValueAsString());
                 if(!elements.get(Tag.Skill3.ordinal()).getValueAsString().isEmpty())
                     skills.add(elements.get(Tag.Skill3.ordinal()).getValueAsString());
+
                 Recruiter recr = new Recruiter(
                         mAuth.getCurrentUser().getEmail(),
                         thisIntent.getStringExtra(LoginActivity.FIRST_NAME_KEY),
@@ -321,7 +326,9 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
                         placename.getValueAsString(),
                         category.getValueAsString(),
                         scope.getValueAsString(),
-                        location.getValueAsString(),
+                        locationParts[0],
+                        new GeoPoint(Double.parseDouble(locationParts[1]),
+                                Double.parseDouble(locationParts[2])),
                         desc.getValueAsString(),
                         education.getValueAsString(),
                         skills
@@ -353,7 +360,11 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
     @Override
 
     public void onValueChanged(BaseFormElement<?> formElement) {
-
+        if(formElement.getTag()== Tag.Location.ordinal())
+        {
+            locationParts = formElement.getValueAsString().split(";");
+            formElement.setValue(locationParts[0]);
+        }
     }
 
     @Override

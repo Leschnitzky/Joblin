@@ -2,8 +2,6 @@ package com.technion.android.joblin;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
-import java.util.Calendar;
-import java.text.SimpleDateFormat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -15,6 +13,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
@@ -22,12 +21,30 @@ import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.technion.android.joblin.DatabaseUtils.*;
+import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.CURRENT_TIME_KEY;
+import static com.technion.android.joblin.DatabaseUtils.EMAIL_KEY;
+import static com.technion.android.joblin.DatabaseUtils.ERRORS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.ERROR_KEY;
+import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORY_KEY;
+import static com.technion.android.joblin.DatabaseUtils.MATCHES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SWIPES_LEFT_KEY;
+import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.SCOPES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.SCOPE_KEY;
+import static com.technion.android.joblin.DatabaseUtils.SIDE_KEY;
+import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.Side;
+import static com.technion.android.joblin.DatabaseUtils.TOKENS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.TOKEN_KEY;
+import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
 class DatabaseAPI {
 
@@ -201,6 +218,7 @@ class DatabaseAPI {
                 "http://image",
                 new Timestamp(new Date(96,10,5)),
                 "Haifa",
+                new GeoPoint(2,5),
                 "twice a week",
                 "Technion",
                 skillsList,
@@ -222,6 +240,7 @@ class DatabaseAPI {
                 "Computer Science",
                 "twice a week",
                 "Tel Aviv",
+                new GeoPoint(2,5),
                 "Building apps for android",
                 "CS",
                 skillsList);
@@ -410,6 +429,7 @@ class DatabaseAPI {
                 "Computer Science",
                 "Three times a week",
                 "Tel Aviv",
+                new GeoPoint(2,5),
                 "Building apps for android",
                 "High School graduate",
                 skillsList);
@@ -424,6 +444,7 @@ class DatabaseAPI {
                 "Goologolo",
                 "Full time",
                 "Haifa",
+                new GeoPoint(2,5),
                 "Building apps for ios",
                 "Kindergarden",
                 skillsList);
@@ -438,6 +459,7 @@ class DatabaseAPI {
                 "Computer Science",
                 "twice a week",
                 "Carmiel",
+                new GeoPoint(2,5),
                 "it's a secret job that can only be known when you have the special skills",
                 "Magic from Hogwarts",
                 new ArrayList<String> (Arrays.asList("Java","C#","abra kadabra")));
@@ -452,6 +474,7 @@ class DatabaseAPI {
                 "Media",
                 "Three times a week",
                 "Ramat Gan",
+                new GeoPoint(2,5),
                 "Speaking with people about arts",
                 "PHD",
                 skillsList);
@@ -466,6 +489,7 @@ class DatabaseAPI {
                 "IT",
                 "Three times a week",
                 "Eilat",
+                new GeoPoint(2,5),
                 "Configuration of IT services in windows",
                 "None",
                 skillsList);
@@ -480,6 +504,7 @@ class DatabaseAPI {
                 "Accounting",
                 "Three times a week",
                 "Ashdod",
+                new GeoPoint(2,5),
                 "Accounting for a big company",
                 "Graduate in Accounting",
                 skillsList);
@@ -494,6 +519,7 @@ class DatabaseAPI {
                 "Accounting",
                 "Three times a week",
                 "Eilat",
+                new GeoPoint(2,5),
                 "Accounting for a big company",
                 "Graduate in Accounting",
                 skillsList);
@@ -513,6 +539,7 @@ class DatabaseAPI {
                 "https://pbs.twimg.com/profile_images/972872769019850753/YTxFZF2x_400x400.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Tel Aviv",
+                new GeoPoint(2,5),
                 "Full Time",
                 "High School",
                 new ArrayList<String> (Arrays.asList("Java","C#")),
@@ -527,6 +554,7 @@ class DatabaseAPI {
                 "https://media.npr.org/assets/img/2015/11/24/ajeup0ayctw4ztltklrnuvtm-y4xulezgneawbqw4cs_custom-7aa29347d5da230c6101168c71549a7399302d0c-s1100-c15.jpg",
                 new Timestamp(new Date(2001,3,12)),
                 "Beer Sheva",
+                new GeoPoint(2,5),
                 "20 hours per month",
                 "Ort Barude",
                 new ArrayList<String> (Arrays.asList("C","Assembly","Writing songs")),
@@ -541,6 +569,7 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Haifa",
+                new GeoPoint(2,5),
                 "Twice a week",
                 "Technion",
                 skillsList,
@@ -555,6 +584,7 @@ class DatabaseAPI {
                 "https://pbs.twimg.com/profile_images/972872769019850753/YTxFZF2x_400x400.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Salem",
+                new GeoPoint(2,5),
                 "Night Shifts",
                 "Witches School of Salem",
                 new ArrayList<String> (Arrays.asList("abra kadabra","whoofoo","escaping")),
@@ -569,6 +599,7 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Jerusalem",
+                new GeoPoint(2,5),
                 "75% misra",
                 "Haward Univerity",
                 new ArrayList<String> (Arrays.asList("C#","angry birds")),
@@ -583,6 +614,7 @@ class DatabaseAPI {
                 "https://avatars1.githubusercontent.com/u/28152692?s=400&v=4",
                 new Timestamp(new Date(90,4,5)),
                 "Haifa",
+                new GeoPoint(2,5),
                 "Full Time",
                 "Technion instituation",
                 new ArrayList<String> (Arrays.asList("Java","Good at jokes")),
@@ -598,6 +630,7 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Eilat",
+                new GeoPoint(2,5),
                 "Three times a week",
                 "Tel Aviv University",
                 skillsList,
@@ -613,6 +646,7 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Jaffa",
+                new GeoPoint(2,5),
                 "Three times a week",
                 "Ben Gurion University",
                 skillsList,
@@ -628,6 +662,7 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Jaffa",
+                new GeoPoint(2,5),
                 "Three times a week",
                 "IDC",
                 skillsList,

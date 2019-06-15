@@ -1,5 +1,7 @@
 package com.technion.android.joblin;
 
+import com.google.firebase.firestore.GeoPoint;
+
 import java.util.List;
 
 public class Recruiter extends User {
@@ -8,6 +10,7 @@ public class Recruiter extends User {
     private String requiredScope;
     private String requiredEducation;
     private String jobLocation;
+    private GeoPoint jobPoint;
     private String jobDescription;
     private List<String> requiredSkillsList;
 
@@ -21,6 +24,7 @@ public class Recruiter extends User {
                      String jobCategory,
                      String requiredScope,
                      String jobLocation,
+                     GeoPoint jobPoint,
                      String jobDescription,
                      String requiredEducation,
                      List<String> requiredSkillsList) {
@@ -29,6 +33,7 @@ public class Recruiter extends User {
         this.workPlace = workplace;
         this.jobCategory = jobCategory;
         this.requiredScope = requiredScope;
+        this.jobPoint = jobPoint;
         this.jobLocation = jobLocation;
         this.jobDescription = jobDescription;
         this.requiredEducation = requiredEducation;
@@ -41,6 +46,7 @@ public class Recruiter extends User {
         this.jobCategory = other.jobCategory;
         this.requiredScope = other.requiredScope;
         this.requiredEducation = other.requiredEducation;
+        this.jobPoint = other.jobPoint;
         this.jobLocation = other.jobLocation;
         this.jobDescription = other.jobDescription;
         this.requiredSkillsList = other.requiredSkillsList;
@@ -74,8 +80,16 @@ public class Recruiter extends User {
         return jobLocation;
     }
 
-    public void setJobLocation(String jobLocation) {
-        this.jobLocation = jobLocation;
+    public void setJobLocation(String jobCity) {
+        this.jobLocation = jobCity;
+    }
+
+    public GeoPoint getJobPoint() {
+        return jobPoint;
+    }
+
+    public void setJobPoint(GeoPoint jobPoint) {
+        this.jobPoint = jobPoint;
     }
 
     public String getJobDescription() {

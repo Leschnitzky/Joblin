@@ -1,12 +1,14 @@
 package com.technion.android.joblin;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.List;
 
 public class Candidate extends User {
     private Timestamp birthday;
     private String jobLocation;
+    private GeoPoint jobPoint;
     private String scope;
     private String education;
     private List<String> skillsList;
@@ -21,6 +23,7 @@ public class Candidate extends User {
                      String imageUrl,
                      Timestamp birthDate,
                      String jobLocation,
+                     GeoPoint jobPoint,
                      String scope,
                      String education,
                      List<String> skillsList,
@@ -30,6 +33,7 @@ public class Candidate extends User {
         super(email, name, lastName, imageUrl);
         this.birthday = birthDate;
         this.jobLocation = jobLocation;
+        this.jobPoint = jobPoint;
         this.scope = scope;
         this.education = education;
         this.skillsList = skillsList;
@@ -41,6 +45,7 @@ public class Candidate extends User {
         super(other);
         this.birthday = other.birthday;
         this.jobLocation = other.jobLocation;
+        this.jobPoint = other.jobPoint;
         this.scope = other.scope;
         this.education = other.education;
         this.skillsList = other.skillsList;
@@ -53,6 +58,14 @@ public class Candidate extends User {
 
     public void setBirthday(Timestamp birthday) {
         this.birthday = birthday;
+    }
+
+    public GeoPoint getJobPoint() {
+        return jobPoint;
+    }
+
+    public void setjobPoint(GeoPoint jobPoint) {
+        this.jobPoint = jobPoint;
     }
 
     public String getJobLocation() {

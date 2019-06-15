@@ -15,7 +15,7 @@ import android.widget.ArrayAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.Place.Field;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,6 +23,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.WriteBatch;
 import com.thejuki.kformmaster.helper.FormBuildHelper;
 import com.thejuki.kformmaster.helper.FormLayouts;
@@ -39,7 +40,6 @@ import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -67,6 +67,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
     ProgressDialog dialog;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     Candidate candidate;
+    String[] locationParts;
 
     @Override
 
@@ -270,7 +271,10 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
 
         location.setTitle("Location");
         location.setHint("Enter location here");
-        location.setPlaceFields(Collections.singletonList(Place.Field.NAME));
+        List<Field> fields = new ArrayList<>();
+        fields.add(Field.NAME);
+        fields.add(Field.LAT_LNG);
+        location.setPlaceFields(fields);
         location.setCenterText(true);
         location.setRequired(true);
         location.setValue(candidate.getJobLocation());
@@ -360,13 +364,16 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
                     skills.add(elements.get(Tag.Skill2.ordinal()).getValueAsString());
                 if(!elements.get(Tag.Skill3.ordinal()).getValueAsString().isEmpty())
                     skills.add(elements.get(Tag.Skill3.ordinal()).getValueAsString());
+
                 Candidate cand = new Candidate(
                         mAuth.getCurrentUser().getEmail(),
                         name.getValueAsString(),
                         lastname.getValueAsString(),
                         mAuth.getCurrentUser().getPhotoUrl().toString(),
                         birthday,
-                        location.getValueAsString(),
+                        locationParts!=null ? locationParts[0] : location.getValueAsString(),
+                        locationParts!=null ? new GeoPoint(Double.parseDouble(locationParts[1]),
+                                Double.parseDouble(locationParts[2])) : candidate.getJobPoint(),
                         scope.getValueAsString(),
                         education.getValueAsString(),
                         skills,
@@ -421,9 +428,12 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
     }
 
     @Override
-
     public void onValueChanged(BaseFormElement<?> formElement) {
-
+        if(formElement.getTag()== Tag.Location.ordinal())
+        {
+            locationParts = formElement.getValueAsString().split(";");
+            formElement.setValue(locationParts[0]);
+        }
     }
 
     @Override
