@@ -33,6 +33,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mindorks.placeholderview.SwipeDecor;
@@ -172,8 +173,14 @@ public class CanMainActivity extends AppCompatActivity {
                 });
     }
 
-    void changeLocation(final String candidateMail) {
-
+    void changeLocation(final String candidateMail, Location location) {
+        candidatesCollection.document(candidateMail).update("location", new GeoPoint(location.getLatitude(),location.getLongitude()))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.w(TAG, "changed location");
+                    }
+                });
     }
 
     @Override
@@ -205,7 +212,7 @@ public class CanMainActivity extends AppCompatActivity {
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
-
+                            changeLocation(email,location);
                         }
                     }
                 });
