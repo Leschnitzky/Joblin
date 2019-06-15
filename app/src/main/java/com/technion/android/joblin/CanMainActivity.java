@@ -33,7 +33,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.mindorks.placeholderview.SwipeDecor;
@@ -227,7 +226,7 @@ public class CanMainActivity extends AppCompatActivity {
         swipesLeftTxt = findViewById(R.id.leftSwipedTxt);
         SwipesLeftUpdate(email);
         mContext = getApplicationContext();
-        int bottomMargin = Utils.dpToPx(150);
+        int bottomMargin = Utils.dpToPx(170);
         Point windowSize = Utils.getDisplaySize(getWindowManager());
         int padding = getResources().getDimensionPixelSize(R.dimen._7sdp);
         mSwipeView.getBuilder()

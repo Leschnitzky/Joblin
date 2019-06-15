@@ -146,7 +146,7 @@ public class RecruiterCard {
         Location.distanceBetween(swiper_loc.getLatitude(),swiper_loc.getLongitude(),
                 mProfile.getJobPoint().getLatitude(),mProfile.getJobPoint().getLongitude(),distance);
         locationNameTxt.setText(mProfile.getJobLocation());
-        distanceTxt.setText(Math.round(distance[0]/1000) + " km away.");
+        distanceTxt.setText(Math.round(distance[0]/1000) + " km away");
         descTxt.setText(mProfile.getJobDescription());
 
         slidingPanel.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
