@@ -92,7 +92,7 @@ public class CandEditActivity extends AppCompatActivity {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         PopupMenu popup = new PopupMenu(CandEditActivity.this, filter_spinner);
         //Inflating the Popup using xml file
-        popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
+        popup.getMenuInflater().inflate(R.menu.popup_menu_cand, popup.getMenu());
         int filter_method = sharedPrefs.getInt(getResources().getString(R.string.saved_filtering_method), 0);
         popup.getMenu().getItem(filter_method).setChecked(true);
         //registering popup with OnMenuItemClickListener

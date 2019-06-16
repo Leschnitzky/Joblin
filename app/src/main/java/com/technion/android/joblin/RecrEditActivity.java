@@ -4,7 +4,9 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -83,13 +85,19 @@ public class RecrEditActivity extends AppCompatActivity {
         dialog.show();
 
         filter_spinner = findViewById(R.id.filter_spinner);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         PopupMenu popup = new PopupMenu(RecrEditActivity.this, filter_spinner);
         //Inflating the Popup using xml file
-        popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
+        popup.getMenuInflater().inflate(R.menu.popup_menu_recr, popup.getMenu());
+        int filter_method = sharedPrefs.getInt(getResources().getString(R.string.saved_filtering_method), 0);
+        popup.getMenu().getItem(filter_method).setChecked(true);
         //registering popup with OnMenuItemClickListener
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 item.setChecked(!item.isChecked());
+                SharedPreferences.Editor editor = sharedPrefs.edit();
+                editor.putInt(getString(R.string.saved_filtering_method),item.getOrder());
+                editor.apply();
                 return true;
             }
         });
