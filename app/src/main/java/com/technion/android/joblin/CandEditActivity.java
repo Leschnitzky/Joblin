@@ -10,10 +10,13 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayout;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -66,7 +69,7 @@ public class CandEditActivity extends AppCompatActivity {
     ImageView mProfileBackButton;
     ImageView mProfileEditButton;
     Context mContext;
-
+    ImageView filter_spinner;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     @Override
@@ -83,6 +86,23 @@ public class CandEditActivity extends AppCompatActivity {
         dialog.setInverseBackgroundForced(false);
         dialog.show();
 
+        filter_spinner = findViewById(R.id.filter_spinner);
+        PopupMenu popup = new PopupMenu(CandEditActivity.this, filter_spinner);
+        //Inflating the Popup using xml file
+        popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
+        //registering popup with OnMenuItemClickListener
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                item.setChecked(!item.isChecked());
+                return true;
+            }
+        });
+        filter_spinner.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popup.show();//showing popup menu
+            }
+        });
 
         can_profile = findViewById(R.id.can_cardprofile);
         can_card = findViewById(R.id.can_cardview);

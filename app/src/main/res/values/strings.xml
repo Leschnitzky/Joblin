@@ -45,4 +45,6 @@
     <string name="title_activity_match_alert">MatchAlertActivity</string>
     <string name="title_activity_match_alert_activty">MatchAlertActivty</string>
     <string name="type_a_message">Type a message</string>
+
+
 </resources>
