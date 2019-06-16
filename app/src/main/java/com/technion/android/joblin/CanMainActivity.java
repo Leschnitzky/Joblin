@@ -96,11 +96,13 @@ public class CanMainActivity extends AppCompatActivity {
                         String candidateJobCategory = (String) document.get(JOB_CATEGORY_KEY);
                         GeoPoint candidateJobLocation = (GeoPoint) document.get(JOB_POINT_KEY);
                         String candidateJobScope = (String) document.get(SCOPE_KEY);
+                        Long candidateJobRadius = (Long) document.get("jobRadius");
                         int filter_method = sharedPrefs.getInt(getResources().getString(R.string.saved_filtering_method),Filter.CATEGORY.ordinal());
                         if(filter_method==Filter.CATEGORY.ordinal())
                             getRecruitersForSwipingScreen_FindRelevantRecruiters(candidateMail, candidateJobCategory);
                         else if(filter_method==Filter.DISTANCE.ordinal())
-                            getRecruitersForSwipingScreen_FindRelevantRecruitersWithDistance(candidateMail,candidateJobCategory,candidateJobLocation);
+                            getRecruitersForSwipingScreen_FindRelevantRecruitersWithDistance(candidateMail,candidateJobCategory,
+                                    candidateJobLocation,candidateJobRadius);
                         else if(filter_method==Filter.CITY.ordinal())
                             getRecruitersForSwipingScreen_FindRelevantRecruitersWithCity(candidateMail, candidateJobCategory,candidateJobLocation);
                         else
@@ -134,7 +136,8 @@ public class CanMainActivity extends AppCompatActivity {
 
     void getRecruitersForSwipingScreen_FindRelevantRecruitersWithDistance(final String candidateMail,
                                                                       final String candidateJobCategory,
-                                                                      final GeoPoint candidateLocation) {
+                                                                      final GeoPoint candidateLocation,
+                                                                          final Long radius) {
         GeoFirestore geoFirestore = new GeoFirestore(recruitersCollection);
         recruitersCollection
                 .whereEqualTo(JOB_CATEGORY_KEY, candidateJobCategory)
@@ -146,7 +149,7 @@ public class CanMainActivity extends AppCompatActivity {
                             return;
                         }
                         List<Recruiter> listOfRecruiters = new ArrayList<>();
-                        geoFirestore.queryAtLocation(candidateLocation,100).addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
+                        geoFirestore.queryAtLocation(candidateLocation,radius).addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
                             @Override
                             public void onDocumentEntered(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
                                 for (QueryDocumentSnapshot document : Objects.requireNonNull(queryDocumentSnapshots)) {

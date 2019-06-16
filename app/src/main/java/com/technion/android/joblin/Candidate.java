@@ -8,6 +8,7 @@ import java.util.List;
 public class Candidate extends User {
     private Timestamp birthday;
     private String jobLocation;
+    private Integer jobRadius;
     private GeoPoint jobPoint;
     private String scope;
     private String education;
@@ -24,6 +25,7 @@ public class Candidate extends User {
                      Timestamp birthDate,
                      String jobLocation,
                      GeoPoint jobPoint,
+                     Integer jobRadius,
                      String scope,
                      String education,
                      List<String> skillsList,
@@ -34,6 +36,7 @@ public class Candidate extends User {
         this.birthday = birthDate;
         this.jobLocation = jobLocation;
         this.jobPoint = jobPoint;
+        this.jobRadius = jobRadius;
         this.scope = scope;
         this.education = education;
         this.skillsList = skillsList;
@@ -46,6 +49,7 @@ public class Candidate extends User {
         this.birthday = other.birthday;
         this.jobLocation = other.jobLocation;
         this.jobPoint = other.jobPoint;
+        this.jobRadius = other.jobRadius;
         this.scope = other.scope;
         this.education = other.education;
         this.skillsList = other.skillsList;
@@ -66,6 +70,14 @@ public class Candidate extends User {
 
     public void setjobPoint(GeoPoint jobPoint) {
         this.jobPoint = jobPoint;
+    }
+
+    public Integer getJobRadius() {
+        return jobRadius;
+    }
+
+    public void setJobRadius(Integer jobRadius) {
+        this.jobRadius = jobRadius;
     }
 
     public String getJobLocation() {

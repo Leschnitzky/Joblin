@@ -370,10 +370,13 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
                         skills
                 );
                 insertRecruiter(recr);
+                GeoFirestore geoFirestore = new GeoFirestore(recruitersCollection);
                 if(locationParts!=null) {
-                    GeoFirestore geoFirestore = new GeoFirestore(recruitersCollection);
                     geoFirestore.setLocation(mAuth.getCurrentUser().getEmail(),
                             new GeoPoint(Double.parseDouble(locationParts[1]), Double.parseDouble(locationParts[2])));
+                }
+                else {
+                    geoFirestore.setLocation(mAuth.getCurrentUser().getEmail(), recruiter.getJobPoint());
                 }
             }
             else

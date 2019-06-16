@@ -37,6 +37,7 @@ import com.thejuki.kformmaster.model.FormPickerDateElement;
 import com.thejuki.kformmaster.model.FormPickerDateElement.DateHolder;
 import com.thejuki.kformmaster.model.FormPickerDropDownElement;
 import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
+import com.thejuki.kformmaster.model.FormSliderElement;
 
 import org.imperiumlabs.geofirestore.GeoFirestore;
 import org.jetbrains.annotations.NotNull;
@@ -109,6 +110,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         Skill3,
         Pref,
         Location,
+        Radius,
         Category,
         Scope,
         DescTitle,
@@ -260,6 +262,15 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         location.setAutocompleteActivityMode(AutocompleteActivityMode.OVERLAY);
         elements.add(location);
 
+        FormSliderElement slider = new FormSliderElement(Tag.Radius.ordinal());
+        slider.setValue(candidate.getJobRadius());
+        slider.setTitle("Distance (KM)");
+        slider.setMin(0);
+        slider.setMax(100);
+        slider.setSteps(5);
+        slider.setRequired(true);
+        elements.add(slider);
+
         FormPickerDropDownElement<ListItem> dropDown = new FormPickerDropDownElement<>(Tag.Category.ordinal());
         dropDown.setTitle("Category");
         dropDown.setDialogTitle("Category");
@@ -326,6 +337,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         BaseFormElement category = elements.get(Tag.Category.ordinal());
         BaseFormElement scope = elements.get(Tag.Scope.ordinal());
         BaseFormElement location = elements.get(Tag.Location.ordinal());
+        BaseFormElement radius = elements.get(Tag.Radius.ordinal());
         BaseFormElement desc = elements.get(Tag.Desc.ordinal());
         BaseFormElement education = elements.get(Tag.Education.ordinal());
         BaseFormElement skill1 = elements.get(Tag.Skill1.ordinal());
@@ -353,6 +365,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
                         locationParts!=null ? locationParts[0] : location.getValueAsString(),
                         locationParts!=null ? new GeoPoint(Double.parseDouble(locationParts[1]),
                                 Double.parseDouble(locationParts[2])) : candidate.getJobPoint(),
+                        Integer.parseInt(radius.getValueAsString()),
                         scope.getValueAsString(),
                         education.getValueAsString(),
                         skills,
@@ -360,10 +373,13 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
                         category.getValueAsString()
                 );
                 insertCandidate(cand);
+                GeoFirestore geoFirestore = new GeoFirestore(candidatesCollection);
                 if(locationParts!=null) {
-                    GeoFirestore geoFirestore = new GeoFirestore(candidatesCollection);
                     geoFirestore.setLocation(mAuth.getCurrentUser().getEmail(),
                             new GeoPoint(Double.parseDouble(locationParts[1]), Double.parseDouble(locationParts[2])));
+                }
+                else {
+                    geoFirestore.setLocation(mAuth.getCurrentUser().getEmail(), candidate.getJobPoint());
                 }
             }
             else

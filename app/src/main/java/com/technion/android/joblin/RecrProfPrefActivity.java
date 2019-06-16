@@ -34,6 +34,8 @@ import com.thejuki.kformmaster.model.FormMultiLineEditTextElement;
 import com.thejuki.kformmaster.model.FormPickerDropDownElement;
 import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
 
+import org.imperiumlabs.geofirestore.GeoFirestore;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -334,6 +336,9 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
                         skills
                 );
                 insertRecruiter(recr);
+                GeoFirestore geoFirestore = new GeoFirestore(recruitersCollection);
+                geoFirestore.setLocation(mAuth.getCurrentUser().getEmail(),
+                        new GeoPoint(Double.parseDouble(locationParts[1]), Double.parseDouble(locationParts[2])));
             }
             else
             {
