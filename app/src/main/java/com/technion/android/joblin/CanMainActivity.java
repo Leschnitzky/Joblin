@@ -43,6 +43,10 @@ import com.mindorks.placeholderview.SwipePlaceHolderView;
 import com.mindorks.placeholderview.listeners.ItemRemovedListener;
 import com.victor.loading.rotate.RotateLoading;
 
+import org.imperiumlabs.geofirestore.GeoFirestore;
+import org.imperiumlabs.geofirestore.callbacks.GeoQueryDataEventListener;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +56,8 @@ import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORY_KEY;
 import static com.technion.android.joblin.DatabaseUtils.JOB_POINT_KEY;
 import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SWIPES_LEFT_KEY;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.REQUIRED_SCOPE_KEY;
+import static com.technion.android.joblin.DatabaseUtils.SCOPE_KEY;
 import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.TAG;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
@@ -92,15 +98,16 @@ public class CanMainActivity extends AppCompatActivity {
                     if (document.exists()) {
                         String candidateJobCategory = (String) document.get(JOB_CATEGORY_KEY);
                         GeoPoint candidateJobLocation = (GeoPoint) document.get(JOB_POINT_KEY);
+                        String candidateJobScope = (String) document.get(SCOPE_KEY);
                         int filter_method = sharedPrefs.getInt(getResources().getString(R.string.saved_filtering_method),Filter.CATEGORY.ordinal());
                         if(filter_method==Filter.CATEGORY.ordinal())
                             getRecruitersForSwipingScreen_FindRelevantRecruiters(candidateMail, candidateJobCategory);
                         else if(filter_method==Filter.DISTANCE.ordinal())
-                            ;
+                            getRecruitersForSwipingScreen_FindRelevantRecruitersWithDistance(candidateMail,candidateJobCategory,candidateJobLocation);
                         else if(filter_method==Filter.CITY.ordinal())
                             getRecruitersForSwipingScreen_FindRelevantRecruitersWithCity(candidateMail, candidateJobCategory,candidateJobLocation);
                         else
-                            ;
+                            getRecruitersForSwipingScreen_FindRelevantRecruitersWithScope(candidateMail, candidateJobCategory,candidateJobScope);
                     } else {
                     }
                 } else {
@@ -131,12 +138,88 @@ public class CanMainActivity extends AppCompatActivity {
                 });
     }
 
+    void getRecruitersForSwipingScreen_FindRelevantRecruitersWithDistance(final String candidateMail,
+                                                                      final String candidateJobCategory,
+                                                                      final GeoPoint candidateLocation) {
+        GeoFirestore geoFirestore = new GeoFirestore(recruitersCollection);
+        recruitersCollection
+                .whereEqualTo(JOB_CATEGORY_KEY, candidateJobCategory)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
+                        List<Recruiter> listOfRecruiters = new ArrayList<>();
+                        geoFirestore.queryAtLocation(candidateLocation,100).addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
+                            @Override
+                            public void onDocumentEntered(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
+                                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                                    Recruiter recruiter = document.toObject(Recruiter.class);
+                                    if(documentSnapshot.toObject(Recruiter.class).getEmail().equals(recruiter.getEmail()))
+                                            listOfRecruiters.add(recruiter);
+                                }
+                            }
+
+                            @Override
+                            public void onDocumentExited(@NotNull DocumentSnapshot documentSnapshot) {
+
+                            }
+
+                            @Override
+                            public void onDocumentMoved(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
+
+                            }
+
+                            @Override
+                            public void onDocumentChanged(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
+
+                            }
+
+                            @Override
+                            public void onGeoQueryReady() {
+                                getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);
+                            }
+
+                            @Override
+                            public void onGeoQueryError(@NotNull Exception e) {
+
+                            }
+                        });
+                    }
+                });
+    }
+
     void getRecruitersForSwipingScreen_FindRelevantRecruitersWithCity(final String candidateMail,
                                                                       final String candidateJobCategory,
                                                                       final GeoPoint candidateLocation) {
         recruitersCollection
                 .whereEqualTo(JOB_CATEGORY_KEY, candidateJobCategory)
                 .whereEqualTo(JOB_POINT_KEY, candidateLocation)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
+                        List<Recruiter> listOfRecruiters = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            Recruiter recruiter = document.toObject(Recruiter.class);
+                            listOfRecruiters.add(recruiter);
+                        }
+                        getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);
+                    }
+                });
+    }
+
+    void getRecruitersForSwipingScreen_FindRelevantRecruitersWithScope(final String candidateMail,
+                                                                      final String candidateJobCategory,
+                                                                      final String candidateScope) {
+        recruitersCollection
+                .whereEqualTo(JOB_CATEGORY_KEY, candidateJobCategory)
+                .whereEqualTo(REQUIRED_SCOPE_KEY, candidateScope)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
