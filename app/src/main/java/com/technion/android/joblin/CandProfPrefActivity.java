@@ -37,28 +37,23 @@ import com.thejuki.kformmaster.model.FormPickerDropDownElement;
 import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
 
 import org.imperiumlabs.geofirestore.GeoFirestore;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import kotlin.Unit;
 
-import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.EMAIL_KEY;
-import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.*;
 
 public class CandProfPrefActivity extends AppCompatActivity implements OnFormElementValueChangedListener {
 
     private FormBuildHelper formBuilder = null;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    CollectionReference candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
-    CollectionReference recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
-    CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
-    CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
+    CollectionReference candidatesCollection,recruitersCollection,usersCollection,jobCategoriesCollection;
 
     Intent thisIntent;
     ProgressDialog dialog;
@@ -66,11 +61,14 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
     String[] locationParts;
 
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
+        recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
+        usersCollection = db.collection(USERS_COLLECTION_NAME);
+        jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
         dialog = new ProgressDialog(CandProfPrefActivity.this);
         thisIntent = getIntent();
         setupForm();
@@ -78,9 +76,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
     }
 
 
-
     @Override
-
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == android.R.id.home) {
@@ -89,7 +85,6 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     private enum Tag {
         Info,
@@ -112,30 +107,13 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
     }
 
     void insertCandidate(Candidate candidate) {
-//        Map<String, Object> candidateMapData = new HashMap<>();
-//        candidateMapData.put(AGE_KEY, candidate.getAge());
-//        candidateMapData.put(EMAIL_KEY, candidate.getEmail());
-//        candidateMapData.put(JOB_CATEGORY_KEY, candidate.getJobCategory());
-//        candidateMapData.put(JOB_LOCATION_KEY, candidate.getJobLocation());
-//        candidateMapData.put(LAST_NAME_KEY, candidate.getLastName());
-//        candidateMapData.put(MORE_INFO_KEY, candidate.getMoreInfo());
-//        candidateMapData.put(NAME_KEY, candidate.getName());
-//        candidateMapData.put(SCOPE_KEY, candidate.getScope());
-//        candidateMapData.put(SKILLS_KEY, candidate.getSkillsList());
-//        candidateMapData.put(EDUCATION_KEY, candidate.getEducation());
-
         WriteBatch batch = db.batch();
-
         DocumentReference candidateDocumentReference = candidatesCollection.document(candidate.getEmail());
         batch.set(candidateDocumentReference, candidate);
-
         Map<String, Object> userMapData = new HashMap<>();
         userMapData.put(EMAIL_KEY, candidate.getEmail());
-
-
         DocumentReference userDocumentReference = usersCollection.document(candidate.getEmail());
         batch.set(userDocumentReference, userMapData);
-
         batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -151,7 +129,6 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
     private void setupForm() {
 
         FormLayouts formLayouts = new FormLayouts();
-
         formBuilder = new FormBuildHelper(this, this, (RecyclerView)findViewById(R.id.recyclerView), true, formLayouts);
         List<BaseFormElement<?>> elements = new ArrayList<>();
         addCandInfo(elements);
@@ -164,11 +141,9 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
     }
 
 
-
     private void addCandInfo(List<BaseFormElement<?>> elements) {
 
         elements.add(new FormHeader("Personal Details"));
-
         FormSingleLineEditTextElement name = new FormSingleLineEditTextElement(Tag.Name.ordinal());
         name.setTitle("First Name");
         name.setHint("Enter first name here");
@@ -316,13 +291,13 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         submit.getValueObservers().add((newValue, element) -> {
             boolean min_age = false;
             if(birthdate.isValid())
-                min_age = Utils.getAge(birthdate.getValue().getTime(),Timestamp.now().toDate())>=13;
+                min_age = Utils.getAge(Objects.requireNonNull(birthdate.getValue()).getTime(),Timestamp.now().toDate())>=13;
             if(formBuilder.isValidForm() && min_age) {
                 dialog.setMessage("Please wait...");
                 dialog.setCancelable(false);
                 dialog.setInverseBackgroundForced(false);
                 dialog.show();
-                Timestamp birthday = new Timestamp(birthdate.getValue().getTime());
+                Timestamp birthday = new Timestamp(Objects.requireNonNull(birthdate.getValue().getTime()));
                 skills.add(skill1.getValueAsString());
                 if(!elements.get(Tag.Skill2.ordinal()).getValueAsString().isEmpty())
                     skills.add(elements.get(Tag.Skill2.ordinal()).getValueAsString());
@@ -330,7 +305,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
                     skills.add(elements.get(Tag.Skill3.ordinal()).getValueAsString());
 
                 Candidate cand = new Candidate(
-                        mAuth.getCurrentUser().getEmail(),
+                        Objects.requireNonNull(mAuth.getCurrentUser()).getEmail(),
                         name.getValueAsString(),
                         lastname.getValueAsString(),
                         thisIntent.getStringExtra(LoginActivity.URI_KEY),
@@ -378,14 +353,14 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
     }
 
     @Override
-
-    public void onValueChanged(BaseFormElement<?> formElement) {
+    public void onValueChanged(@NotNull BaseFormElement<?> formElement) {
         if(formElement.getTag()==Tag.Location.ordinal())
         {
             locationParts = formElement.getValueAsString().split(";");
             formElement.setValue(locationParts[0]);
         }
     }
+
     @Override
     public void onActivityResult(int requestCode,int resultCode, Intent data) {
         if (requestCode == Tag.Location.ordinal()) {
