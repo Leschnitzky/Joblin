@@ -204,6 +204,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
         if(currentUser != null) {
+            initFCM();
             dialog.setMessage("Please wait...");
             dialog.setCancelable(false);
             dialog.setInverseBackgroundForced(false);
