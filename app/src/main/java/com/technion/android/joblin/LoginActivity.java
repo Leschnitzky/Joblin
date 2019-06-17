@@ -208,7 +208,6 @@ public class LoginActivity extends AppCompatActivity {
             mUserFirstName = account.getDisplayName();
             mUserLastName = account.getFamilyName();
             mUserPhoto = currentUser.getPhotoUrl();
-            initFCM();
             isCandidateOrRecrInDB(currentUser.getEmail());
         }
     }
