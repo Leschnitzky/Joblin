@@ -49,6 +49,8 @@ import static com.technion.android.joblin.DatabaseUtils.TAG;
 import static com.technion.android.joblin.DatabaseUtils.TOKENS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.TOKEN_KEY;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
+import static com.technion.android.joblin.Utils.getRandomCandidate;
+import static com.technion.android.joblin.Utils.getRandomRecruiter;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -118,6 +120,7 @@ public class LoginActivity extends AppCompatActivity {
 //        dbAPI.initializeDBWithSomeData();
 
         dialog = new ProgressDialog(LoginActivity.this);
+
         FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
         activity = this;
