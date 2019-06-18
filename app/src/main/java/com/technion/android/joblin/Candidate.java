@@ -25,9 +25,10 @@ public class Candidate extends User {
                      String education,
                      List<String> skillsList,
                      String moreInfo,
-                     String jobCategory) {
+                     String jobCategory,
+                     long maxDistance) {
 
-        super(email, name, lastName, imageUrl);
+        super(email, name, lastName, imageUrl, maxDistance);
         this.birthday = birthDate;
         this.jobLocation = jobLocation;
         this.scope = scope;

@@ -23,9 +23,10 @@ public class Recruiter extends User {
                      String jobLocation,
                      String jobDescription,
                      String requiredEducation,
-                     List<String> requiredSkillsList) {
+                     List<String> requiredSkillsList,
+                     long maxDistance) {
 
-        super(email, name, lastName, imageUrl);
+        super(email, name, lastName, imageUrl, maxDistance);
         this.workPlace = workplace;
         this.jobCategory = jobCategory;
         this.requiredScope = requiredScope;

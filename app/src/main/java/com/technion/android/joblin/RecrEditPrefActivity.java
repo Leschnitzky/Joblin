@@ -105,7 +105,8 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
         Skill3,
         DescTitle,
         Desc,
-        Submit
+        Submit,
+        MaxDistance
     }
 
     void insertRecruiter(Recruiter recruiter) {
@@ -335,6 +336,7 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
         BaseFormElement desc = elements.get(Tag.Desc.ordinal());
         BaseFormElement education = elements.get(Tag.Education.ordinal());
         BaseFormElement skill1 = elements.get(Tag.Skill1.ordinal());
+        BaseFormElement maxDistance = elements.get(Tag.MaxDistance.ordinal());
         List<String> skills = new ArrayList<>();
         submit.getValueObservers().add((newValue, element) -> {
             if(formBuilder.isValidForm()) {
@@ -358,7 +360,8 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
                         location.getValueAsString(),
                         desc.getValueAsString(),
                         education.getValueAsString(),
-                        skills
+                        skills,
+                        Long.valueOf((String) maxDistance.getValue())
                 );
                 insertRecruiter(recr);
             }
@@ -378,6 +381,8 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
                     scope.setError("Scope is required");
                 if(!skill1.isValid())
                     skill1.setError("At least one skill");
+                if(!maxDistance.isValid())
+                    maxDistance.setError("Maximum distance is required");
             }
             return Unit.INSTANCE;
         });

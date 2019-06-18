@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.login_screen_layout);
 
 //        DatabaseAPI dbAPI = new DatabaseAPI();
-//        dbAPI.initializeDBWithSomeData();
+//        dbAPI.addMaxDistanceFieldToAllUsersInDB();
 
         dialog = new ProgressDialog(LoginActivity.this);
 

@@ -105,6 +105,7 @@ public class Utils {
             ,"Sagi","Ohad","Matan","Moshe","Liran","Dvir"
             ,"Gal","Zvi","Ofek","Ofir"
     );
+
     private static List<String> lastNames =  Arrays.asList(
             "Cohen","Levi","Shvartz","Wisemann",
             "Aflalo","Abutbul","Eliyaho","Kahlon",
@@ -133,12 +134,10 @@ public class Utils {
             "Hedera", "Tiberia", "Raanana"
     );
 
-
     private static List<String> categories = Arrays.asList(
             "Accounting","Computer Science","Education","Finance",
             "IT","Media","Sales"
     );
-
 
     public static Candidate getRandomCandidate(){
 
@@ -158,12 +157,11 @@ public class Utils {
         String secondSkill = skills.get(rand.nextInt(skills.size()));
         String thirdSkill = skills.get(rand.nextInt(skills.size()));
         List<String> skills = Arrays.asList(firstSkill,secondSkill,thirdSkill);
-        List<String> skillsWithoutDup =  new ArrayList<>(
-                new HashSet<>(skills));
+        List<String> skillsWithoutDup =  new ArrayList<>(new HashSet<>(skills));
+        long maxDistance = rand.nextInt(100);
 
          return new Candidate(email,firstName,
-                lastName,imageUrl,birthdate,location,scope,education,skillsWithoutDup,moreInfo,jobCategory);
-
+                lastName,imageUrl,birthdate,location,scope,education,skillsWithoutDup,moreInfo,jobCategory,maxDistance);
     }
 
     public static Recruiter getRandomRecruiter(){
@@ -184,12 +182,11 @@ public class Utils {
         String thirdSkill = skills.get(rand.nextInt(skills.size()));
         String workplace = "Random";
         List<String> skills = Arrays.asList(firstSkill,secondSkill,thirdSkill);
-        List<String> skillsWithoutDup =  new ArrayList<>(
-                new HashSet<>(skills));
+        List<String> skillsWithoutDup =  new ArrayList<>(new HashSet<>(skills));
+        long maxDistance = rand.nextInt(100);
 
         return new Recruiter(email,firstName,
-                lastName,imageUrl,workplace,jobCategory,scope,location,moreInfo,education,skillsWithoutDup);
+                lastName,imageUrl,workplace,jobCategory,scope,location,moreInfo,education,skillsWithoutDup,maxDistance);
     }
-
 
 }

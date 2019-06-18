@@ -105,7 +105,8 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         DescTitle,
         Desc,
         Submit,
-        PlacesElement
+        PlacesElement,
+        MaxDistance
     }
 
     void insertCandidate(Candidate candidate) {
@@ -306,6 +307,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         BaseFormElement desc = elements.get(Tag.Desc.ordinal());
         BaseFormElement education = elements.get(Tag.Education.ordinal());
         BaseFormElement skill1 = elements.get(Tag.Skill1.ordinal());
+        BaseFormElement maxDistance = elements.get(Tag.MaxDistance.ordinal());
         List<String> skills = new ArrayList<>();
         submit.getValueObservers().add((newValue, element) -> {
             boolean min_age = false;
@@ -322,6 +324,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
                     skills.add(elements.get(Tag.Skill2.ordinal()).getValueAsString());
                 if(!elements.get(Tag.Skill3.ordinal()).getValueAsString().isEmpty())
                     skills.add(elements.get(Tag.Skill3.ordinal()).getValueAsString());
+
                 Candidate cand = new Candidate(
                         mAuth.getCurrentUser().getEmail(),
                         name.getValueAsString(),
@@ -333,7 +336,8 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
                         education.getValueAsString(),
                         skills,
                         desc.getValueAsString(),
-                        category.getValueAsString()
+                        category.getValueAsString(),
+                        Long.valueOf((String) maxDistance.getValue())
                 );
                 insertCandidate(cand);
             }
@@ -359,6 +363,8 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
                     scope.setError("Scope is required");
                 if(!skill1.isValid())
                     skill1.setError("At least one skill");
+                if(!maxDistance.isValid())
+                    maxDistance.setError("Maximum distance is required");
             }
             return Unit.INSTANCE;
         });
