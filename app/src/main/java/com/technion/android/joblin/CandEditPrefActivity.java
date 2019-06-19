@@ -373,6 +373,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
                         desc.getValueAsString(),
                         category.getValueAsString()
                 );
+                cand.setNumberOfSwipesLeft(candidate.getNumberOfSwipesLeft());
                 insertCandidate(cand);
             }
             else

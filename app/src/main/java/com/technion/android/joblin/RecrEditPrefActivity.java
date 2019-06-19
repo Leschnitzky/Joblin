@@ -360,6 +360,7 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
                         education.getValueAsString(),
                         skills
                 );
+                recr.setNumberOfSwipesLeft(recruiter.getNumberOfSwipesLeft());
                 insertRecruiter(recr);
             }
             else
