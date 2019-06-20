@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -48,13 +50,17 @@ import org.imperiumlabs.geofirestore.callbacks.GeoQueryDataEventListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORY_KEY;
+import static com.technion.android.joblin.DatabaseUtils.JOB_LOCATION_KEY;
 import static com.technion.android.joblin.DatabaseUtils.JOB_POINT_KEY;
+import static com.technion.android.joblin.DatabaseUtils.JOB_RADIUS_KEY;
 import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SWIPES_LEFT_KEY;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.REQUIRED_SCOPE_KEY;
@@ -81,6 +87,44 @@ public class CanMainActivity extends AppCompatActivity {
         CATEGORY, DISTANCE, CITY, SCOPE
     }
 
+    void InitializeMissingAttributes(DocumentSnapshot document, final String candidateMail)
+    {
+        DocumentReference docRef = candidatesCollection.document(candidateMail);
+        Map<String,Object> attr = new HashMap<>();
+        GeoPoint geoPoint = null;
+        boolean addedPoint = false;
+        if(document.get(JOB_POINT_KEY)==null)
+        {
+            Geocoder geocoder = new Geocoder(this);
+            try {
+                Address address = geocoder.getFromLocationName(document.get(JOB_LOCATION_KEY).toString(), 1).get(0);
+                geoPoint = new GeoPoint(address.getLatitude(), address.getLongitude());
+            }
+            catch (Exception e) {
+                return;
+            }
+            attr.put(JOB_POINT_KEY,geoPoint);
+            addedPoint = true;
+        }
+        if(document.get(JOB_RADIUS_KEY)==null)
+        {
+            attr.put(JOB_RADIUS_KEY,30);
+        }
+        if(!attr.isEmpty())
+            docRef.update(attr).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Utils.newAttributesPopup(getApplicationContext());
+                }
+            });
+        if(document.get("g")==null)
+        {
+            GeoFirestore geoFirestore = new GeoFirestore(candidatesCollection);
+            GeoPoint location = addedPoint ? geoPoint : (GeoPoint) document.get(JOB_POINT_KEY);
+            geoFirestore.setLocation(candidateMail, Objects.requireNonNull(location));
+        }
+    }
+
     void getRecruitersForSwipingScreen_MainFunction(final String candidateMail) {
         getRecruitersForSwipingScreen_CollectDataAboutCandidate(candidateMail);
     }
@@ -93,10 +137,11 @@ public class CanMainActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (Objects.requireNonNull(document).exists()) {
+                        InitializeMissingAttributes(document, candidateMail);
                         String candidateJobCategory = (String) document.get(JOB_CATEGORY_KEY);
                         GeoPoint candidateJobLocation = (GeoPoint) document.get(JOB_POINT_KEY);
                         String candidateJobScope = (String) document.get(SCOPE_KEY);
-                        Long candidateJobRadius = (Long) document.get("jobRadius");
+                        Long candidateJobRadius = (Long) document.get(JOB_RADIUS_KEY);
                         int filter_method = sharedPrefs.getInt(getResources().getString(R.string.saved_filtering_method),Filter.CATEGORY.ordinal());
                         if(filter_method==Filter.CATEGORY.ordinal())
                             getRecruitersForSwipingScreen_FindRelevantRecruiters(candidateMail, candidateJobCategory);

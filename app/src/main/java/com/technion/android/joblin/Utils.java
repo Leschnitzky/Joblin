@@ -71,6 +71,15 @@ public class Utils {
                 .show();
     }
 
+    public static void newAttributesPopup(Context context)
+    {
+        new SweetAlertDialog(context)
+                .setTitleText("Attention!")
+                .setContentText("new options for filtering are now available.")
+                .setConfirmText("OK")
+                .show();
+    }
+
     public static void errorPopUp(Context context, String error)
     {
         new SweetAlertDialog(context,SweetAlertDialog.ERROR_TYPE)

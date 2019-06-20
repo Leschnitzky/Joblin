@@ -10,6 +10,7 @@ class DatabaseUtils {
     static final String JOB_CATEGORY_KEY = "jobCategory";
     static final String JOB_LOCATION_KEY = "jobLocation";
     static final String JOB_POINT_KEY = "jobPoint";
+    static final String JOB_RADIUS_KEY = "jobRadius";
     static final String LAST_NAME_KEY = "lastName";
     static final String MORE_INFO_KEY = "moreInfo";
     static final String NAME_KEY = "name";
