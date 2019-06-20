@@ -75,7 +75,7 @@ public class Utils {
     {
         new SweetAlertDialog(context)
                 .setTitleText("Attention!")
-                .setContentText("new options for filtering are now available.")
+                .setContentText("new options for filtering are now available.\n default distance is 30KM, \n edit profile to change this")
                 .setConfirmText("OK")
                 .show();
     }

@@ -97,7 +97,7 @@ public class CanMainActivity extends AppCompatActivity {
         {
             Geocoder geocoder = new Geocoder(this);
             try {
-                Address address = geocoder.getFromLocationName(document.get(JOB_LOCATION_KEY).toString(), 1).get(0);
+                Address address = geocoder.getFromLocationName(document.get(JOB_LOCATION_KEY).toString()+",Israel", 1).get(0);
                 geoPoint = new GeoPoint(address.getLatitude(), address.getLongitude());
             }
             catch (Exception e) {
@@ -114,7 +114,7 @@ public class CanMainActivity extends AppCompatActivity {
             docRef.update(attr).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    Utils.newAttributesPopup(getApplicationContext());
+                    Utils.newAttributesPopup(CanMainActivity.this);
                 }
             });
         if(document.get("g")==null)
@@ -146,8 +146,8 @@ public class CanMainActivity extends AppCompatActivity {
                         if(filter_method==Filter.CATEGORY.ordinal())
                             getRecruitersForSwipingScreen_FindRelevantRecruiters(candidateMail, candidateJobCategory);
                         else if(filter_method==Filter.DISTANCE.ordinal())
-                            getRecruitersForSwipingScreen_FindRelevantRecruitersWithDistance(candidateMail,candidateJobCategory,
-                                    candidateJobLocation,candidateJobRadius);
+                            getRecruitersForSwipingScreen_FindRelevantRecruitersWithDistance(candidateMail, candidateJobCategory,
+                                    candidateJobLocation, candidateJobRadius);
                         else if(filter_method==Filter.CITY.ordinal())
                             getRecruitersForSwipingScreen_FindRelevantRecruitersWithCity(candidateMail, candidateJobCategory,candidateJobLocation);
                         else

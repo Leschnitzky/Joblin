@@ -79,7 +79,7 @@ public class RecMainActivity extends AppCompatActivity {
 
     void InitializeMissingAttributes(DocumentSnapshot document, final String recruiterMail)
     {
-        DocumentReference docRef = recruitersCollection.document(recruiterMail);
+        DocumentReference docRef = candidatesCollection.document(recruiterMail);
         Map<String,Object> attr = new HashMap<>();
         GeoPoint geoPoint = null;
         boolean addedPoint = false;
@@ -87,7 +87,7 @@ public class RecMainActivity extends AppCompatActivity {
         {
             Geocoder geocoder = new Geocoder(this);
             try {
-                Address address = geocoder.getFromLocationName(document.get(JOB_LOCATION_KEY).toString(), 1).get(0);
+                Address address = geocoder.getFromLocationName(document.get(JOB_LOCATION_KEY).toString()+",Israel", 1).get(0);
                 geoPoint = new GeoPoint(address.getLatitude(), address.getLongitude());
             }
             catch (Exception e) {
@@ -100,12 +100,12 @@ public class RecMainActivity extends AppCompatActivity {
             docRef.update(attr).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    Utils.newAttributesPopup(getApplicationContext());
+                    Utils.newAttributesPopup(RecMainActivity.this);
                 }
             });
         if(document.get("g")==null)
         {
-            GeoFirestore geoFirestore = new GeoFirestore(recruitersCollection);
+            GeoFirestore geoFirestore = new GeoFirestore(candidatesCollection);
             GeoPoint location = addedPoint ? geoPoint : (GeoPoint) document.get(JOB_POINT_KEY);
             geoFirestore.setLocation(recruiterMail, Objects.requireNonNull(location));
         }
