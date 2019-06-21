@@ -12,6 +12,7 @@ public class Candidate extends User {
     private List<String> skillsList;
     private String moreInfo;
     private String jobCategory;
+    private int maxDistance;
 
     public Candidate() {}
 
@@ -26,9 +27,9 @@ public class Candidate extends User {
                      List<String> skillsList,
                      String moreInfo,
                      String jobCategory,
-                     long maxDistance) {
+                     int maxDistance) {
 
-        super(email, name, lastName, imageUrl, maxDistance);
+        super(email, name, lastName, imageUrl);
         this.birthday = birthDate;
         this.jobLocation = jobLocation;
         this.scope = scope;
@@ -36,6 +37,7 @@ public class Candidate extends User {
         this.skillsList = skillsList;
         this.moreInfo = moreInfo;
         this.jobCategory = jobCategory;
+        this.maxDistance = maxDistance;
     }
 
     public Candidate(Candidate other) {
@@ -47,6 +49,7 @@ public class Candidate extends User {
         this.skillsList = other.skillsList;
         this.moreInfo = other.moreInfo;
         this.jobCategory = other.jobCategory;
+        this.maxDistance = other.maxDistance;
     }
 
     public Timestamp getBirthday() { return birthday;
@@ -102,5 +105,13 @@ public class Candidate extends User {
 
     public void setJobCategory(String jobCategory) {
         this.jobCategory = jobCategory;
+    }
+
+    public int getMaxDistance() {
+        return maxDistance;
+    }
+
+    public void setMaxDistance(int maxDistance) {
+        this.maxDistance = maxDistance;
     }
 }

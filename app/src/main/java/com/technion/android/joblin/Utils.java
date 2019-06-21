@@ -158,7 +158,7 @@ public class Utils {
         String thirdSkill = skills.get(rand.nextInt(skills.size()));
         List<String> skills = Arrays.asList(firstSkill,secondSkill,thirdSkill);
         List<String> skillsWithoutDup =  new ArrayList<>(new HashSet<>(skills));
-        long maxDistance = rand.nextInt(100);
+        int maxDistance = rand.nextInt(100);
 
          return new Candidate(email,firstName,
                 lastName,imageUrl,birthdate,location,scope,education,skillsWithoutDup,moreInfo,jobCategory,maxDistance);
@@ -183,10 +183,9 @@ public class Utils {
         String workplace = "Random";
         List<String> skills = Arrays.asList(firstSkill,secondSkill,thirdSkill);
         List<String> skillsWithoutDup =  new ArrayList<>(new HashSet<>(skills));
-        long maxDistance = rand.nextInt(100);
 
         return new Recruiter(email,firstName,
-                lastName,imageUrl,workplace,jobCategory,scope,location,moreInfo,education,skillsWithoutDup,maxDistance);
+                lastName,imageUrl,workplace,jobCategory,scope,location,moreInfo,education,skillsWithoutDup);
     }
 
 }

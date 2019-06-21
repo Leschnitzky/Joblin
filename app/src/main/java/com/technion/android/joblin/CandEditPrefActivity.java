@@ -36,6 +36,7 @@ import com.thejuki.kformmaster.model.FormPickerDateElement;
 import com.thejuki.kformmaster.model.FormPickerDateElement.DateHolder;
 import com.thejuki.kformmaster.model.FormPickerDropDownElement;
 import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
+import com.thejuki.kformmaster.model.FormSliderElement;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -107,13 +108,13 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         Skill3,
         Pref,
         Location,
+        MaxDistance,
         Category,
         Scope,
         DescTitle,
         Desc,
         Submit,
-        Cancel,
-        MaxDistance
+        Cancel
     }
 
     void insertCandidate(Candidate candidate) {
@@ -266,9 +267,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
 
         elements.add(new FormHeader("Job Preferences"));
 
-
         FormPlacesAutoCompleteElement location = new FormPlacesAutoCompleteElement(Tag.Location.ordinal());
-
         location.setTitle("Location");
         location.setHint("Enter location here");
         location.setPlaceFields(Collections.singletonList(Place.Field.NAME));
@@ -277,6 +276,15 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         location.setValue(candidate.getJobLocation());
         location.setAutocompleteActivityMode(AutocompleteActivityMode.OVERLAY);
         elements.add(location);
+
+        FormSliderElement slider = new FormSliderElement(Tag.MaxDistance.ordinal());
+        slider.setTitle("Maximum Distance");
+        slider.setValue(50);
+        slider.setMin(0);
+        slider.setMax(100);
+        slider.setSteps(20); // or slider.setIncrementBy(5);
+        slider.setValue(candidate.getMaxDistance());
+        elements.add(slider);
 
         FormPickerDropDownElement<ListItem> dropDown = new FormPickerDropDownElement<>(Tag.Category.ordinal());
         dropDown.setTitle("Category");
@@ -374,7 +382,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
                         skills,
                         desc.getValueAsString(),
                         category.getValueAsString(),
-                        Long.valueOf((String) maxDistance.getValue())
+                        (int) maxDistance.getValue()
                 );
                 insertCandidate(cand);
             }
@@ -400,8 +408,6 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
                     scope.setError("Scope is required");
                 if(!skill1.isValid())
                     skill1.setError("At least one skill");
-                if(!maxDistance.isValid())
-                    maxDistance.setError("Maximum distance is required");
             }
             return Unit.INSTANCE;
         });

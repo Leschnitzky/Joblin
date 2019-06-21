@@ -224,8 +224,7 @@ class DatabaseAPI {
                 "Tel Aviv",
                 "Building apps for android",
                 "CS",
-                skillsList,
-                10);
+                skillsList);
 
         insertRecruiter(recruiter);
     }
@@ -494,8 +493,7 @@ class DatabaseAPI {
                 "Tel Aviv",
                 "Building apps for android",
                 "High School graduate",
-                skillsList,
-                10);
+                skillsList);
 
         insertRecruiter(recruiter);
 
@@ -509,8 +507,7 @@ class DatabaseAPI {
                 "Haifa",
                 "Building apps for ios",
                 "Kindergarden",
-                skillsList,
-                10);
+                skillsList);
 
         insertRecruiter(recruiter);
 
@@ -524,8 +521,7 @@ class DatabaseAPI {
                 "Carmiel",
                 "it's a secret job that can only be known when you have the special skills",
                 "Magic from Hogwarts",
-                new ArrayList<String> (Arrays.asList("Java","C#","abra kadabra")),
-                10);
+                new ArrayList<String> (Arrays.asList("Java","C#","abra kadabra")));
 
         insertRecruiter(recruiter);
 
@@ -539,8 +535,7 @@ class DatabaseAPI {
                 "Ramat Gan",
                 "Speaking with people about arts",
                 "PHD",
-                skillsList,
-                10);
+                skillsList);
 
         insertRecruiter(recruiter);
 
@@ -554,8 +549,7 @@ class DatabaseAPI {
                 "Eilat",
                 "Configuration of IT services in windows",
                 "None",
-                skillsList,
-                10);
+                skillsList);
 
         insertRecruiter(recruiter);
 
@@ -569,8 +563,7 @@ class DatabaseAPI {
                 "Ashdod",
                 "Accounting for a big company",
                 "Graduate in Accounting",
-                skillsList,
-                10);
+                skillsList);
 
         insertRecruiter(recruiter);
 
@@ -584,8 +577,7 @@ class DatabaseAPI {
                 "Eilat",
                 "Accounting for a big company",
                 "Graduate in Accounting",
-                skillsList,
-                10);
+                skillsList);
 
         insertRecruiter(recruiter);
     }

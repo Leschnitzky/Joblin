@@ -7,19 +7,16 @@ public class User {
     private String lastName;
     private String imageUrl;
 
-    private long maxDistance;
-
     static long totalNumberOfSwipes = 10;
     private long numberOfSwipesLeft = 10;
 
     User() {}
 
-    User(String email, String name, String lastName, String imageUrl, long maxDistance) {
+    User(String email, String name, String lastName, String imageUrl) {
         this.email = email;
         this.name = name;
         this.lastName = lastName;
         this.imageUrl = imageUrl;
-        this.maxDistance = maxDistance;
     }
 
     public User(User other) {
@@ -28,7 +25,6 @@ public class User {
         this.lastName = other.lastName;
         this.numberOfSwipesLeft = other.numberOfSwipesLeft;
         this.imageUrl = other.imageUrl;
-        this.maxDistance = other.maxDistance;
     }
 
     public String getEmail() {
@@ -89,13 +85,5 @@ public class User {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-
-    public long getMaxDistance() {
-        return maxDistance;
-    }
-
-    public void setMaxDistance(long maxDistance) {
-        this.maxDistance = maxDistance;
     }
 }
