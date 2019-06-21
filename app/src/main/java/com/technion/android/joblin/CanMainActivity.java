@@ -104,7 +104,6 @@ public class CanMainActivity extends AppCompatActivity {
                             if(distance <= candidateMaxDistance) {
                                 listOfRecruiters.add(recruiter);
                             }
-
                         }
                         getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);
                     }
