@@ -13,7 +13,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
@@ -218,7 +217,6 @@ class DatabaseAPI {
                 "http://image",
                 new Timestamp(new Date(96,10,5)),
                 "Haifa",
-                new GeoPoint(2,5),
                 10,
                 "twice a week",
                 "Technion",
@@ -241,7 +239,6 @@ class DatabaseAPI {
                 "Computer Science",
                 "twice a week",
                 "Tel Aviv",
-                new GeoPoint(2,5),
                 "Building apps for android",
                 "CS",
                 skillsList);
@@ -430,7 +427,6 @@ class DatabaseAPI {
                 "Computer Science",
                 "Three times a week",
                 "Tel Aviv",
-                new GeoPoint(2,5),
                 "Building apps for android",
                 "High School graduate",
                 skillsList);
@@ -445,7 +441,6 @@ class DatabaseAPI {
                 "Goologolo",
                 "Full time",
                 "Haifa",
-                new GeoPoint(2,5),
                 "Building apps for ios",
                 "Kindergarden",
                 skillsList);
@@ -460,7 +455,6 @@ class DatabaseAPI {
                 "Computer Science",
                 "twice a week",
                 "Carmiel",
-                new GeoPoint(2,5),
                 "it's a secret job that can only be known when you have the special skills",
                 "Magic from Hogwarts",
                 new ArrayList<String> (Arrays.asList("Java","C#","abra kadabra")));
@@ -475,7 +469,6 @@ class DatabaseAPI {
                 "Media",
                 "Three times a week",
                 "Ramat Gan",
-                new GeoPoint(2,5),
                 "Speaking with people about arts",
                 "PHD",
                 skillsList);
@@ -490,7 +483,6 @@ class DatabaseAPI {
                 "IT",
                 "Three times a week",
                 "Eilat",
-                new GeoPoint(2,5),
                 "Configuration of IT services in windows",
                 "None",
                 skillsList);
@@ -505,7 +497,6 @@ class DatabaseAPI {
                 "Accounting",
                 "Three times a week",
                 "Ashdod",
-                new GeoPoint(2,5),
                 "Accounting for a big company",
                 "Graduate in Accounting",
                 skillsList);
@@ -520,7 +511,6 @@ class DatabaseAPI {
                 "Accounting",
                 "Three times a week",
                 "Eilat",
-                new GeoPoint(2,5),
                 "Accounting for a big company",
                 "Graduate in Accounting",
                 skillsList);
@@ -540,7 +530,6 @@ class DatabaseAPI {
                 "https://pbs.twimg.com/profile_images/972872769019850753/YTxFZF2x_400x400.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Tel Aviv",
-                new GeoPoint(2,5),
                 10,
                 "Full Time",
                 "High School",
@@ -556,7 +545,6 @@ class DatabaseAPI {
                 "https://media.npr.org/assets/img/2015/11/24/ajeup0ayctw4ztltklrnuvtm-y4xulezgneawbqw4cs_custom-7aa29347d5da230c6101168c71549a7399302d0c-s1100-c15.jpg",
                 new Timestamp(new Date(2001,3,12)),
                 "Beer Sheva",
-                new GeoPoint(2,5),
                 10,
                 "20 hours per month",
                 "Ort Barude",
@@ -572,7 +560,6 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Haifa",
-                new GeoPoint(2,5),
                 10,
                 "Twice a week",
                 "Technion",
@@ -588,7 +575,6 @@ class DatabaseAPI {
                 "https://pbs.twimg.com/profile_images/972872769019850753/YTxFZF2x_400x400.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Salem",
-                new GeoPoint(2,5),
                 10,
                 "Night Shifts",
                 "Witches School of Salem",
@@ -604,7 +590,6 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Jerusalem",
-                new GeoPoint(2,5),
                 10,
                 "75% misra",
                 "Haward Univerity",
@@ -620,7 +605,6 @@ class DatabaseAPI {
                 "https://avatars1.githubusercontent.com/u/28152692?s=400&v=4",
                 new Timestamp(new Date(90,4,5)),
                 "Haifa",
-                new GeoPoint(2,5),
                 10,
                 "Full Time",
                 "Technion instituation",
@@ -637,7 +621,6 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Eilat",
-                new GeoPoint(2,5),
                 10,
                 "Three times a week",
                 "Tel Aviv University",
@@ -654,7 +637,6 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Jaffa",
-                new GeoPoint(2,5),
                 10,
                 "Three times a week",
                 "Ben Gurion University",
@@ -671,7 +653,6 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Jaffa",
-                new GeoPoint(2,5),
                 10,
                 "Three times a week",
                 "IDC",

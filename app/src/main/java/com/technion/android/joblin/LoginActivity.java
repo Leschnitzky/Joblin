@@ -302,4 +302,10 @@ public void addTokenData(String email, String token) {
                     }
                 });
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dialog.dismiss();
+    }
 }

@@ -363,8 +363,6 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
                         category.getValueAsString(),
                         scope.getValueAsString(),
                         locationParts!=null ? locationParts[0] : location.getValueAsString(),
-                        locationParts!=null ? new GeoPoint(Double.parseDouble(locationParts[1]),
-                                Double.parseDouble(locationParts[2])) : recruiter.getJobPoint(),
                         desc.getValueAsString(),
                         education.getValueAsString(),
                         skills
@@ -376,7 +374,12 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
                             new GeoPoint(Double.parseDouble(locationParts[1]), Double.parseDouble(locationParts[2])));
                 }
                 else {
-                    geoFirestore.setLocation(mAuth.getCurrentUser().getEmail(), recruiter.getJobPoint());
+                    GeoPoint point = Utils.getPoint(this,location.getValueAsString());
+                    if(point!=null)
+                        geoFirestore.setLocation(mAuth.getCurrentUser().getEmail(), point);
+                    else
+                        //shouldn't happen
+                        geoFirestore.setLocation(mAuth.getCurrentUser().getEmail(), new GeoPoint(1,1));
                 }
             }
             else

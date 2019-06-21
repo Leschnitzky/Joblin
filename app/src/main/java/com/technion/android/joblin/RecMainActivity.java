@@ -6,8 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Point;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -22,7 +20,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -40,18 +37,16 @@ import com.mindorks.placeholderview.listeners.ItemRemovedListener;
 import com.victor.loading.rotate.RotateLoading;
 
 import org.imperiumlabs.geofirestore.GeoFirestore;
+import org.imperiumlabs.geofirestore.GeoFirestore.CompletionListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORY_KEY;
 import static com.technion.android.joblin.DatabaseUtils.JOB_LOCATION_KEY;
-import static com.technion.android.joblin.DatabaseUtils.JOB_POINT_KEY;
 import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SWIPES_LEFT_KEY;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.REQUIRED_SCOPE_KEY;
@@ -79,35 +74,16 @@ public class RecMainActivity extends AppCompatActivity {
 
     void InitializeMissingAttributes(DocumentSnapshot document, final String recruiterMail)
     {
-        DocumentReference docRef = candidatesCollection.document(recruiterMail);
-        Map<String,Object> attr = new HashMap<>();
-        GeoPoint geoPoint = null;
-        boolean addedPoint = false;
-        if(document.get(JOB_POINT_KEY)==null)
+        if(document.get("g")==null)
         {
-            Geocoder geocoder = new Geocoder(this);
-            try {
-                Address address = geocoder.getFromLocationName(document.get(JOB_LOCATION_KEY).toString()+",Israel", 1).get(0);
-                geoPoint = new GeoPoint(address.getLatitude(), address.getLongitude());
-            }
-            catch (Exception e) {
-                return;
-            }
-            attr.put(JOB_POINT_KEY,geoPoint);
-            addedPoint = true;
-        }
-        if(!attr.isEmpty())
-            docRef.update(attr).addOnSuccessListener(new OnSuccessListener<Void>() {
+            GeoFirestore geoFirestore = new GeoFirestore(recruitersCollection);
+            GeoPoint location = Utils.getPoint(RecMainActivity.this,(String) document.get(JOB_LOCATION_KEY));
+            geoFirestore.setLocation(recruiterMail, Objects.requireNonNull(location), new CompletionListener() {
                 @Override
-                public void onSuccess(Void aVoid) {
+                public void onComplete(@org.jetbrains.annotations.Nullable Exception e) {
                     Utils.newAttributesPopup(RecMainActivity.this);
                 }
             });
-        if(document.get("g")==null)
-        {
-            GeoFirestore geoFirestore = new GeoFirestore(candidatesCollection);
-            GeoPoint location = addedPoint ? geoPoint : (GeoPoint) document.get(JOB_POINT_KEY);
-            geoFirestore.setLocation(recruiterMail, Objects.requireNonNull(location));
         }
     }
 
@@ -125,7 +101,9 @@ public class RecMainActivity extends AppCompatActivity {
                     if (Objects.requireNonNull(document).exists()) {
                         InitializeMissingAttributes(document, recruiterMail);
                         String recruiterJobCategory = (String) document.get(JOB_CATEGORY_KEY);
-                        GeoPoint recruiterJobLocation = (GeoPoint) document.get(JOB_POINT_KEY);
+                        List<Double> l = (List<Double>) document.get("l");
+                        assert l != null;
+                        GeoPoint recruiterJobLocation = (GeoPoint) new GeoPoint(l.get(0),l.get(1));
                         String recruiterJobScope = (String) document.get(REQUIRED_SCOPE_KEY);
                         int filter_method = sharedPrefs.getInt(getResources().getString(R.string.saved_filtering_method), Filter.CATEGORY.ordinal());
                         if(filter_method==Filter.CATEGORY.ordinal())
@@ -166,7 +144,6 @@ public class RecMainActivity extends AppCompatActivity {
                                                                       final GeoPoint recruiterLocation) {
         candidatesCollection
                 .whereEqualTo(JOB_CATEGORY_KEY, recruiterJobCategory)
-                .whereEqualTo(JOB_POINT_KEY, recruiterLocation)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
@@ -177,7 +154,8 @@ public class RecMainActivity extends AppCompatActivity {
                         List<Candidate> listOfCandidates = new ArrayList<>();
                         for (QueryDocumentSnapshot document : Objects.requireNonNull(queryDocumentSnapshots)) {
                             Candidate candidate = document.toObject(Candidate.class);
-                            listOfCandidates.add(candidate);
+                            if(Utils.getPoint(RecMainActivity.this,candidate.getJobLocation()).equals(recruiterLocation))
+                                listOfCandidates.add(candidate);
                         }
                         getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped(recruiterMail, listOfCandidates);
                     }

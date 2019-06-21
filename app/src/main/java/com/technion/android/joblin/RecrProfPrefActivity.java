@@ -329,8 +329,6 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
                         category.getValueAsString(),
                         scope.getValueAsString(),
                         locationParts[0],
-                        new GeoPoint(Double.parseDouble(locationParts[1]),
-                                Double.parseDouble(locationParts[2])),
                         desc.getValueAsString(),
                         education.getValueAsString(),
                         skills

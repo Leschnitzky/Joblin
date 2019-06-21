@@ -19,6 +19,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Transaction;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
 import com.mindorks.placeholderview.annotations.Layout;
@@ -140,13 +141,20 @@ public class RecruiterCard {
         fullEducationTxt.setText(mProfile.getRequiredEducation());
         SkillsTxt.setText(getSkillsString(mProfile.getRequiredSkillsList(),10));
         fullSkillsTxt.setText(getSkillsString(mProfile.getRequiredSkillsList(),20));
-        /*double distance = Utils.distFrom(swiper_loc.getLatitude(),swiper_loc.getLongitude(),
-                mProfile.getJobPoint().getLatitude(),mProfile.getJobPoint().getLongitude()) / 1000;*/
+
         float[] distance = new float[1];
-        Location.distanceBetween(swiper_loc.getLatitude(),swiper_loc.getLongitude(),
-                mProfile.getJobPoint().getLatitude(),mProfile.getJobPoint().getLongitude(),distance);
+        GeoPoint jobPoint = Utils.getPoint(mContext,mProfile.getJobLocation());
+        if(jobPoint!=null)
+        {
+            Location.distanceBetween(swiper_loc.getLatitude(),swiper_loc.getLongitude(),
+                    jobPoint.getLatitude(),jobPoint.getLongitude(),distance);
+            distanceTxt.setText(Math.round(distance[0]/1000) + " km away");
+        }
+        else
+        {
+            distanceTxt.setText("");
+        }
         locationNameTxt.setText(mProfile.getJobLocation());
-        distanceTxt.setText(Math.round(distance[0]/1000) + " km away");
         descTxt.setText(mProfile.getJobDescription());
 
         slidingPanel.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {

@@ -363,8 +363,6 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
                         Objects.requireNonNull(mAuth.getCurrentUser().getPhotoUrl()).toString(),
                         birthday,
                         locationParts!=null ? locationParts[0] : location.getValueAsString(),
-                        locationParts!=null ? new GeoPoint(Double.parseDouble(locationParts[1]),
-                                Double.parseDouble(locationParts[2])) : candidate.getJobPoint(),
                         Integer.parseInt(radius.getValueAsString()),
                         scope.getValueAsString(),
                         education.getValueAsString(),
@@ -379,7 +377,12 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
                             new GeoPoint(Double.parseDouble(locationParts[1]), Double.parseDouble(locationParts[2])));
                 }
                 else {
-                    geoFirestore.setLocation(mAuth.getCurrentUser().getEmail(), candidate.getJobPoint());
+                    GeoPoint point = Utils.getPoint(this,location.getValueAsString());
+                    if(point!=null)
+                        geoFirestore.setLocation(mAuth.getCurrentUser().getEmail(), point);
+                    else
+                        //shouldn't happen
+                        geoFirestore.setLocation(mAuth.getCurrentUser().getEmail(), new GeoPoint(1,1));
                 }
             }
             else

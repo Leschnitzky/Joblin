@@ -327,8 +327,6 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
                         thisIntent.getStringExtra(LoginActivity.URI_KEY),
                         birthday,
                         locationParts[0],
-                        new GeoPoint(Double.parseDouble(locationParts[1]),
-                                Double.parseDouble(locationParts[2])),
                         Integer.parseInt(radius.getValueAsString()),
                         scope.getValueAsString(),
                         education.getValueAsString(),

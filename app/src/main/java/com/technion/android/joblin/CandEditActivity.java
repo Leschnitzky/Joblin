@@ -82,12 +82,6 @@ public class CandEditActivity extends AppCompatActivity {
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
-        dialog = new ProgressDialog(CandEditActivity.this);
-        dialog.setMessage("Retrieving user information...");
-        dialog.setCancelable(false);
-        dialog.setInverseBackgroundForced(false);
-        dialog.show();
-
         filter_spinner = findViewById(R.id.filter_spinner);
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         PopupMenu popup = new PopupMenu(CandEditActivity.this, filter_spinner);
@@ -224,7 +218,11 @@ public class CandEditActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
+        dialog = new ProgressDialog(CandEditActivity.this);
+        dialog.setMessage("Retrieving user information...");
+        dialog.setCancelable(false);
+        dialog.setInverseBackgroundForced(false);
+        dialog.show();
         getCandidate(mAuth.getCurrentUser().getEmail());
     }
 
@@ -243,6 +241,7 @@ public class CandEditActivity extends AppCompatActivity {
     protected void onPause() {
         LocalBroadcastManager.getInstance(this).
                 unregisterReceiver(currentActivityReceiver);
+        dialog.dismiss();
         currentActivityReceiver = null;
         super.onPause();
     }
