@@ -1,7 +1,9 @@
 package com.technion.android.joblin;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayout;
 import android.util.Log;
 import android.widget.ImageView;
@@ -255,9 +257,9 @@ public class CandidateCard {
             }).addOnSuccessListener(new OnSuccessListener<Boolean>() {
                 @Override
                 public void onSuccess(Boolean isMatch) {
-                    if(isMatch) {
-                        Utils.matchPopUp(mSwipeView.getContext(),"candidate");
-                    }
+//                    if(isMatch && !recrSuperLiked) {
+//                        Utils.matchPopUp(mSwipeView.getContext(),"candidate");
+//                    }
                 }
             })
                     .addOnFailureListener(new OnFailureListener() {
@@ -289,8 +291,8 @@ public class CandidateCard {
     @SwipeIn
     public void onSwipeIn(){
         if(recrSuperLiked) {
-            recruiterMakeSuperLike(swiper,mProfile.getEmail());
             recruiterDoSwipe(swiper,mProfile.getEmail(),Side.RIGHT);
+            swipeRightOnRecruiter(swiper,mProfile.getEmail());
             recrSuperLiked = false;
         } else {
             recruiterDoSwipe(swiper,mProfile.getEmail(),Side.RIGHT);
@@ -314,87 +316,9 @@ public class CandidateCard {
     // ################# SUPER LIKE FUNCTIONALITY ##########################
 
 
-    public void recruiterMakeSuperLike(String recruiterMail, String candidateMail) {
-        addSwipeDataBecauseSuperLike(recruitersCollection, candidatesCollection, recruiterMail, candidateMail);
-    }
 
-
-    public void addSwipeDataForRecruiter(String recruiterMail, String candidateMail, Side side) {
-        addSwipeData(recruitersCollection, candidatesCollection, recruiterMail, candidateMail, side);
-    }
-
-
-    public void addSwipeDataBecauseSuperLike(CollectionReference firstCollection,
-                                             CollectionReference secondCollection,
-                                             String firstMail,
-                                             String secondMail) {
-
-        String sideString = "right";
-
-        final Map<String, Object> firstSwipesMapData = new HashMap<>();
-        firstSwipesMapData.put(EMAIL_KEY, secondMail);
-        firstSwipesMapData.put(SIDE_KEY, sideString);
-
-        final Map<String, Object> secondSwipesMapData = new HashMap<>();
-
-        final Map<String, Object> firstMatchesMapData = new HashMap<>();
-        firstMatchesMapData.put(EMAIL_KEY, firstMail);
-
-        final Map<String, Object> secondMatchesMapData = new HashMap<>();
-        secondMatchesMapData.put(EMAIL_KEY, secondMail);
-
-        final DocumentReference mainDocRefOfFirst = firstCollection.document(firstMail);
-        final DocumentReference swipeDocRefOfFirst = firstCollection.document(firstMail).collection(SWIPES_COLLECTION_NAME).document(secondMail);
-        final DocumentReference swipeDocRefOfSecond = secondCollection.document(secondMail).collection(SWIPES_COLLECTION_NAME).document(firstMail);
-        final DocumentReference matchDocRefOfFirst = firstCollection.document(firstMail).collection(MATCHES_COLLECTION_NAME).document(secondMail);
-        final DocumentReference matchDocRefOfSecond = secondCollection.document(secondMail).collection(MATCHES_COLLECTION_NAME).document(firstMail);
-        db.runTransaction(new Transaction.Function<Boolean>() {
-            @Override
-            public Boolean apply(Transaction transaction) throws FirebaseFirestoreException {
-                DocumentSnapshot snapshotMainFirst = transaction.get(mainDocRefOfFirst);
-                DocumentSnapshot snapshotSwipeSecond = transaction.get(swipeDocRefOfSecond);
-                DocumentSnapshot snapshotSwipeFirst = transaction.get(swipeDocRefOfFirst);
-                boolean isMatch = false;
-                if (snapshotSwipeSecond.exists()) {
-                    if (snapshotSwipeSecond.get(SIDE_KEY).equals("right")) {
-                        transaction.set(matchDocRefOfFirst, secondMatchesMapData);
-                        transaction.set(matchDocRefOfSecond, firstMatchesMapData);
-                        isMatch = true;
-                    }
-                    transaction.update(swipeDocRefOfSecond, secondSwipesMapData);
-                } else {
-                    transaction.set(swipeDocRefOfSecond, secondSwipesMapData);
-                    transaction.delete(swipeDocRefOfSecond);
-                }
-
-                if (snapshotSwipeFirst.exists()) {
-                    transaction.update(swipeDocRefOfFirst, firstSwipesMapData);
-                } else {
-                    transaction.set(swipeDocRefOfFirst, firstSwipesMapData);
-                }
-
-                if (snapshotMainFirst.exists()) {
-                    long numberOfSwipesLeft = snapshotMainFirst.getLong(NUMBER_OF_SWIPES_LEFT_KEY);
-                    transaction.update(mainDocRefOfFirst, NUMBER_OF_SWIPES_LEFT_KEY, numberOfSwipesLeft - 1);
-                }
-
-                return isMatch;
-            }
-        }).addOnSuccessListener(new OnSuccessListener<Boolean>() {
-            @Override
-            public void onSuccess(Boolean isMatch) {
-                if (isMatch) {
-                }
-            }
-        })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Transaction failure.", e);
-                        //TODO: add general toast for failure.
-                    }
-                });
-
+    public void swipeRightOnRecruiter(String recruiterMail, String candidateMail) {
+        addSwipeData(candidatesCollection, recruitersCollection, candidateMail, recruiterMail, Side.RIGHT);
     }
 
 }

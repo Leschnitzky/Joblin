@@ -1,5 +1,6 @@
 package com.technion.android.joblin;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -44,6 +45,7 @@ public class CanMainActivity extends AppCompatActivity {
 
     private SwipePlaceHolderView mSwipeView;
     private Context mContext;
+    private Activity mActivity = this;
     FirebaseFirestore db;
     CollectionReference candidatesCollection, recruitersCollection, usersCollection, jobCategoriesCollection;
     private FirebaseAuth mAuth;
@@ -254,11 +256,6 @@ public class CanMainActivity extends AppCompatActivity {
                     candSuperLiked = true;
                     mSwipeView.doSwipe(true);
 
-                // Todo: implement SuperLike
-                // 1. Remove Current Card
-                // 2. Add Swiping Right Animation
-                // 3. Invoke Levi's SuperLike Functions
-                // 4. Limit Superlike for 1 use per day.
             }
         });
 

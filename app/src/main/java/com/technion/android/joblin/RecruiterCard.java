@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.technion.android.joblin.CanMainActivity.candSuperLiked;
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.EMAIL_KEY;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
@@ -45,6 +46,7 @@ import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.Side;
 import static com.technion.android.joblin.DatabaseUtils.TAG;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
+import static com.technion.android.joblin.RecMainActivity.recrSuperLiked;
 
 @Layout(R.layout.reccard_view)
 public class RecruiterCard {
@@ -256,9 +258,9 @@ public class RecruiterCard {
             }).addOnSuccessListener(new OnSuccessListener<Boolean>() {
                 @Override
                 public void onSuccess(Boolean isMatch) {
-                    if(isMatch) {
-                        Utils.matchPopUp(mSwipeView.getContext(),"recruiter");
-                    }
+//                    if(isMatch && !candSuperLiked) {
+//                        Utils.matchPopUp(mSwipeView.getContext(),"recruiter");
+//                    }
                 }
             })
                     .addOnFailureListener(new OnFailureListener() {
@@ -288,9 +290,19 @@ public class RecruiterCard {
 
     }
 
+    public void swipeRightOnCandidate(String candidateMail, String recruiterMail) {
+        addSwipeData(recruitersCollection, candidatesCollection, recruiterMail, candidateMail, Side.RIGHT);
+    }
+
     @SwipeIn
     public void onSwipeIn(){
-        candidateDoSwipe(swiper,mProfile.getEmail(),Side.RIGHT);
+        if(candSuperLiked) {
+            swipeRightOnCandidate(swiper,mProfile.getEmail());
+            candidateDoSwipe(swiper,mProfile.getEmail(),Side.RIGHT);
+            candSuperLiked = false;
+        } else {
+            candidateDoSwipe(swiper,mProfile.getEmail(),Side.RIGHT);
+        }
     }
 
     @SwipeOut
