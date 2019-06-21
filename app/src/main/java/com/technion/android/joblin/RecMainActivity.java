@@ -58,6 +58,7 @@ public class RecMainActivity extends AppCompatActivity {
     private ImageButton matchButton;
     private String email;
     private TextView swipesLeftTxt;
+    public static Boolean recrSuperLiked = false;
 
     void getCandidatesForSwipingScreen_MainFunction(final String recruiterMail) {
         getCandidatesForSwipingScreen_CollectDataAboutRecruiter(recruiterMail);
@@ -236,6 +237,20 @@ public class RecMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mSwipeView.doSwipe(true);
+            }
+        });
+
+        findViewById(R.id.starBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recrSuperLiked = true;
+                mSwipeView.doSwipe(true);
+
+                // Todo: implement SuperLike
+                // 1. Remove Current Card
+                // 2. Add Swiping Right Animation
+                // 3. Invoke Levi's SuperLike Functions
+                // 4. Limit Superlike for 1 use per day.
             }
         });
 

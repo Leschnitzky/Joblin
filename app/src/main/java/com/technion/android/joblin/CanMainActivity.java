@@ -58,6 +58,8 @@ public class CanMainActivity extends AppCompatActivity {
     private ImageButton mProfileButton;
     private ImageButton mMatchesButton;
     private TextView swipesLeftTxt;
+    public static Boolean candSuperLiked = false;
+
 
     void getRecruitersForSwipingScreen_MainFunction(final String candidateMail) {
         getRecruitersForSwipingScreen_CollectDataAboutCandidate(candidateMail);
@@ -239,6 +241,19 @@ public class CanMainActivity extends AppCompatActivity {
                 mSwipeView.doSwipe(true);
             }
         });
+        findViewById(R.id.starBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    candSuperLiked = true;
+                    mSwipeView.doSwipe(true);
+
+                // Todo: implement SuperLike
+                // 1. Remove Current Card
+                // 2. Add Swiping Right Animation
+                // 3. Invoke Levi's SuperLike Functions
+                // 4. Limit Superlike for 1 use per day.
+            }
+        });
 
         //initialization for display
         rl = findViewById(R.id.rotateloading);
@@ -297,6 +312,7 @@ public class CanMainActivity extends AppCompatActivity {
         currentActivityReceiver = null;
         super.onPause();
     }
+
 
 
 }
