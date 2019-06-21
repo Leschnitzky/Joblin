@@ -1,29 +1,42 @@
 package com.technion.android.joblin;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Point;
-import android.icu.util.Calendar;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 
-import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+
+import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.EMAIL_KEY;
+import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
 public class Utils {
     private static final String TAG = "Utils";
@@ -139,8 +152,13 @@ public class Utils {
             "IT","Media","Sales"
     );
 
+    private static List<String> scopes = Arrays.asList(
+            "Full Time", "40%-50%", "50%-60%", "60%-70%", "70%-80%",
+            "80%-90%"
+    );
 
-    public static Candidate getRandomCandidate(){
+
+    private static Candidate getRandomCandidate(){
 
         Random rand = new Random();
         String firstName = firstNames.get(rand.nextInt(firstNames.size()));
@@ -152,7 +170,7 @@ public class Utils {
         Date date = new GregorianCalendar(rand.nextInt(60)+1960, rand.nextInt(12), rand.nextInt(31)).getTime();
         Timestamp birthdate = new Timestamp(date);
         String location = locationTraits.get(rand.nextInt(locationTraits.size()));
-        String scope = "Full Time";
+        String scope = scopes.get(rand.nextInt(scopes.size()));
         String jobCategory = categories.get(rand.nextInt(categories.size()));
         String firstSkill = skills.get(rand.nextInt(skills.size()));
         String secondSkill = skills.get(rand.nextInt(skills.size()));
@@ -166,7 +184,7 @@ public class Utils {
 
     }
 
-    public static Recruiter getRandomRecruiter(){
+    private static Recruiter getRandomRecruiter(){
         Random rand = new Random();
         String firstName = firstNames.get(rand.nextInt(firstNames.size()));
         String lastName = lastNames.get(rand.nextInt(lastNames.size()));
@@ -177,7 +195,7 @@ public class Utils {
         Date date = new GregorianCalendar(rand.nextInt(60)+1960, rand.nextInt(12), rand.nextInt(31)).getTime();
         Timestamp birthdate = new Timestamp(date);
         String location = locationTraits.get(rand.nextInt(locationTraits.size()));
-        String scope = "Full Time";
+        String scope = scopes.get(rand.nextInt(scopes.size()));
         String jobCategory = categories.get(rand.nextInt(categories.size()));
         String firstSkill = skills.get(rand.nextInt(skills.size()));
         String secondSkill = skills.get(rand.nextInt(skills.size()));
@@ -191,5 +209,57 @@ public class Utils {
                 lastName,imageUrl,workplace,jobCategory,scope,location,moreInfo,education,skillsWithoutDup);
     }
 
+    public static void insertRandomCandidate(Context context) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
+        CollectionReference recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
+        CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
+        CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
+        Candidate candidate = getRandomCandidate();
+        WriteBatch batch = db.batch();
 
+        DocumentReference candidateDocumentReference = candidatesCollection.document(candidate.getEmail());
+        batch.set(candidateDocumentReference, candidate);
+
+        Map<String, Object> userMapData = new HashMap<>();
+        userMapData.put(EMAIL_KEY, candidate.getEmail());
+
+
+        DocumentReference userDocumentReference = usersCollection.document(candidate.getEmail());
+        batch.set(userDocumentReference, userMapData);
+
+        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(context, "inserted random candidate", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    static void insertRandomRecruiter(Context context) {
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
+        CollectionReference recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
+        CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
+        CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
+        Recruiter recruiter = getRandomRecruiter();
+        WriteBatch batch = db.batch();
+
+        DocumentReference candidateDocumentReference = recruitersCollection.document(recruiter.getEmail());
+        batch.set(candidateDocumentReference, recruiter);
+
+        Map<String, Object> userMapData = new HashMap<>();
+        userMapData.put(EMAIL_KEY, recruiter.getEmail());
+
+
+        DocumentReference userDocumentReference = usersCollection.document(recruiter.getEmail());
+        batch.set(userDocumentReference, userMapData);
+
+        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(context, "inserted random recruiter", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }

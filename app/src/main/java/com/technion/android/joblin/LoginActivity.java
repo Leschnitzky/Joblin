@@ -49,8 +49,6 @@ import static com.technion.android.joblin.DatabaseUtils.TAG;
 import static com.technion.android.joblin.DatabaseUtils.TOKENS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.TOKEN_KEY;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
-import static com.technion.android.joblin.Utils.getRandomCandidate;
-import static com.technion.android.joblin.Utils.getRandomRecruiter;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -201,7 +199,6 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-
 
         if(currentUser != null) {
             initFCM();
