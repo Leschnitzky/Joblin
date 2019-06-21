@@ -70,7 +70,6 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
     Candidate candidate;
 
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
@@ -82,19 +81,14 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         Places.initialize(this, "AIzaSyBz1HHQ4v-4wifOcikbPGOqetSzt2vSFPY");
     }
 
-
-
     @Override
-
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     private enum Tag {
         Info,
@@ -180,7 +174,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         addPreferences(elements);
         addDescription(elements);
         addButtons(elements);
-        FormPlacesAutoCompleteViewBinder vb = new FormPlacesAutoCompleteViewBinder(this,formBuilder,null,null);
+        FormPlacesAutoCompleteViewBinder vb = new FormPlacesAutoCompleteViewBinder(this, formBuilder,null,null);
         formBuilder.registerCustomViewBinder(vb.getViewBinder());
         formBuilder.addFormElements(elements);
     }
@@ -310,16 +304,19 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
 
         // scope
         FormPickerDropDownElement<ListItem> scope = new FormPickerDropDownElement<>(Tag.Scope.ordinal());
-
         List<String> scopesList = new ArrayList<>();
-        scopesList.add("Full Time");
         scopesList.add("20-30%");
         scopesList.add("40-50%");
         scopesList.add("60-70%");
         scopesList.add("80-90%");
+        scopesList.add("Once a Week");
+        scopesList.add("Twice a Week");
+        scopesList.add("3 Times a Week");
+        scopesList.add("4 Times a Week");
+        scopesList.add("5 Times a Week");
+        scopesList.add("Full Time");
 
         scope.setArrayAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item, scopesList));
-
         scope.setTitle("Scope");
         scope.setHint("Click here to choose");
         scope.setValue(candidate.getScope());
@@ -346,6 +343,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         submit.setValue("Submit");
         submit.setBackgroundColor(R.color.colorPrimaryDark);
         submit.setValueTextColor(Color.WHITE);
+
         BaseFormElement name = elements.get(Tag.Name.ordinal());
         BaseFormElement lastname = elements.get(Tag.LastName.ordinal());
         FormPickerDateElement birthdate = (FormPickerDateElement)elements.get(Tag.BirthDate.ordinal());
@@ -356,6 +354,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         BaseFormElement education = elements.get(Tag.Education.ordinal());
         BaseFormElement skill1 = elements.get(Tag.Skill1.ordinal());
         BaseFormElement maxDistance = elements.get(Tag.MaxDistance.ordinal());
+
         List<String> skills = new ArrayList<>();
         submit.getValueObservers().add((newValue, element) -> {
             boolean min_age = Utils.getAge(birthdate.getValue().getTime(),Timestamp.now().toDate())>=13;

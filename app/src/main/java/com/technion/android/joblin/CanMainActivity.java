@@ -98,11 +98,15 @@ public class CanMainActivity extends AppCompatActivity {
                         List<Recruiter> listOfRecruiters = new ArrayList<>();
                         for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                             Recruiter recruiter = document.toObject(Recruiter.class);
-                            final String recruiterJobLocation = recruiter.getJobLocation();
-                            final Location recruiterLocation = Utils.getLocationFromCity(mContext, recruiterJobLocation);
-                            float distance = candidateLocation.distanceTo(recruiterLocation) / 1000;
-                            if(distance <= candidateMaxDistance) {
-                                listOfRecruiters.add(recruiter);
+                            if(candidateLocation != null) {
+                                final String recruiterJobLocation = recruiter.getJobLocation();
+                                final Location recruiterLocation = Utils.getLocationFromCity(mContext, recruiterJobLocation);
+                                if(recruiterLocation != null) {
+                                    float distance = candidateLocation.distanceTo(recruiterLocation) / 1000;
+                                    if(distance <= candidateMaxDistance) {
+                                        listOfRecruiters.add(recruiter);
+                                    }
+                                }
                             }
                         }
                         getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);

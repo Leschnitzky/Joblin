@@ -233,6 +233,7 @@ public class Utils {
         double[] candidateLocation = Utils.getLocationFromAddress(context, candidateLocationAddress);
         if(candidateLocation == null) {
             addErrorData(cityName + " not found with getLocation");
+            return null;
         }
         double locationLatitude = candidateLocation[0];
         double locationLongitude = candidateLocation[1];

@@ -279,12 +279,23 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
 
         // scope
         FormPickerDropDownElement<ListItem> scope = new FormPickerDropDownElement<>(Tag.Scope.ordinal());
+
+        scope.getValueObservers().add((newValue, element) -> {
+
+            return Unit.INSTANCE;
+        });
+
         List<String> scopesList = new ArrayList<>();
-        scopesList.add("Full Time");
         scopesList.add("20-30%");
         scopesList.add("40-50%");
         scopesList.add("60-70%");
         scopesList.add("80-90%");
+        scopesList.add("Once a Week");
+        scopesList.add("Twice a Week");
+        scopesList.add("3 Times a Week");
+        scopesList.add("4 Times a Week");
+        scopesList.add("5 Times a Week");
+        scopesList.add("Full Time");
 
         scope.setArrayAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item, scopesList));
         scope.setTitle("Scope");
@@ -315,6 +326,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         submit.setValue("Submit");
         submit.setBackgroundColor(R.color.colorPrimaryDark);
         submit.setValueTextColor(Color.WHITE);
+
         BaseFormElement name = elements.get(Tag.Name.ordinal());
         BaseFormElement lastname = elements.get(Tag.LastName.ordinal());
         FormPickerDateElement birthdate = (FormPickerDateElement)elements.get(Tag.BirthDate.ordinal());
@@ -325,6 +337,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         BaseFormElement education = elements.get(Tag.Education.ordinal());
         BaseFormElement skill1 = elements.get(Tag.Skill1.ordinal());
         BaseFormElement maxDistance = elements.get(Tag.MaxDistance.ordinal());
+
         List<String> skills = new ArrayList<>();
         submit.getValueObservers().add((newValue, element) -> {
             boolean min_age = false;
