@@ -281,6 +281,14 @@ class DatabaseAPI {
         addSwipeDataBecauseSuperLike(candidatesCollection, recruitersCollection, candidateMail, recruiterMail);
     }
 
+    public void swipeRightOnRecruiter(String recruiterMail, String candidateMail) {
+        addSwipeData(candidatesCollection, recruitersCollection, candidateMail, recruiterMail, Side.RIGHT);
+    }
+
+    public void swipeRightOnCandidate(String candidateMail, String recruiterMail) {
+        addSwipeData(recruitersCollection, candidatesCollection, recruiterMail, candidateMail, Side.RIGHT);
+    }
+
     public void addSwipeDataBecauseSuperLike(CollectionReference firstCollection,
                                              CollectionReference secondCollection,
                                              String firstMail,
