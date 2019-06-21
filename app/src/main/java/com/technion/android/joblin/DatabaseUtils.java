@@ -16,6 +16,7 @@ class DatabaseUtils {
     static final String SKILLS_KEY = "skillList";
     static final String EDUCATION_KEY = "education";
     static final String NUMBER_OF_SWIPES_LEFT_KEY = "numberOfSwipesLeft";
+    static final String NUMBER_OF_SUPER_LIKES_LEFT_KEY = "numberOfSuperLikesLeft";
     static final String REQUIRED_EDUCATION = "requiredEducation";
     static final String REQUIRED_SCOPE_KEY = "requiredScope";
     static final String REQUIRED_SKILLS_KEY = "requiredSkillsList";
