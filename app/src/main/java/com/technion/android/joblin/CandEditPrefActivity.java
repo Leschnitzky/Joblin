@@ -36,6 +36,7 @@ import com.thejuki.kformmaster.model.FormPickerDateElement;
 import com.thejuki.kformmaster.model.FormPickerDateElement.DateHolder;
 import com.thejuki.kformmaster.model.FormPickerDropDownElement;
 import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
+import com.thejuki.kformmaster.model.FormSliderElement;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -107,6 +108,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         Skill3,
         Pref,
         Location,
+        MaxDistance,
         Category,
         Scope,
         DescTitle,
@@ -265,9 +267,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
 
         elements.add(new FormHeader("Job Preferences"));
 
-
         FormPlacesAutoCompleteElement location = new FormPlacesAutoCompleteElement(Tag.Location.ordinal());
-
         location.setTitle("Location");
         location.setHint("Enter location here");
         location.setPlaceFields(Collections.singletonList(Place.Field.NAME));
@@ -276,6 +276,15 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         location.setValue(candidate.getJobLocation());
         location.setAutocompleteActivityMode(AutocompleteActivityMode.OVERLAY);
         elements.add(location);
+
+        FormSliderElement slider = new FormSliderElement(Tag.MaxDistance.ordinal());
+        slider.setTitle("Maximum Distance");
+        slider.setValue(50);
+        slider.setMin(1);
+        slider.setMax(100);
+        slider.setIncrementBy(1);
+        slider.setValue(candidate.getMaxDistance());
+        elements.add(slider);
 
         FormPickerDropDownElement<ListItem> dropDown = new FormPickerDropDownElement<>(Tag.Category.ordinal());
         dropDown.setTitle("Category");
@@ -346,6 +355,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         BaseFormElement desc = elements.get(Tag.Desc.ordinal());
         BaseFormElement education = elements.get(Tag.Education.ordinal());
         BaseFormElement skill1 = elements.get(Tag.Skill1.ordinal());
+        BaseFormElement maxDistance = elements.get(Tag.MaxDistance.ordinal());
         List<String> skills = new ArrayList<>();
         submit.getValueObservers().add((newValue, element) -> {
             boolean min_age = Utils.getAge(birthdate.getValue().getTime(),Timestamp.now().toDate())>=13;
@@ -371,7 +381,8 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
                         education.getValueAsString(),
                         skills,
                         desc.getValueAsString(),
-                        category.getValueAsString()
+                        category.getValueAsString(),
+                        (int) maxDistance.getValue()
                 );
                 insertCandidate(cand);
             }

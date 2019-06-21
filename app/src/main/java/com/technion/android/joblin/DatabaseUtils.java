@@ -28,6 +28,7 @@ class DatabaseUtils {
     static final String CURRENT_TIME_KEY = "time";
     static final String SENDER_KEY = "sender";
     static final String RECEIVER_KEY = "receiver";
+    static final String MAX_DISTANCE_KEY = "maxDistance";
 
     static final String SWIPES_COLLECTION_NAME = "Swipes";
     static final String MATCHES_COLLECTION_NAME = "Matches";
