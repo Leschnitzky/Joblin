@@ -30,6 +30,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentChange.Type;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -145,9 +147,12 @@ public class CanMainActivity extends AppCompatActivity {
                             return;
                         }
                         List<Recruiter> listOfRecruiters = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : Objects.requireNonNull(queryDocumentSnapshots)) {
-                            Recruiter recruiter = document.toObject(Recruiter.class);
-                            listOfRecruiters.add(recruiter);
+                        for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()) {
+                            if(documentChange.getType().equals(Type.ADDED))
+                            {
+                                Recruiter recruiter = documentChange.getDocument().toObject(Recruiter.class);
+                                listOfRecruiters.add(recruiter);
+                            }
                         }
                         getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);
                     }
@@ -221,10 +226,12 @@ public class CanMainActivity extends AppCompatActivity {
                             return;
                         }
                         List<Recruiter> listOfRecruiters = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : Objects.requireNonNull(queryDocumentSnapshots)) {
-                            Recruiter recruiter = document.toObject(Recruiter.class);
-                            if(Utils.getPoint(CanMainActivity.this,recruiter.getJobLocation()).equals(candidateLocation))
-                                listOfRecruiters.add(recruiter);
+                        for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()) {
+                            if(documentChange.getType().equals(Type.ADDED)) {
+                                Recruiter recruiter = documentChange.getDocument().toObject(Recruiter.class);
+                                if (Utils.getPoint(CanMainActivity.this, recruiter.getJobLocation()).equals(candidateLocation))
+                                    listOfRecruiters.add(recruiter);
+                            }
                         }
                         getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);
                     }
@@ -245,9 +252,11 @@ public class CanMainActivity extends AppCompatActivity {
                             return;
                         }
                         List<Recruiter> listOfRecruiters = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : Objects.requireNonNull(queryDocumentSnapshots)) {
-                            Recruiter recruiter = document.toObject(Recruiter.class);
-                            listOfRecruiters.add(recruiter);
+                        for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()) {
+                            if(documentChange.getType().equals(Type.ADDED)) {
+                                Recruiter recruiter = documentChange.getDocument().toObject(Recruiter.class);
+                                listOfRecruiters.add(recruiter);
+                            }
                         }
                         getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);
                     }
