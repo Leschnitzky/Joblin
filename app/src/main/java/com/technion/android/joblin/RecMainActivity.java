@@ -245,12 +245,6 @@ public class RecMainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 recrSuperLiked = true;
                 mSwipeView.doSwipe(true);
-
-                // Todo: implement SuperLike
-                // 1. Remove Current Card
-                // 2. Add Swiping Right Animation
-                // 3. Invoke Levi's SuperLike Functions
-                // 4. Limit Superlike for 1 use per day.
             }
         });
 

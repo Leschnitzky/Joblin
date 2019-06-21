@@ -11,12 +11,17 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SUPER_LIKES_LEFT_KEY;
 import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SWIPES_LEFT_KEY;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.TAG;
@@ -41,7 +46,11 @@ public class MyReceiver extends BroadcastReceiver {
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            document.getReference().update(NUMBER_OF_SWIPES_LEFT_KEY, User.totalNumberOfSwipes)
+                            Map<String,Object> updates = new HashMap<>();
+                            updates.put(NUMBER_OF_SWIPES_LEFT_KEY, User.totalNumberOfSwipes);
+                            updates.put(NUMBER_OF_SUPER_LIKES_LEFT_KEY, User.totalNumberOfSuperLikes);
+
+                            document.getReference().update(updates)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
@@ -65,7 +74,11 @@ public class MyReceiver extends BroadcastReceiver {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
-                                document.getReference().update(NUMBER_OF_SWIPES_LEFT_KEY, User.totalNumberOfSwipes)
+                                Map<String,Object> updates = new HashMap<>();
+                                updates.put(NUMBER_OF_SWIPES_LEFT_KEY, User.totalNumberOfSwipes);
+                                updates.put(NUMBER_OF_SUPER_LIKES_LEFT_KEY, User.totalNumberOfSuperLikes);
+
+                                document.getReference().update(updates)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {

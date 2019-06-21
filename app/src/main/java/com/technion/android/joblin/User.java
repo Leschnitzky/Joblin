@@ -10,6 +10,9 @@ public class User {
     static long totalNumberOfSwipes = 10;
     private long numberOfSwipesLeft = 10;
 
+    static long totalNumberOfSuperLikes = 1;
+    private long numberOfSuperLikesLeft = 1;
+
     User() {}
 
     User(String email, String name, String lastName, String imageUrl) {
@@ -24,6 +27,7 @@ public class User {
         this.name = other.name;
         this.lastName = other.lastName;
         this.numberOfSwipesLeft = other.numberOfSwipesLeft;
+        this.numberOfSuperLikesLeft = other.numberOfSuperLikesLeft;
         this.imageUrl = other.imageUrl;
     }
 
@@ -85,5 +89,21 @@ public class User {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public static long getTotalNumberOfSuperLikes() {
+        return totalNumberOfSuperLikes;
+    }
+
+    public static void setTotalNumberOfSuperLikes(long totalNumberOfSuperLikes) {
+        User.totalNumberOfSuperLikes = totalNumberOfSuperLikes;
+    }
+
+    public long getNumberOfSuperLikesLeft() {
+        return numberOfSuperLikesLeft;
+    }
+
+    public void setNumberOfSuperLikesLeft(long numberOfSuperLikesLeft) {
+        this.numberOfSuperLikesLeft = numberOfSuperLikesLeft;
     }
 }

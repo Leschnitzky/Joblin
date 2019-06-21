@@ -207,9 +207,9 @@ public class LoginActivity extends AppCompatActivity {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
         //insert random Candidate
-        Candidate cand = getRandomCandidate();
-        Toast.makeText(context, "Category: "+ cand.getJobCategory()+ " , MAIL : " + cand.getEmail(), Toast.LENGTH_SHORT).show();
-        insertCandidate(cand);
+//        Candidate cand = getRandomCandidate();
+//        Toast.makeText(context, "Category: "+ cand.getJobCategory()+ " , MAIL : " + cand.getEmail(), Toast.LENGTH_SHORT).show();
+//        insertCandidate(cand);
 
 
         if(currentUser != null) {
