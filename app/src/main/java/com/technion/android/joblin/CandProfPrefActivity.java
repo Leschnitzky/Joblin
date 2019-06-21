@@ -34,6 +34,7 @@ import com.thejuki.kformmaster.model.FormMultiLineEditTextElement;
 import com.thejuki.kformmaster.model.FormPickerDateElement;
 import com.thejuki.kformmaster.model.FormPickerDropDownElement;
 import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
+import com.thejuki.kformmaster.model.FormSliderElement;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -100,6 +101,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         Skill3,
         Pref,
         Location,
+        MaxDistance,
         Category,
         Scope,
         DescTitle,
@@ -164,8 +166,10 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
 
     private void addCandInfo(List<BaseFormElement<?>> elements) {
 
+        // info
         elements.add(new FormHeader("Personal Details"));
 
+        // name
         FormSingleLineEditTextElement name = new FormSingleLineEditTextElement(Tag.Name.ordinal());
         name.setTitle("First Name");
         name.setHint("Enter first name here");
@@ -174,6 +178,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         name.setRequired(true);
         elements.add(name);
 
+        // last name
         FormSingleLineEditTextElement lastname = new FormSingleLineEditTextElement(Tag.LastName.ordinal());
         lastname.setTitle("Last Name");
         lastname.setHint("Enter last name here");
@@ -182,6 +187,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         lastname.setRequired(true);
         elements.add(lastname);
 
+        // birthday
         FormPickerDateElement birthdate = new FormPickerDateElement(Tag.BirthDate.ordinal());
         birthdate.setTitle("Date of birth");
         birthdate.setHint("Click here to pick date");
@@ -189,36 +195,37 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         birthdate.setRequired(true);
         elements.add(birthdate);
 
+        // education
         FormSingleLineEditTextElement education = new FormSingleLineEditTextElement(Tag.Education.ordinal());
-
         education.setTitle("Education");
         education.setHint("Enter education here");
         education.setCenterText(true);
         education.setRequired(true);
         elements.add(education);
 
+        // skills
         FormLabelElement skills = new FormLabelElement();
         skills.setTitle("Skills: (One at least)");
         skills.setCenterText(true);
         elements.add(skills);
 
+        // skills1
         FormSingleLineEditTextElement skill1 = new FormSingleLineEditTextElement(Tag.Skill1.ordinal());
-
         skill1.setTitle("Skill 1");
         skill1.setHint("Enter skill here");
         skill1.setCenterText(true);
         skill1.setRequired(true);
         elements.add(skill1);
 
+        // skills2
         FormSingleLineEditTextElement skill2 = new FormSingleLineEditTextElement(Tag.Skill2.ordinal());
-
         skill2.setTitle("Skill 2");
         skill2.setHint("Enter skill here");
         skill2.setCenterText(true);
         elements.add(skill2);
 
+        // skills3
         FormSingleLineEditTextElement skill3 = new FormSingleLineEditTextElement(Tag.Skill3.ordinal());
-
         skill3.setTitle("Skill 3");
         skill3.setHint("Enter skill here");
         skill3.setCenterText(true);
@@ -228,11 +235,11 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
 
     private void addPreferences(List<BaseFormElement<?>> elements) {
 
+        // preferences
         elements.add(new FormHeader("Job Preferences"));
 
-
+        // location
         FormPlacesAutoCompleteElement location = new FormPlacesAutoCompleteElement(Tag.Location.ordinal());
-
         location.setTitle("Location");
         location.setHint("Enter location here");
         location.setPlaceFields(Collections.singletonList(Place.Field.NAME));
@@ -241,6 +248,16 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         location.setAutocompleteActivityMode(AutocompleteActivityMode.OVERLAY);
         elements.add(location);
 
+        // max distance
+        FormSliderElement slider = new FormSliderElement(Tag.MaxDistance.ordinal());
+        slider.setTitle("Maximum Distance");
+        slider.setValue(50);
+        slider.setMin(1);
+        slider.setMax(100);
+        slider.setIncrementBy(1);
+        elements.add(slider);
+
+        // category
         FormPickerDropDownElement<ListItem> dropDown = new FormPickerDropDownElement<>(Tag.Category.ordinal());
         dropDown.setTitle("Category");
         dropDown.setDialogTitle("Category");
@@ -262,7 +279,6 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
 
         // scope
         FormPickerDropDownElement<ListItem> scope = new FormPickerDropDownElement<>(Tag.Scope.ordinal());
-
         List<String> scopesList = new ArrayList<>();
         scopesList.add("Full Time");
         scopesList.add("20-30%");
@@ -271,7 +287,6 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         scopesList.add("80-90%");
 
         scope.setArrayAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item, scopesList));
-
         scope.setTitle("Scope");
         scope.setDialogTitle("Scope");
         scope.setHint("Click here to choose");
@@ -281,9 +296,12 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
     }
 
     private void addDescription(List<BaseFormElement<?>> elements) {
-        elements.add(new FormHeader("About me"));
-        FormMultiLineEditTextElement description = new FormMultiLineEditTextElement(Tag.Desc.ordinal());
 
+        // description title
+        elements.add(new FormHeader("About me"));
+
+        // description
+        FormMultiLineEditTextElement description = new FormMultiLineEditTextElement(Tag.Desc.ordinal());
         description.setMaxLines(6);
         description.setHint("Enter description here");
         description.setDisplayTitle(false);
@@ -306,6 +324,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         BaseFormElement desc = elements.get(Tag.Desc.ordinal());
         BaseFormElement education = elements.get(Tag.Education.ordinal());
         BaseFormElement skill1 = elements.get(Tag.Skill1.ordinal());
+        BaseFormElement maxDistance = elements.get(Tag.MaxDistance.ordinal());
         List<String> skills = new ArrayList<>();
         submit.getValueObservers().add((newValue, element) -> {
             boolean min_age = false;
@@ -322,6 +341,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
                     skills.add(elements.get(Tag.Skill2.ordinal()).getValueAsString());
                 if(!elements.get(Tag.Skill3.ordinal()).getValueAsString().isEmpty())
                     skills.add(elements.get(Tag.Skill3.ordinal()).getValueAsString());
+
                 Candidate cand = new Candidate(
                         mAuth.getCurrentUser().getEmail(),
                         name.getValueAsString(),
@@ -333,7 +353,8 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
                         education.getValueAsString(),
                         skills,
                         desc.getValueAsString(),
-                        category.getValueAsString()
+                        category.getValueAsString(),
+                        (int) maxDistance.getValue()
                 );
                 insertCandidate(cand);
             }
@@ -366,12 +387,12 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
     }
 
     @Override
-
     public void onValueChanged(BaseFormElement<?> formElement) {
 
     }
+
     @Override
-    public void onActivityResult(int requestCode,int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Tag.Location.ordinal()) {
             FormPlacesAutoCompleteElement placesElement = formBuilder.getFormElement(Tag.Location.ordinal());
             placesElement.handleActivityResult(formBuilder, resultCode, data);
@@ -381,8 +402,6 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
         mAuth.signOut();
-
     }
 }

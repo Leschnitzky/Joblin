@@ -4,48 +4,69 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Point;
-import android.icu.util.Calendar;
+import android.location.Address;
+import android.location.Location;
 import android.os.Build;
+import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import android.location.Geocoder;
+
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public class Utils {
-    private static final String TAG = "Utils";
+import static com.technion.android.joblin.DatabaseUtils.CURRENT_TIME_KEY;
+import static com.technion.android.joblin.DatabaseUtils.ERRORS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.ERROR_KEY;
 
-        public static Point getDisplaySize(WindowManager windowManager){
-            try {
-                if(Build.VERSION.SDK_INT > 16) {
-                    Display display = windowManager.getDefaultDisplay();
-                    DisplayMetrics displayMetrics = new DisplayMetrics();
-                    display.getMetrics(displayMetrics);
-                    return new Point(displayMetrics.widthPixels, displayMetrics.heightPixels);
-                }else{
-                    return new Point(0, 0);
-                }
-            }catch (Exception e){
-                e.printStackTrace();
+public class Utils {
+
+    private static final String TAG = "Utils";
+    static FirebaseFirestore db = FirebaseFirestore.getInstance();
+    static CollectionReference errorsCollection = db.collection(ERRORS_COLLECTION_NAME);
+
+    public static Point getDisplaySize(WindowManager windowManager){
+        try {
+            if(Build.VERSION.SDK_INT > 16) {
+                Display display = windowManager.getDefaultDisplay();
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                display.getMetrics(displayMetrics);
+                return new Point(displayMetrics.widthPixels, displayMetrics.heightPixels);
+            }else{
                 return new Point(0, 0);
             }
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Point(0, 0);
         }
-        public static int dpToPx(int dp) {
-            return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
-        }
+    }
+
+    public static int dpToPx(int dp) {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
     public static void matchPopUp(Context context, String type)
     {
         new SweetAlertDialog(context)
@@ -105,6 +126,7 @@ public class Utils {
             ,"Sagi","Ohad","Matan","Moshe","Liran","Dvir"
             ,"Gal","Zvi","Ofek","Ofir"
     );
+
     private static List<String> lastNames =  Arrays.asList(
             "Cohen","Levi","Shvartz","Wisemann",
             "Aflalo","Abutbul","Eliyaho","Kahlon",
@@ -133,12 +155,10 @@ public class Utils {
             "Hedera", "Tiberia", "Raanana"
     );
 
-
     private static List<String> categories = Arrays.asList(
             "Accounting","Computer Science","Education","Finance",
             "IT","Media","Sales"
     );
-
 
     public static Candidate getRandomCandidate(){
 
@@ -158,12 +178,11 @@ public class Utils {
         String secondSkill = skills.get(rand.nextInt(skills.size()));
         String thirdSkill = skills.get(rand.nextInt(skills.size()));
         List<String> skills = Arrays.asList(firstSkill,secondSkill,thirdSkill);
-        List<String> skillsWithoutDup =  new ArrayList<>(
-                new HashSet<>(skills));
+        List<String> skillsWithoutDup =  new ArrayList<>(new HashSet<>(skills));
+        int maxDistance = rand.nextInt(100);
 
          return new Candidate(email,firstName,
-                lastName,imageUrl,birthdate,location,scope,education,skillsWithoutDup,moreInfo,jobCategory);
-
+                lastName,imageUrl,birthdate,location,scope,education,skillsWithoutDup,moreInfo,jobCategory,maxDistance);
     }
 
     public static Recruiter getRandomRecruiter(){
@@ -184,12 +203,64 @@ public class Utils {
         String thirdSkill = skills.get(rand.nextInt(skills.size()));
         String workplace = "Random";
         List<String> skills = Arrays.asList(firstSkill,secondSkill,thirdSkill);
-        List<String> skillsWithoutDup =  new ArrayList<>(
-                new HashSet<>(skills));
+        List<String> skillsWithoutDup =  new ArrayList<>(new HashSet<>(skills));
 
         return new Recruiter(email,firstName,
                 lastName,imageUrl,workplace,jobCategory,scope,location,moreInfo,education,skillsWithoutDup);
     }
 
+    public static double[] getLocationFromAddress(Context context, String strAddress) {
+        Geocoder coder = new Geocoder(context);
+        List<Address> address;
+
+        try {
+            address = coder.getFromLocationName(strAddress, 1);
+            if (address == null) {
+                return null;
+            }
+            Address location = address.get(0);
+            double lat = location.getLatitude();
+            double lng = location.getLongitude();
+            double[] toReturn = {lat, lng};
+            return toReturn;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static Location getLocationFromCity(Context context, String cityName) {
+        String candidateLocationAddress = cityName + ", Israel";
+        double[] candidateLocation = Utils.getLocationFromAddress(context, candidateLocationAddress);
+        if(candidateLocation == null) {
+            addErrorData(cityName + " not found with getLocation");
+        }
+        double locationLatitude = candidateLocation[0];
+        double locationLongitude = candidateLocation[1];
+        Location location = new Location(cityName);
+        location.setLatitude(locationLatitude);
+        location.setLongitude(locationLongitude);
+        return location;
+    }
+
+    public static void addErrorData(String errorDescription) {
+        Date currentDateTime = Calendar.getInstance().getTime();
+        Timestamp currentTimeTimeStamp = new Timestamp(currentDateTime);
+
+        Map<String, Object> errorData = new HashMap<>();
+        errorData.put(ERROR_KEY, errorDescription);
+        errorData.put(CURRENT_TIME_KEY, currentTimeTimeStamp);
+
+        errorsCollection.document().set(errorData)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                    }
+                });
+    }
 
 }

@@ -120,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.login_screen_layout);
 
 //        DatabaseAPI dbAPI = new DatabaseAPI();
-//        dbAPI.initializeDBWithSomeData();
+//        dbAPI.addMaxDistanceFieldToAllUsersInDB();
 
         dialog = new ProgressDialog(LoginActivity.this);
 
@@ -160,6 +160,7 @@ public class LoginActivity extends AppCompatActivity {
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
 
 //        DatabaseAPI dbAPI = new DatabaseAPI();
+//        dbAPI.swipeRightOnRecruiter("baraflalo@gmail.com", "levi.weiss3@gmail.com");
 
     }
 

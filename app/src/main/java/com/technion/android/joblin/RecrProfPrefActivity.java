@@ -101,7 +101,7 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
         Skill3,
         DescTitle,
         Desc,
-        Submit
+        Submit,
     }
 
     void insertRecruiter(Recruiter recruiter) {

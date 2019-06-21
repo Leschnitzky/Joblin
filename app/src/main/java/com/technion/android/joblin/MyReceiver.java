@@ -52,7 +52,6 @@ public class MyReceiver extends BroadcastReceiver {
                                         public void onFailure(@NonNull Exception e) {
                                         }
                                     });
-
                         }
                     } else {
                     }

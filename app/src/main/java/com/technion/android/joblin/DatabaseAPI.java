@@ -204,7 +204,8 @@ class DatabaseAPI {
                 "Technion",
                 skillsList,
                 "I like building Android apps",
-                "Computer Science");
+                "Computer Science",
+                10);
 
         insertCandidate(candidate);
     }
@@ -279,6 +280,14 @@ class DatabaseAPI {
 
     public void candidateMakeSuperLike(String candidateMail, String recruiterMail) {
         addSwipeDataBecauseSuperLike(candidatesCollection, recruitersCollection, candidateMail, recruiterMail);
+    }
+
+    public void swipeRightOnRecruiter(String recruiterMail, String candidateMail) {
+        addSwipeData(candidatesCollection, recruitersCollection, candidateMail, recruiterMail, Side.RIGHT);
+    }
+
+    public void swipeRightOnCandidate(String candidateMail, String recruiterMail) {
+        addSwipeData(recruitersCollection, candidatesCollection, recruiterMail, candidateMail, Side.RIGHT);
     }
 
     public void addSwipeDataBecauseSuperLike(CollectionReference firstCollection,
@@ -597,7 +606,8 @@ class DatabaseAPI {
                 "High School",
                 new ArrayList<String> (Arrays.asList("Java","C#")),
                 "I know how to code, code is my life, more than anything in the world.",
-                "Computer Science");
+                "Computer Science",
+                10);
 
         insertCandidate(candidate);
 
@@ -611,7 +621,8 @@ class DatabaseAPI {
                 "Ort Barude",
                 new ArrayList<String> (Arrays.asList("C","Assembly","Writing songs")),
                 "Hello, it's me\n I was wondering if after all these years you'd like to meet",
-                "Computer Science");
+                "Computer Science",
+                10);
 
         insertCandidate(candidate);
 
@@ -625,7 +636,8 @@ class DatabaseAPI {
                 "Technion",
                 skillsList,
                 "I like building Android apps",
-                "Computer Science");
+                "Computer Science",
+                10);
 
         insertCandidate(candidate);
 
@@ -639,7 +651,8 @@ class DatabaseAPI {
                 "Witches School of Salem",
                 new ArrayList<String> (Arrays.asList("abra kadabra","whoofoo","escaping")),
                 "I'm a witch and i'm proud of it. i can spell any programming language i want.",
-                "Computer Science");
+                "Computer Science",
+                10);
 
         insertCandidate(candidate);
 
@@ -653,7 +666,8 @@ class DatabaseAPI {
                 "Haward Univerity",
                 new ArrayList<String> (Arrays.asList("C#","angry birds")),
                 "Only Iphones. If you make android, swipe left!",
-                "Computer Science");
+                "Computer Science",
+                10);
 
         insertCandidate(candidate);
 
@@ -667,7 +681,8 @@ class DatabaseAPI {
                 "Technion instituation",
                 new ArrayList<String> (Arrays.asList("Java","Good at jokes")),
                 "I have a great idea for an android app, it's called...\n 'remedicene'\n ~mind blown~",
-                "Computer Science");
+                "Computer Science",
+                10);
 
         insertCandidate(candidate);
 
@@ -682,7 +697,8 @@ class DatabaseAPI {
                 "Tel Aviv University",
                 skillsList,
                 "I am best person for cyber security",
-                "IT");
+                "IT",
+                10);
 
         insertCandidate(candidate);
 
@@ -697,7 +713,8 @@ class DatabaseAPI {
                 "Ben Gurion University",
                 skillsList,
                 "I am friendly personal",
-                "IT");
+                "IT",
+                10);
 
         insertCandidate(candidate);
 
@@ -712,7 +729,8 @@ class DatabaseAPI {
                 "IDC",
                 skillsList,
                 "I am looking to work in dynamic place with good people",
-                "Accounting");
+                "Accounting",
+                10);
 
         insertCandidate(candidate);
     }
@@ -1000,6 +1018,55 @@ class DatabaseAPI {
                     public void onFailure(@NonNull Exception e) {
                     }
                 });
+    }
+
+    public void addMaxDistanceFieldToAllUsersInDB() {
+
+        recruitersCollection
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            WriteBatch batch = db.batch();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                DocumentReference documentReference = document.getReference();
+                                batch.update(documentReference, "maxDistance", 12L);
+                            }
+
+                            batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+
+                                }
+                            });
+                        }
+                    }
+                });
+
+
+        candidatesCollection
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            WriteBatch batch = db.batch();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                DocumentReference documentReference = document.getReference();
+                                batch.update(documentReference, "maxDistance", 30L);
+                            }
+
+                            batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+
+                                }
+                            });
+                        }
+                    }
+                });
+
     }
 
 }
