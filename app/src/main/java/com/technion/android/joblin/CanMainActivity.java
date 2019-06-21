@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
@@ -36,14 +37,7 @@ import com.victor.loading.rotate.RotateLoading;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORY_KEY;
-import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SWIPES_LEFT_KEY;
-import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.TAG;
-import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.*;
 
 
 public class CanMainActivity extends AppCompatActivity {
@@ -59,6 +53,7 @@ public class CanMainActivity extends AppCompatActivity {
     private ImageButton mMatchesButton;
     private TextView swipesLeftTxt;
 
+
     void getRecruitersForSwipingScreen_MainFunction(final String candidateMail) {
         getRecruitersForSwipingScreen_CollectDataAboutCandidate(candidateMail);
     }
@@ -72,7 +67,9 @@ public class CanMainActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         String candidateJobCategory = (String) document.get(JOB_CATEGORY_KEY);
-                        getRecruitersForSwipingScreen_FindRelevantRecruiters(candidateMail, candidateJobCategory);
+                        String candidateJobLocation = (String) document.get(JOB_LOCATION_KEY);
+                        long candidateMaxDistance = (long) document.get(MAX_DISTANCE_KEY);
+                        getRecruitersForSwipingScreen_FindRelevantRecruiters(candidateMail, candidateJobCategory, candidateJobLocation, candidateMaxDistance);
                     } else {
                     }
                 } else {
@@ -83,7 +80,12 @@ public class CanMainActivity extends AppCompatActivity {
     }
 
     void getRecruitersForSwipingScreen_FindRelevantRecruiters(final String candidateMail,
-                                                              final String candidateJobCategory) {
+                                                              final String candidateJobCategory,
+                                                              final String candidateJobLocation,
+                                                              final long candidateMaxDistance) {
+
+        final Location candidateLocation = Utils.getLocationFromCity(mContext, candidateJobLocation);
+
         recruitersCollection
                 .whereEqualTo(JOB_CATEGORY_KEY, candidateJobCategory)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -96,7 +98,13 @@ public class CanMainActivity extends AppCompatActivity {
                         List<Recruiter> listOfRecruiters = new ArrayList<>();
                         for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                             Recruiter recruiter = document.toObject(Recruiter.class);
-                            listOfRecruiters.add(recruiter);
+                            final String recruiterJobLocation = recruiter.getJobLocation();
+                            final Location recruiterLocation = Utils.getLocationFromCity(mContext, recruiterJobLocation);
+                            float distance = candidateLocation.distanceTo(recruiterLocation) / 1000;
+                            if(distance <= candidateMaxDistance) {
+                                listOfRecruiters.add(recruiter);
+                            }
+
                         }
                         getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);
                     }

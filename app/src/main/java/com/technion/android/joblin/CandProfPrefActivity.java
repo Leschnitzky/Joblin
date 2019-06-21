@@ -252,9 +252,9 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         FormSliderElement slider = new FormSliderElement(Tag.MaxDistance.ordinal());
         slider.setTitle("Maximum Distance");
         slider.setValue(50);
-        slider.setMin(0);
+        slider.setMin(1);
         slider.setMax(100);
-        slider.setSteps(20); // or slider.setIncrementBy(5);
+        slider.setIncrementBy(1);
         elements.add(slider);
 
         // category
