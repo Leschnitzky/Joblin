@@ -254,7 +254,7 @@ public class CandidateCard {
                 @Override
                 public void onSuccess(Boolean isMatch) {
                     if(isMatch) {
-                        Utils.matchPopUp(mSwipeView.getContext(),"candidate");
+                        Utils.matchPopUp(mSwipeView.getContext(),mProfile.getName());
                     }
                 }
             })

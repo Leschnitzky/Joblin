@@ -39,20 +39,20 @@ public class Utils {
         public static int dpToPx(int dp) {
             return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
         }
-    public static void matchPopUp(Context context, String type)
+    public static void matchPopUp(Context context, String name)
     {
         new SweetAlertDialog(context)
                 .setTitleText("It's a match!")
-                .setContentText("You can contact this " + type + " now.")
+                .setContentText("You can contact " + name + " now.")
                 .setConfirmText("Great!")
                 .show();
     }
 
-    public static void newMatchPopUp(Context context, String title, String type)
+    public static void newMatchPopUp(Context context, String title, String name)
     {
         new SweetAlertDialog(context)
                 .setTitleText(title)
-                .setContentText("You can contact this " + type + " now.")
+                .setContentText("You can contact " + name + " now.")
                 .setConfirmText("Great!")
                 .show();
     }
