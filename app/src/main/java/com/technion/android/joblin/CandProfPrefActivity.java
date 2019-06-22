@@ -15,13 +15,14 @@ import android.widget.ArrayAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.Place.Field;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.WriteBatch;
 import com.thejuki.kformmaster.helper.FormBuildHelper;
 import com.thejuki.kformmaster.helper.FormLayouts;
@@ -34,12 +35,15 @@ import com.thejuki.kformmaster.model.FormMultiLineEditTextElement;
 import com.thejuki.kformmaster.model.FormPickerDateElement;
 import com.thejuki.kformmaster.model.FormPickerDropDownElement;
 import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
+import com.thejuki.kformmaster.model.FormSliderElement;
+import org.imperiumlabs.geofirestore.GeoFirestore;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import kotlin.Unit;
 
@@ -53,21 +57,22 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
 
     private FormBuildHelper formBuilder = null;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    CollectionReference candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
-    CollectionReference recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
-    CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
-    CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
+    CollectionReference candidatesCollection,recruitersCollection,usersCollection,jobCategoriesCollection;
 
     Intent thisIntent;
     ProgressDialog dialog;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    String[] locationParts;
 
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
+        recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
+        usersCollection = db.collection(USERS_COLLECTION_NAME);
+        jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
         dialog = new ProgressDialog(CandProfPrefActivity.this);
         thisIntent = getIntent();
         setupForm();
@@ -75,9 +80,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
     }
 
 
-
     @Override
-
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == android.R.id.home) {
@@ -86,7 +89,6 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     private enum Tag {
         Info,
@@ -100,6 +102,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         Skill3,
         Pref,
         Location,
+        Radius,
         Category,
         Scope,
         DescTitle,
@@ -109,30 +112,13 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
     }
 
     void insertCandidate(Candidate candidate) {
-//        Map<String, Object> candidateMapData = new HashMap<>();
-//        candidateMapData.put(AGE_KEY, candidate.getAge());
-//        candidateMapData.put(EMAIL_KEY, candidate.getEmail());
-//        candidateMapData.put(JOB_CATEGORY_KEY, candidate.getJobCategory());
-//        candidateMapData.put(JOB_LOCATION_KEY, candidate.getJobLocation());
-//        candidateMapData.put(LAST_NAME_KEY, candidate.getLastName());
-//        candidateMapData.put(MORE_INFO_KEY, candidate.getMoreInfo());
-//        candidateMapData.put(NAME_KEY, candidate.getName());
-//        candidateMapData.put(SCOPE_KEY, candidate.getScope());
-//        candidateMapData.put(SKILLS_KEY, candidate.getSkillsList());
-//        candidateMapData.put(EDUCATION_KEY, candidate.getEducation());
-
         WriteBatch batch = db.batch();
-
         DocumentReference candidateDocumentReference = candidatesCollection.document(candidate.getEmail());
         batch.set(candidateDocumentReference, candidate);
-
         Map<String, Object> userMapData = new HashMap<>();
         userMapData.put(EMAIL_KEY, candidate.getEmail());
-
-
         DocumentReference userDocumentReference = usersCollection.document(candidate.getEmail());
         batch.set(userDocumentReference, userMapData);
-
         batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -148,7 +134,6 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
     private void setupForm() {
 
         FormLayouts formLayouts = new FormLayouts();
-
         formBuilder = new FormBuildHelper(this, this, (RecyclerView)findViewById(R.id.recyclerView), true, formLayouts);
         List<BaseFormElement<?>> elements = new ArrayList<>();
         addCandInfo(elements);
@@ -161,11 +146,10 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
     }
 
 
-
     private void addCandInfo(List<BaseFormElement<?>> elements) {
 
+        // info
         elements.add(new FormHeader("Personal Details"));
-
         FormSingleLineEditTextElement name = new FormSingleLineEditTextElement(Tag.Name.ordinal());
         name.setTitle("First Name");
         name.setHint("Enter first name here");
@@ -174,6 +158,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         name.setRequired(true);
         elements.add(name);
 
+        // last name
         FormSingleLineEditTextElement lastname = new FormSingleLineEditTextElement(Tag.LastName.ordinal());
         lastname.setTitle("Last Name");
         lastname.setHint("Enter last name here");
@@ -182,6 +167,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         lastname.setRequired(true);
         elements.add(lastname);
 
+        // birthday
         FormPickerDateElement birthdate = new FormPickerDateElement(Tag.BirthDate.ordinal());
         birthdate.setTitle("Date of birth");
         birthdate.setHint("Click here to pick date");
@@ -189,36 +175,37 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         birthdate.setRequired(true);
         elements.add(birthdate);
 
+        // education
         FormSingleLineEditTextElement education = new FormSingleLineEditTextElement(Tag.Education.ordinal());
-
         education.setTitle("Education");
         education.setHint("Enter education here");
         education.setCenterText(true);
         education.setRequired(true);
         elements.add(education);
 
+        // skills
         FormLabelElement skills = new FormLabelElement();
         skills.setTitle("Skills: (One at least)");
         skills.setCenterText(true);
         elements.add(skills);
 
+        // skills1
         FormSingleLineEditTextElement skill1 = new FormSingleLineEditTextElement(Tag.Skill1.ordinal());
-
         skill1.setTitle("Skill 1");
         skill1.setHint("Enter skill here");
         skill1.setCenterText(true);
         skill1.setRequired(true);
         elements.add(skill1);
 
+        // skills2
         FormSingleLineEditTextElement skill2 = new FormSingleLineEditTextElement(Tag.Skill2.ordinal());
-
         skill2.setTitle("Skill 2");
         skill2.setHint("Enter skill here");
         skill2.setCenterText(true);
         elements.add(skill2);
 
+        // skills3
         FormSingleLineEditTextElement skill3 = new FormSingleLineEditTextElement(Tag.Skill3.ordinal());
-
         skill3.setTitle("Skill 3");
         skill3.setHint("Enter skill here");
         skill3.setCenterText(true);
@@ -228,18 +215,30 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
 
     private void addPreferences(List<BaseFormElement<?>> elements) {
 
+        // preferences
         elements.add(new FormHeader("Job Preferences"));
 
-
+        // location
         FormPlacesAutoCompleteElement location = new FormPlacesAutoCompleteElement(Tag.Location.ordinal());
-
         location.setTitle("Location");
         location.setHint("Enter location here");
-        location.setPlaceFields(Collections.singletonList(Place.Field.NAME));
+        List<Field> fields = new ArrayList<>();
+        fields.add(Field.NAME);
+        fields.add(Field.LAT_LNG);
+        location.setPlaceFields(fields);
         location.setCenterText(true);
         location.setRequired(true);
         location.setAutocompleteActivityMode(AutocompleteActivityMode.OVERLAY);
         elements.add(location);
+
+        FormSliderElement slider = new FormSliderElement(Tag.Radius.ordinal());
+        slider.setValue(10);
+        slider.setTitle("Distance (KM)");
+        slider.setMin(0);
+        slider.setMax(100);
+        slider.setSteps(5);
+        slider.setRequired(true);
+        elements.add(slider);
 
         FormPickerDropDownElement<ListItem> dropDown = new FormPickerDropDownElement<>(Tag.Category.ordinal());
         dropDown.setTitle("Category");
@@ -262,16 +261,19 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
 
         // scope
         FormPickerDropDownElement<ListItem> scope = new FormPickerDropDownElement<>(Tag.Scope.ordinal());
-
         List<String> scopesList = new ArrayList<>();
-        scopesList.add("Full Time");
         scopesList.add("20-30%");
         scopesList.add("40-50%");
         scopesList.add("60-70%");
         scopesList.add("80-90%");
+        scopesList.add("Once a Week");
+        scopesList.add("Twice a Week");
+        scopesList.add("3 Times a Week");
+        scopesList.add("4 Times a Week");
+        scopesList.add("5 Times a Week");
+        scopesList.add("Full Time");
 
         scope.setArrayAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item, scopesList));
-
         scope.setTitle("Scope");
         scope.setDialogTitle("Scope");
         scope.setHint("Click here to choose");
@@ -281,9 +283,12 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
     }
 
     private void addDescription(List<BaseFormElement<?>> elements) {
-        elements.add(new FormHeader("About me"));
-        FormMultiLineEditTextElement description = new FormMultiLineEditTextElement(Tag.Desc.ordinal());
 
+        // description title
+        elements.add(new FormHeader("About me"));
+
+        // description
+        FormMultiLineEditTextElement description = new FormMultiLineEditTextElement(Tag.Desc.ordinal());
         description.setMaxLines(6);
         description.setHint("Enter description here");
         description.setDisplayTitle(false);
@@ -297,45 +302,52 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         submit.setValue("Submit");
         submit.setBackgroundColor(R.color.colorPrimaryDark);
         submit.setValueTextColor(Color.WHITE);
+
         BaseFormElement name = elements.get(Tag.Name.ordinal());
         BaseFormElement lastname = elements.get(Tag.LastName.ordinal());
         FormPickerDateElement birthdate = (FormPickerDateElement)elements.get(Tag.BirthDate.ordinal());
         BaseFormElement category = elements.get(Tag.Category.ordinal());
         BaseFormElement scope = elements.get(Tag.Scope.ordinal());
-        BaseFormElement location = elements.get(Tag.Location.ordinal());
+        FormPlacesAutoCompleteElement location = (FormPlacesAutoCompleteElement) elements.get(Tag.Location.ordinal());
+        BaseFormElement radius = elements.get(Tag.Radius.ordinal());
         BaseFormElement desc = elements.get(Tag.Desc.ordinal());
         BaseFormElement education = elements.get(Tag.Education.ordinal());
         BaseFormElement skill1 = elements.get(Tag.Skill1.ordinal());
+
         List<String> skills = new ArrayList<>();
         submit.getValueObservers().add((newValue, element) -> {
             boolean min_age = false;
             if(birthdate.isValid())
-                min_age = Utils.getAge(birthdate.getValue().getTime(),Timestamp.now().toDate())>=13;
+                min_age = Utils.getAge(Objects.requireNonNull(birthdate.getValue()).getTime(),Timestamp.now().toDate())>=13;
             if(formBuilder.isValidForm() && min_age) {
                 dialog.setMessage("Please wait...");
                 dialog.setCancelable(false);
                 dialog.setInverseBackgroundForced(false);
                 dialog.show();
-                Timestamp birthday = new Timestamp(birthdate.getValue().getTime());
+                Timestamp birthday = new Timestamp(Objects.requireNonNull(birthdate.getValue().getTime()));
                 skills.add(skill1.getValueAsString());
                 if(!elements.get(Tag.Skill2.ordinal()).getValueAsString().isEmpty())
                     skills.add(elements.get(Tag.Skill2.ordinal()).getValueAsString());
                 if(!elements.get(Tag.Skill3.ordinal()).getValueAsString().isEmpty())
                     skills.add(elements.get(Tag.Skill3.ordinal()).getValueAsString());
+
                 Candidate cand = new Candidate(
-                        mAuth.getCurrentUser().getEmail(),
+                        Objects.requireNonNull(mAuth.getCurrentUser()).getEmail(),
                         name.getValueAsString(),
                         lastname.getValueAsString(),
                         thisIntent.getStringExtra(LoginActivity.URI_KEY),
                         birthday,
-                        location.getValueAsString(),
+                        locationParts[0],
+                        Integer.parseInt(radius.getValueAsString()),
                         scope.getValueAsString(),
                         education.getValueAsString(),
                         skills,
                         desc.getValueAsString(),
-                        category.getValueAsString()
-                );
+                        category.getValueAsString());
                 insertCandidate(cand);
+                GeoFirestore geoFirestore = new GeoFirestore(candidatesCollection);
+                geoFirestore.setLocation(mAuth.getCurrentUser().getEmail(),
+                        new GeoPoint(Double.parseDouble(locationParts[1]), Double.parseDouble(locationParts[2])));
             }
             else
             {
@@ -366,12 +378,16 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
     }
 
     @Override
-
-    public void onValueChanged(BaseFormElement<?> formElement) {
-
+    public void onValueChanged(@NotNull BaseFormElement<?> formElement) {
+        if(formElement.getTag()==Tag.Location.ordinal())
+        {
+            locationParts = formElement.getValueAsString().split(";");
+            formElement.setValue(locationParts[0]);
+        }
     }
+
     @Override
-    public void onActivityResult(int requestCode,int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Tag.Location.ordinal()) {
             FormPlacesAutoCompleteElement placesElement = formBuilder.getFormElement(Tag.Location.ordinal());
             placesElement.handleActivityResult(formBuilder, resultCode, data);
@@ -381,8 +397,6 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
         mAuth.signOut();
-
     }
 }

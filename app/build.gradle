@@ -75,13 +75,15 @@ android {
         implementation 'com.github.ybq:Android-SpinKit:1.2.0'
         implementation 'com.google.firebase:firebase-auth:17.0.0'
         implementation 'com.google.android.gms:play-services-auth:16.0.1'
+        implementation 'com.google.android.gms:play-services-base:16.1.0'
         implementation 'com.google.firebase:firebase-core:16.0.9'
         implementation 'com.google.firebase:firebase-messaging:18.0.0'
-
         implementation 'com.shobhitpuri.custombuttons:google-signin:1.0.0'
         implementation 'com.intuit.sdp:sdp-android:1.0.6'
         implementation 'com.firebaseui:firebase-ui-firestore:4.3.2'
         implementation 'com.firebaseui:firebase-ui-database:4.0.1'
+        implementation 'com.github.imperiumlabs:GeoFirestore-Android:v1.4.0'
+
     }
 }
 

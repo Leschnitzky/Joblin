@@ -17,11 +17,14 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -32,47 +35,47 @@ import java.util.Random;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.EMAIL_KEY;
-import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.*;
 
 public class Utils {
-    private static final String TAG = "Utils";
 
-        public static Point getDisplaySize(WindowManager windowManager){
-            try {
-                if(Build.VERSION.SDK_INT > 16) {
-                    Display display = windowManager.getDefaultDisplay();
-                    DisplayMetrics displayMetrics = new DisplayMetrics();
-                    display.getMetrics(displayMetrics);
-                    return new Point(displayMetrics.widthPixels, displayMetrics.heightPixels);
-                }else{
-                    return new Point(0, 0);
-                }
-            }catch (Exception e){
-                e.printStackTrace();
+    private static final String TAG = "Utils";
+    static FirebaseFirestore db = FirebaseFirestore.getInstance();
+    static CollectionReference errorsCollection = db.collection(ERRORS_COLLECTION_NAME);
+
+    public static Point getDisplaySize(WindowManager windowManager) {
+        try {
+            if (Build.VERSION.SDK_INT > 16) {
+                Display display = windowManager.getDefaultDisplay();
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                display.getMetrics(displayMetrics);
+                return new Point(displayMetrics.widthPixels, displayMetrics.heightPixels);
+            } else {
                 return new Point(0, 0);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Point(0, 0);
         }
-        public static int dpToPx(int dp) {
-            return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
-        }
-    public static void matchPopUp(Context context, String type)
+    }
+    public static int dpToPx(int dp) {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    public static void matchPopUp(Context context, String name)
     {
         new SweetAlertDialog(context)
                 .setTitleText("It's a match!")
-                .setContentText("You can contact this " + type + " now.")
+                .setContentText("You can contact " + name + " now.")
                 .setConfirmText("Great!")
                 .show();
     }
 
-    public static void newMatchPopUp(Context context, String title, String type)
+    public static void newMatchPopUp(Context context, String title, String name)
     {
         new SweetAlertDialog(context)
                 .setTitleText(title)
-                .setContentText("You can contact this " + type + " now.")
+                .setContentText("You can contact " + name + " now.")
                 .setConfirmText("Great!")
                 .show();
     }
@@ -90,6 +93,15 @@ public class Utils {
     {
         new SweetAlertDialog(context)
                 .setTitleText("No more swipes!")
+                .setContentText("Try again tommorrow!")
+                .setConfirmText("OK")
+                .show();
+    }
+
+    public static void noMoreSuperLikesPopUp(Context context)
+    {
+        new SweetAlertDialog(context)
+                .setTitleText("You have already used your SuperLike!")
                 .setContentText("Try again tommorrow!")
                 .setConfirmText("OK")
                 .show();
@@ -118,6 +130,7 @@ public class Utils {
             ,"Sagi","Ohad","Matan","Moshe","Liran","Dvir"
             ,"Gal","Zvi","Ofek","Ofir"
     );
+
     private static List<String> lastNames =  Arrays.asList(
             "Cohen","Levi","Shvartz","Wisemann",
             "Aflalo","Abutbul","Eliyaho","Kahlon",
@@ -146,7 +159,6 @@ public class Utils {
             "Hedera", "Tiberia", "Raanana"
     );
 
-
     private static List<String> categories = Arrays.asList(
             "Accounting","Computer Science","Education","Finance",
             "IT","Media","Sales"
@@ -158,8 +170,7 @@ public class Utils {
     );
 
 
-    private static Candidate getRandomCandidate(){
-
+    public static Candidate getRandomCandidate(){
         Random rand = new Random();
         String firstName = firstNames.get(rand.nextInt(firstNames.size()));
         String lastName = lastNames.get(rand.nextInt(lastNames.size()));
@@ -176,12 +187,11 @@ public class Utils {
         String secondSkill = skills.get(rand.nextInt(skills.size()));
         String thirdSkill = skills.get(rand.nextInt(skills.size()));
         List<String> skills = Arrays.asList(firstSkill,secondSkill,thirdSkill);
-        List<String> skillsWithoutDup =  new ArrayList<>(
-                new HashSet<>(skills));
+        List<String> skillsWithoutDup =  new ArrayList<>(new HashSet<>(skills));
+        int maxDistance = rand.nextInt(100);
 
          return new Candidate(email,firstName,
-                lastName,imageUrl,birthdate,location,scope,education,skillsWithoutDup,moreInfo,jobCategory);
-
+                lastName,imageUrl,birthdate,location,maxDistance,scope,education,skillsWithoutDup,moreInfo,jobCategory);
     }
 
     private static Recruiter getRandomRecruiter(){
@@ -202,8 +212,7 @@ public class Utils {
         String thirdSkill = skills.get(rand.nextInt(skills.size()));
         String workplace = "Random";
         List<String> skills = Arrays.asList(firstSkill,secondSkill,thirdSkill);
-        List<String> skillsWithoutDup =  new ArrayList<>(
-                new HashSet<>(skills));
+        List<String> skillsWithoutDup =  new ArrayList<>(new HashSet<>(skills));
 
         return new Recruiter(email,firstName,
                 lastName,imageUrl,workplace,jobCategory,scope,location,moreInfo,education,skillsWithoutDup);
@@ -223,8 +232,6 @@ public class Utils {
 
         Map<String, Object> userMapData = new HashMap<>();
         userMapData.put(EMAIL_KEY, candidate.getEmail());
-
-
         DocumentReference userDocumentReference = usersCollection.document(candidate.getEmail());
         batch.set(userDocumentReference, userMapData);
 
@@ -234,6 +241,26 @@ public class Utils {
                 Toast.makeText(context, "inserted random candidate", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    public static void addErrorData(String errorDescription) {
+        Date currentDateTime = Calendar.getInstance().getTime();
+        Timestamp currentTimeTimeStamp = new Timestamp(currentDateTime);
+
+        Map<String, Object> errorData = new HashMap<>();
+        errorData.put(ERROR_KEY, errorDescription);
+        errorData.put(CURRENT_TIME_KEY, currentTimeTimeStamp);
+
+        errorsCollection.document().set(errorData)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                    }
+                });
     }
     static void insertRandomRecruiter(Context context) {
 

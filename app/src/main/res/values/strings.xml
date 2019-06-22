@@ -8,6 +8,7 @@
     <string name="no_new_can_right_now">There are no new candidates right now</string>
     <string name="greeting_text">Welcome To Joblin</string>
     <string name="greeting_text_2"> The app for finding your next job!</string>
+    <string name="saved_filtering_method">filtering method</string>
 
     <!--For Choose Activity-->
     <string name="choose_one">Before we start, please choose which service you wish to use</string>
@@ -45,4 +46,6 @@
     <string name="title_activity_match_alert">MatchAlertActivity</string>
     <string name="title_activity_match_alert_activty">MatchAlertActivty</string>
     <string name="type_a_message">Type a message</string>
+
+
 </resources>

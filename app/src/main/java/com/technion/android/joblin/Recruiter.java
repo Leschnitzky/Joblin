@@ -74,8 +74,8 @@ public class Recruiter extends User {
         return jobLocation;
     }
 
-    public void setJobLocation(String jobLocation) {
-        this.jobLocation = jobLocation;
+    public void setJobLocation(String jobCity) {
+        this.jobLocation = jobCity;
     }
 
     public String getJobDescription() {

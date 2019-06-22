@@ -37,6 +37,9 @@ data class PlaceItem(val id: String? = null,
 
     // Text that is displayed in the textfield
     override fun toString(): String {
+        if (latLng != null) {
+            return (name.orEmpty() + ";" + latLng.latitude + ";" + latLng.longitude)
+        }
         return name.orEmpty()
     }
 

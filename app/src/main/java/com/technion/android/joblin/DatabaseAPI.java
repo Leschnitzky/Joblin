@@ -2,7 +2,6 @@ package com.technion.android.joblin;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
-import java.util.Calendar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -12,6 +11,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -21,12 +21,31 @@ import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.technion.android.joblin.DatabaseUtils.*;
+import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.CURRENT_TIME_KEY;
+import static com.technion.android.joblin.DatabaseUtils.EMAIL_KEY;
+import static com.technion.android.joblin.DatabaseUtils.ERRORS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.ERROR_KEY;
+import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORY_KEY;
+import static com.technion.android.joblin.DatabaseUtils.JOB_RADIUS_KEY;
+import static com.technion.android.joblin.DatabaseUtils.MATCHES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SWIPES_LEFT_KEY;
+import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.SCOPES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.SCOPE_KEY;
+import static com.technion.android.joblin.DatabaseUtils.SIDE_KEY;
+import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.Side;
+import static com.technion.android.joblin.DatabaseUtils.TOKENS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.TOKEN_KEY;
+import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
 class DatabaseAPI {
 
@@ -200,6 +219,7 @@ class DatabaseAPI {
                 "http://image",
                 new Timestamp(new Date(96,10,5)),
                 "Haifa",
+                10,
                 "twice a week",
                 "Technion",
                 skillsList,
@@ -279,6 +299,14 @@ class DatabaseAPI {
 
     public void candidateMakeSuperLike(String candidateMail, String recruiterMail) {
         addSwipeDataBecauseSuperLike(candidatesCollection, recruitersCollection, candidateMail, recruiterMail);
+    }
+
+    public void swipeRightOnRecruiter(String recruiterMail, String candidateMail) {
+        addSwipeData(candidatesCollection, recruitersCollection, candidateMail, recruiterMail, Side.RIGHT);
+    }
+
+    public void swipeRightOnCandidate(String candidateMail, String recruiterMail) {
+        addSwipeData(recruitersCollection, candidatesCollection, recruiterMail, candidateMail, Side.RIGHT);
     }
 
     public void addSwipeDataBecauseSuperLike(CollectionReference firstCollection,
@@ -593,6 +621,7 @@ class DatabaseAPI {
                 "https://pbs.twimg.com/profile_images/972872769019850753/YTxFZF2x_400x400.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Tel Aviv",
+                10,
                 "Full Time",
                 "High School",
                 new ArrayList<String> (Arrays.asList("Java","C#")),
@@ -607,6 +636,7 @@ class DatabaseAPI {
                 "https://media.npr.org/assets/img/2015/11/24/ajeup0ayctw4ztltklrnuvtm-y4xulezgneawbqw4cs_custom-7aa29347d5da230c6101168c71549a7399302d0c-s1100-c15.jpg",
                 new Timestamp(new Date(2001,3,12)),
                 "Beer Sheva",
+                10,
                 "20 hours per month",
                 "Ort Barude",
                 new ArrayList<String> (Arrays.asList("C","Assembly","Writing songs")),
@@ -621,6 +651,7 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Haifa",
+                10,
                 "Twice a week",
                 "Technion",
                 skillsList,
@@ -635,6 +666,7 @@ class DatabaseAPI {
                 "https://pbs.twimg.com/profile_images/972872769019850753/YTxFZF2x_400x400.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Salem",
+                10,
                 "Night Shifts",
                 "Witches School of Salem",
                 new ArrayList<String> (Arrays.asList("abra kadabra","whoofoo","escaping")),
@@ -649,6 +681,7 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Jerusalem",
+                10,
                 "75% misra",
                 "Haward Univerity",
                 new ArrayList<String> (Arrays.asList("C#","angry birds")),
@@ -663,6 +696,7 @@ class DatabaseAPI {
                 "https://avatars1.githubusercontent.com/u/28152692?s=400&v=4",
                 new Timestamp(new Date(90,4,5)),
                 "Haifa",
+                10,
                 "Full Time",
                 "Technion instituation",
                 new ArrayList<String> (Arrays.asList("Java","Good at jokes")),
@@ -678,6 +712,7 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Eilat",
+                10,
                 "Three times a week",
                 "Tel Aviv University",
                 skillsList,
@@ -693,6 +728,7 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Jaffa",
+                10,
                 "Three times a week",
                 "Ben Gurion University",
                 skillsList,
@@ -708,6 +744,7 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Jaffa",
+                10,
                 "Three times a week",
                 "IDC",
                 skillsList,
@@ -998,6 +1035,71 @@ class DatabaseAPI {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                    }
+                });
+    }
+
+    public void addMaxDistanceFieldToAllUsersInDB() {
+
+        recruitersCollection
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            WriteBatch batch = db.batch();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                DocumentReference documentReference = document.getReference();
+                                batch.update(documentReference, "maxDistance", 12L);
+                            }
+
+                            batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+
+                                }
+                            });
+                        }
+                    }
+                });
+
+
+        candidatesCollection
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            WriteBatch batch = db.batch();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                DocumentReference documentReference = document.getReference();
+                                batch.update(documentReference, "maxDistance", 30L);
+                            }
+
+                            batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+
+                                }
+                            });
+                        }
+                    }
+                });
+
+    }
+
+    public void removeMaxDistanceFieldFromRecruiter() {
+        recruitersCollection
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                document.getReference().update(JOB_RADIUS_KEY, FieldValue.delete());
+                            }
+                        } else {
+                        }
                     }
                 });
     }
