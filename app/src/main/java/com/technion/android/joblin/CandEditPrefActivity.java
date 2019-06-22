@@ -369,7 +369,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
                         skills,
                         desc.getValueAsString(),
                         category.getValueAsString());
-
+                cand.setNumberOfSwipesLeft(candidate.getNumberOfSwipesLeft());
                 insertCandidate(cand);
                 GeoFirestore geoFirestore = new GeoFirestore(candidatesCollection);
                 if(locationParts!=null) {
