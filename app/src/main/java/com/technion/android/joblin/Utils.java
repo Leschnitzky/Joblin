@@ -103,6 +103,15 @@ public class Utils {
                 .show();
     }
 
+    public static void noMoreSuperLikesPopUp(Context context)
+    {
+        new SweetAlertDialog(context)
+                .setTitleText("You have already used your SuperLike!")
+                .setContentText("Try again tommorrow!")
+                .setConfirmText("OK")
+                .show();
+    }
+
     public static void errorPopUp(Context context, String error)
     {
         new SweetAlertDialog(context,SweetAlertDialog.ERROR_TYPE)

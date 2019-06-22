@@ -34,10 +34,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.technion.android.joblin.CanMainActivity.candSuperLiked;
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.EMAIL_KEY;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.MATCHES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SUPER_LIKES_LEFT_KEY;
 import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SWIPES_LEFT_KEY;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.SIDE_KEY;
@@ -45,6 +47,7 @@ import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.Side;
 import static com.technion.android.joblin.DatabaseUtils.TAG;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
+import static com.technion.android.joblin.RecMainActivity.recrSuperLiked;
 
 @Layout(R.layout.reccard_view)
 public class RecruiterCard {
@@ -105,6 +108,7 @@ public class RecruiterCard {
     CollectionReference recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
     CollectionReference usersCollection = db.collection(USERS_COLLECTION_NAME);
     CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
+    private Boolean noMoreSuperLikes = false;
 
     public RecruiterCard(Context context, Recruiter profile, SwipePlaceHolderView swipeView, final String swiper_Email) {
         mContext = context;
@@ -169,7 +173,11 @@ public class RecruiterCard {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         Candidate candidate = document.toObject(Candidate.class);
-                        if((side == Side.RIGHT) && (candidate.getNumberOfSwipesLeft() == 0)) {
+                        if((side == Side.RIGHT) && (candidate.getNumberOfSuperLikesLeft() == 0) && candSuperLiked) {
+                            noMoreSuperLikes = true;
+                            Utils.noMoreSuperLikesPopUp(mSwipeView.getContext());
+                            mSwipeView.undoLastSwipe();
+                        } else if((side == Side.RIGHT) && (candidate.getNumberOfSwipesLeft() == 0)) {
                             Utils.noMoreSwipesPopUp(mSwipeView.getContext());
                             mSwipeView.undoLastSwipe();
                         } else {
@@ -195,102 +203,121 @@ public class RecruiterCard {
                       String secondMail,
                       Side side) {
 
-        String sideString;
-        if(side == Side.RIGHT) {
-            sideString = "right";
+        if(noMoreSuperLikes){
+            noMoreSuperLikes = false;
+            return;
         } else {
-            sideString = "left";
-        }
 
-        final Map<String, Object> firstSwipesMapData = new HashMap<>();
-        firstSwipesMapData.put(EMAIL_KEY, secondMail);
-        firstSwipesMapData.put(SIDE_KEY, sideString);
+            String sideString;
+            if (side == Side.RIGHT) {
+                sideString = "right";
+            } else {
+                sideString = "left";
+            }
 
-        final Map<String, Object> secondSwipesMapData = new HashMap<>();
+            final Map<String, Object> firstSwipesMapData = new HashMap<>();
+            firstSwipesMapData.put(EMAIL_KEY, secondMail);
+            firstSwipesMapData.put(SIDE_KEY, sideString);
 
-        final Map<String, Object> firstMatchesMapData = new HashMap<>();
-        firstMatchesMapData.put(EMAIL_KEY, firstMail);
+            final Map<String, Object> secondSwipesMapData = new HashMap<>();
 
-        final Map<String, Object> secondMatchesMapData = new HashMap<>();
-        secondMatchesMapData.put(EMAIL_KEY, secondMail);
+            final Map<String, Object> firstMatchesMapData = new HashMap<>();
+            firstMatchesMapData.put(EMAIL_KEY, firstMail);
 
-        if(side == Side.RIGHT) {
-            final DocumentReference mainDocRefOfFirst = firstCollection.document(firstMail);
-            final DocumentReference swipeDocRefOfFirst = firstCollection.document(firstMail).collection(SWIPES_COLLECTION_NAME).document(secondMail);
-            final DocumentReference swipeDocRefOfSecond = secondCollection.document(secondMail).collection(SWIPES_COLLECTION_NAME).document(firstMail);
-            final DocumentReference matchDocRefOfFirst = firstCollection.document(firstMail).collection(MATCHES_COLLECTION_NAME).document(secondMail);
-            final DocumentReference matchDocRefOfSecond = secondCollection.document(secondMail).collection(MATCHES_COLLECTION_NAME).document(firstMail);
-            db.runTransaction(new Transaction.Function<Boolean>() {
-                @Override
-                public Boolean apply(Transaction transaction) throws FirebaseFirestoreException {
-                    DocumentSnapshot snapshotMainFirst = transaction.get(mainDocRefOfFirst);
-                    DocumentSnapshot snapshotSwipeSecond = transaction.get(swipeDocRefOfSecond);
-                    DocumentSnapshot snapshotSwipeFirst = transaction.get(swipeDocRefOfFirst);
-                    boolean isMatch = false;
-                    if(snapshotSwipeSecond.exists()) {
-                        if(snapshotSwipeSecond.get(SIDE_KEY).equals("right")) {
-                            transaction.set(matchDocRefOfFirst, secondMatchesMapData);
-                            transaction.set(matchDocRefOfSecond, firstMatchesMapData);
-                            isMatch = true;
-                        }
-                        transaction.update(swipeDocRefOfSecond, secondSwipesMapData);
-                    }
-                    else {
-                        transaction.set(swipeDocRefOfSecond, secondSwipesMapData);
-                        transaction.delete(swipeDocRefOfSecond);
-                    }
+            final Map<String, Object> secondMatchesMapData = new HashMap<>();
+            secondMatchesMapData.put(EMAIL_KEY, secondMail);
 
-                    if(snapshotSwipeFirst.exists()) {
-                        transaction.update(swipeDocRefOfFirst, firstSwipesMapData);
-                    } else {
-                        transaction.set(swipeDocRefOfFirst, firstSwipesMapData);
-                    }
-
-                    if(snapshotMainFirst.exists()) {
-                        long numberOfSwipesLeft = snapshotMainFirst.getLong(NUMBER_OF_SWIPES_LEFT_KEY);
-                        transaction.update(mainDocRefOfFirst, NUMBER_OF_SWIPES_LEFT_KEY, numberOfSwipesLeft - 1);
-                    }
-
-                    return isMatch;
-                }
-            }).addOnSuccessListener(new OnSuccessListener<Boolean>() {
-                @Override
-                public void onSuccess(Boolean isMatch) {
-                    if(isMatch) {
-                        Utils.matchPopUp(mSwipeView.getContext(),"recruiter");
-                    }
-                }
-            })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w(TAG, "Transaction failure.", e);
-                            Utils.errorPopUp(mSwipeView.getContext(),e.toString());
-                        }
-                    });
-        } else {
-            firstCollection.document(firstMail).collection(SWIPES_COLLECTION_NAME).document(secondMail)
-                    .set(firstSwipesMapData)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
+            if (side == Side.RIGHT) {
+                final DocumentReference mainDocRefOfFirst = firstCollection.document(firstMail);
+                final DocumentReference swipeDocRefOfFirst = firstCollection.document(firstMail).collection(SWIPES_COLLECTION_NAME).document(secondMail);
+                final DocumentReference swipeDocRefOfSecond = secondCollection.document(secondMail).collection(SWIPES_COLLECTION_NAME).document(firstMail);
+                final DocumentReference matchDocRefOfFirst = firstCollection.document(firstMail).collection(MATCHES_COLLECTION_NAME).document(secondMail);
+                final DocumentReference matchDocRefOfSecond = secondCollection.document(secondMail).collection(MATCHES_COLLECTION_NAME).document(firstMail);
+                db.runTransaction(new Transaction.Function<Boolean>() {
+                    @Override
+                    public Boolean apply(Transaction transaction) throws FirebaseFirestoreException {
+                        DocumentSnapshot snapshotMainFirst = transaction.get(mainDocRefOfFirst);
+                        DocumentSnapshot snapshotSwipeSecond = transaction.get(swipeDocRefOfSecond);
+                        DocumentSnapshot snapshotSwipeFirst = transaction.get(swipeDocRefOfFirst);
+                        boolean isMatch = false;
+                        if (snapshotSwipeSecond.exists()) {
+                            if (snapshotSwipeSecond.get(SIDE_KEY).equals("right")) {
+                                transaction.set(matchDocRefOfFirst, secondMatchesMapData);
+                                transaction.set(matchDocRefOfSecond, firstMatchesMapData);
+                                isMatch = true;
+                            }
+                            transaction.update(swipeDocRefOfSecond, secondSwipesMapData);
+                        } else {
+                            transaction.set(swipeDocRefOfSecond, secondSwipesMapData);
+                            transaction.delete(swipeDocRefOfSecond);
                         }
 
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w(TAG, "Error updating document", e);
-                            Utils.errorPopUp(mSwipeView.getContext(),e.toString());
+                        if (snapshotSwipeFirst.exists()) {
+                            transaction.update(swipeDocRefOfFirst, firstSwipesMapData);
+                        } else {
+                            transaction.set(swipeDocRefOfFirst, firstSwipesMapData);
                         }
-                    });
+
+                        if (snapshotMainFirst.exists()) {
+                            long numberOfSwipesLeft = snapshotMainFirst.getLong(NUMBER_OF_SWIPES_LEFT_KEY);
+                            transaction.update(mainDocRefOfFirst, NUMBER_OF_SWIPES_LEFT_KEY, numberOfSwipesLeft - 1);
+                            if(candSuperLiked){
+                                long numberOfSuperLikes = snapshotMainFirst.getLong(NUMBER_OF_SUPER_LIKES_LEFT_KEY);
+                                transaction.update(mainDocRefOfFirst, NUMBER_OF_SUPER_LIKES_LEFT_KEY, numberOfSuperLikes - 1);
+                                candSuperLiked = false;
+                            }
+                        }
+
+                        return isMatch;
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean isMatch) {
+//                    if(isMatch && !candSuperLiked) {
+//                        Utils.matchPopUp(mSwipeView.getContext(),"recruiter");
+//                    }
+                    }
+                })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Transaction failure.", e);
+                                Utils.errorPopUp(mSwipeView.getContext(), e.toString());
+                            }
+                        });
+            } else {
+                firstCollection.document(firstMail).collection(SWIPES_COLLECTION_NAME).document(secondMail)
+                        .set(firstSwipesMapData)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                            }
+
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error updating document", e);
+                                Utils.errorPopUp(mSwipeView.getContext(), e.toString());
+                            }
+                        });
+            }
         }
 
     }
 
+    public void swipeRightOnCandidate(String candidateMail, String recruiterMail) {
+        addSwipeData(recruitersCollection, candidatesCollection, recruiterMail, candidateMail, Side.RIGHT);
+    }
+
     @SwipeIn
     public void onSwipeIn(){
-        candidateDoSwipe(swiper,mProfile.getEmail(),Side.RIGHT);
+        if(candSuperLiked) {
+            swipeRightOnCandidate(swiper,mProfile.getEmail());
+            candidateDoSwipe(swiper,mProfile.getEmail(),Side.RIGHT);
+        } else {
+            candidateDoSwipe(swiper,mProfile.getEmail(),Side.RIGHT);
+        }
     }
 
     @SwipeOut
