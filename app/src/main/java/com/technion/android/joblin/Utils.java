@@ -47,40 +47,39 @@ public class Utils {
     static FirebaseFirestore db = FirebaseFirestore.getInstance();
     static CollectionReference errorsCollection = db.collection(ERRORS_COLLECTION_NAME);
 
-    public static Point getDisplaySize(WindowManager windowManager){
+    public static Point getDisplaySize(WindowManager windowManager) {
         try {
-            if(Build.VERSION.SDK_INT > 16) {
+            if (Build.VERSION.SDK_INT > 16) {
                 Display display = windowManager.getDefaultDisplay();
                 DisplayMetrics displayMetrics = new DisplayMetrics();
                 display.getMetrics(displayMetrics);
                 return new Point(displayMetrics.widthPixels, displayMetrics.heightPixels);
-            }else{
+            } else {
                 return new Point(0, 0);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return new Point(0, 0);
         }
     }
-
     public static int dpToPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
 
-    public static void matchPopUp(Context context, String type)
+    public static void matchPopUp(Context context, String name)
     {
         new SweetAlertDialog(context)
                 .setTitleText("It's a match!")
-                .setContentText("You can contact this " + type + " now.")
+                .setContentText("You can contact " + name + " now.")
                 .setConfirmText("Great!")
                 .show();
     }
 
-    public static void newMatchPopUp(Context context, String title, String type)
+    public static void newMatchPopUp(Context context, String title, String name)
     {
         new SweetAlertDialog(context)
                 .setTitleText(title)
-                .setContentText("You can contact this " + type + " now.")
+                .setContentText("You can contact " + name + " now.")
                 .setConfirmText("Great!")
                 .show();
     }
@@ -191,7 +190,7 @@ public class Utils {
         int maxDistance = rand.nextInt(100);
 
          return new Candidate(email,firstName,
-                lastName,imageUrl,birthdate,location,scope,education,skillsWithoutDup,moreInfo,jobCategory,maxDistance);
+                lastName,imageUrl,birthdate,location,maxDistance,scope,education,skillsWithoutDup,moreInfo,jobCategory);
     }
 
     public static Recruiter getRandomRecruiter(){
@@ -216,40 +215,6 @@ public class Utils {
 
         return new Recruiter(email,firstName,
                 lastName,imageUrl,workplace,jobCategory,scope,location,moreInfo,education,skillsWithoutDup);
-    }
-
-    public static double[] getLocationFromAddress(Context context, String strAddress) {
-        Geocoder coder = new Geocoder(context);
-        List<Address> address;
-
-        try {
-            address = coder.getFromLocationName(strAddress, 1);
-            if (address == null) {
-                return null;
-            }
-            Address location = address.get(0);
-            double lat = location.getLatitude();
-            double lng = location.getLongitude();
-            double[] toReturn = {lat, lng};
-            return toReturn;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static Location getLocationFromCity(Context context, String cityName) {
-        String candidateLocationAddress = cityName + ", Israel";
-        double[] candidateLocation = Utils.getLocationFromAddress(context, candidateLocationAddress);
-        if(candidateLocation == null) {
-            addErrorData(cityName + " not found with getLocation");
-            return null;
-        }
-        double locationLatitude = candidateLocation[0];
-        double locationLongitude = candidateLocation[1];
-        Location location = new Location(cityName);
-        location.setLatitude(locationLatitude);
-        location.setLongitude(locationLongitude);
-        return location;
     }
 
     public static void addErrorData(String errorDescription) {

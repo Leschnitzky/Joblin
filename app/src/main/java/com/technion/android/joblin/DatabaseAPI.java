@@ -3,7 +3,6 @@ package com.technion.android.joblin;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import java.util.Calendar;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -22,12 +21,30 @@ import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.technion.android.joblin.DatabaseUtils.*;
+import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.CURRENT_TIME_KEY;
+import static com.technion.android.joblin.DatabaseUtils.EMAIL_KEY;
+import static com.technion.android.joblin.DatabaseUtils.ERRORS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.ERROR_KEY;
+import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORY_KEY;
+import static com.technion.android.joblin.DatabaseUtils.MATCHES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SWIPES_LEFT_KEY;
+import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.SCOPES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.SCOPE_KEY;
+import static com.technion.android.joblin.DatabaseUtils.SIDE_KEY;
+import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.Side;
+import static com.technion.android.joblin.DatabaseUtils.TOKENS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.TOKEN_KEY;
+import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
 class DatabaseAPI {
 
@@ -201,12 +218,12 @@ class DatabaseAPI {
                 "http://image",
                 new Timestamp(new Date(96,10,5)),
                 "Haifa",
+                10,
                 "twice a week",
                 "Technion",
                 skillsList,
                 "I like building Android apps",
-                "Computer Science",
-                10);
+                "Computer Science");
 
         insertCandidate(candidate);
     }
@@ -603,12 +620,12 @@ class DatabaseAPI {
                 "https://pbs.twimg.com/profile_images/972872769019850753/YTxFZF2x_400x400.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Tel Aviv",
+                10,
                 "Full Time",
                 "High School",
                 new ArrayList<String> (Arrays.asList("Java","C#")),
                 "I know how to code, code is my life, more than anything in the world.",
-                "Computer Science",
-                10);
+                "Computer Science");
 
         insertCandidate(candidate);
 
@@ -618,12 +635,12 @@ class DatabaseAPI {
                 "https://media.npr.org/assets/img/2015/11/24/ajeup0ayctw4ztltklrnuvtm-y4xulezgneawbqw4cs_custom-7aa29347d5da230c6101168c71549a7399302d0c-s1100-c15.jpg",
                 new Timestamp(new Date(2001,3,12)),
                 "Beer Sheva",
+                10,
                 "20 hours per month",
                 "Ort Barude",
                 new ArrayList<String> (Arrays.asList("C","Assembly","Writing songs")),
                 "Hello, it's me\n I was wondering if after all these years you'd like to meet",
-                "Computer Science",
-                10);
+                "Computer Science");
 
         insertCandidate(candidate);
 
@@ -633,12 +650,12 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Haifa",
+                10,
                 "Twice a week",
                 "Technion",
                 skillsList,
                 "I like building Android apps",
-                "Computer Science",
-                10);
+                "Computer Science");
 
         insertCandidate(candidate);
 
@@ -648,12 +665,12 @@ class DatabaseAPI {
                 "https://pbs.twimg.com/profile_images/972872769019850753/YTxFZF2x_400x400.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Salem",
+                10,
                 "Night Shifts",
                 "Witches School of Salem",
                 new ArrayList<String> (Arrays.asList("abra kadabra","whoofoo","escaping")),
                 "I'm a witch and i'm proud of it. i can spell any programming language i want.",
-                "Computer Science",
-                10);
+                "Computer Science");
 
         insertCandidate(candidate);
 
@@ -663,12 +680,12 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Jerusalem",
+                10,
                 "75% misra",
                 "Haward Univerity",
                 new ArrayList<String> (Arrays.asList("C#","angry birds")),
                 "Only Iphones. If you make android, swipe left!",
-                "Computer Science",
-                10);
+                "Computer Science");
 
         insertCandidate(candidate);
 
@@ -678,12 +695,12 @@ class DatabaseAPI {
                 "https://avatars1.githubusercontent.com/u/28152692?s=400&v=4",
                 new Timestamp(new Date(90,4,5)),
                 "Haifa",
+                10,
                 "Full Time",
                 "Technion instituation",
                 new ArrayList<String> (Arrays.asList("Java","Good at jokes")),
                 "I have a great idea for an android app, it's called...\n 'remedicene'\n ~mind blown~",
-                "Computer Science",
-                10);
+                "Computer Science");
 
         insertCandidate(candidate);
 
@@ -694,12 +711,12 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Eilat",
+                10,
                 "Three times a week",
                 "Tel Aviv University",
                 skillsList,
                 "I am best person for cyber security",
-                "IT",
-                10);
+                "IT");
 
         insertCandidate(candidate);
 
@@ -710,12 +727,12 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Jaffa",
+                10,
                 "Three times a week",
                 "Ben Gurion University",
                 skillsList,
                 "I am friendly personal",
-                "IT",
-                10);
+                "IT");
 
         insertCandidate(candidate);
 
@@ -726,12 +743,12 @@ class DatabaseAPI {
                 "https://1qxya61uvyue18mpsx3zc8om-wpengine.netdna-ssl.com/wp-content/uploads/sites/2/2017/02/lola.jpg",
                 new Timestamp(new Date(90,4,5)),
                 "Jaffa",
+                10,
                 "Three times a week",
                 "IDC",
                 skillsList,
                 "I am looking to work in dynamic place with good people",
-                "Accounting",
-                10);
+                "Accounting");
 
         insertCandidate(candidate);
     }

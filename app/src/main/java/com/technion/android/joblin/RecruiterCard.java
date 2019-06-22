@@ -1,6 +1,7 @@
 package com.technion.android.joblin;
 
 import android.content.Context;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayout;
 import android.util.Log;
@@ -18,6 +19,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Transaction;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
 import com.mindorks.placeholderview.annotations.Layout;
@@ -99,10 +101,14 @@ public class RecruiterCard {
     @View(R.id.slidingpanel)
     SlidingUpPanelLayout slidingPanel;
 
+    @View(R.id.distanceTxt)
+    TextView distanceTxt;
+
     private Recruiter mProfile;
     private Context mContext;
     private SwipePlaceHolderView mSwipeView;
     private final String swiper;
+    private final Location swiper_loc;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
     CollectionReference recruitersCollection = db.collection(RECRUITERS_COLLECTION_NAME);
@@ -110,11 +116,13 @@ public class RecruiterCard {
     CollectionReference jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
     private Boolean noMoreSuperLikes = false;
 
-    public RecruiterCard(Context context, Recruiter profile, SwipePlaceHolderView swipeView, final String swiper_Email) {
+    public RecruiterCard(Context context, Recruiter profile, SwipePlaceHolderView swipeView,
+                         final String swiper_Email, final Location swiper_location) {
         mContext = context;
         mProfile = profile;
         mSwipeView = swipeView;
         swiper = swiper_Email;
+        swiper_loc = swiper_location;
     }
 
     private String getSkillsString(List<String> skills, int maxLength)
@@ -137,6 +145,15 @@ public class RecruiterCard {
         fullEducationTxt.setText(mProfile.getRequiredEducation());
         SkillsTxt.setText(getSkillsString(mProfile.getRequiredSkillsList(),10));
         fullSkillsTxt.setText(getSkillsString(mProfile.getRequiredSkillsList(),20));
+
+        float[] distance = new float[1];
+        /*
+        GeoPoint jobPoint = Utils.getPoint(mContext,mProfile.getJobLocation());
+        */
+        GeoPoint jobPoint = new GeoPoint(mProfile.getL().get(0),mProfile.getL().get(1));
+        Location.distanceBetween(swiper_loc.getLatitude(),swiper_loc.getLongitude(),
+                jobPoint.getLatitude(),jobPoint.getLongitude(),distance);
+        distanceTxt.setText(Math.round(distance[0]/1000) + " km away");
         locationNameTxt.setText(mProfile.getJobLocation());
         descTxt.setText(mProfile.getJobDescription());
 

@@ -7,12 +7,12 @@ import java.util.List;
 public class Candidate extends User {
     private Timestamp birthday;
     private String jobLocation;
+    private Integer maxDistance;
     private String scope;
     private String education;
     private List<String> skillsList;
     private String moreInfo;
     private String jobCategory;
-    private int maxDistance;
 
     public Candidate() {}
 
@@ -22,28 +22,29 @@ public class Candidate extends User {
                      String imageUrl,
                      Timestamp birthDate,
                      String jobLocation,
+                     Integer maxDistance,
                      String scope,
                      String education,
                      List<String> skillsList,
                      String moreInfo,
-                     String jobCategory,
-                     int maxDistance) {
+                     String jobCategory) {
 
         super(email, name, lastName, imageUrl);
         this.birthday = birthDate;
         this.jobLocation = jobLocation;
+        this.maxDistance = maxDistance;
         this.scope = scope;
         this.education = education;
         this.skillsList = skillsList;
         this.moreInfo = moreInfo;
         this.jobCategory = jobCategory;
-        this.maxDistance = maxDistance;
     }
 
     public Candidate(Candidate other) {
         super(other);
         this.birthday = other.birthday;
         this.jobLocation = other.jobLocation;
+        this.maxDistance = other.maxDistance;
         this.scope = other.scope;
         this.education = other.education;
         this.skillsList = other.skillsList;
@@ -57,6 +58,14 @@ public class Candidate extends User {
 
     public void setBirthday(Timestamp birthday) {
         this.birthday = birthday;
+    }
+
+    public Integer getMaxDistance() {
+        return maxDistance;
+    }
+
+    public void setMaxDistance(Integer maxDistance) {
+        this.maxDistance = maxDistance;
     }
 
     public String getJobLocation() {
@@ -105,13 +114,5 @@ public class Candidate extends User {
 
     public void setJobCategory(String jobCategory) {
         this.jobCategory = jobCategory;
-    }
-
-    public int getMaxDistance() {
-        return maxDistance;
-    }
-
-    public void setMaxDistance(int maxDistance) {
-        this.maxDistance = maxDistance;
     }
 }

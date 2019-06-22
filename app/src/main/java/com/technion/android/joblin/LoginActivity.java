@@ -205,13 +205,6 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-
-        //insert random Candidate
-//        Candidate cand = getRandomCandidate();
-//        Toast.makeText(context, "Category: "+ cand.getJobCategory()+ " , MAIL : " + cand.getEmail(), Toast.LENGTH_SHORT).show();
-//        insertCandidate(cand);
-
-
         if(currentUser != null) {
             initFCM();
             dialog.setMessage("Please wait...");
@@ -314,39 +307,9 @@ public void addTokenData(String email, String token) {
                     }
                 });
     }
-
-
-    // FOR TESTING
-
-    public void insertCandidate(Candidate candidate) {
-//        Map<String, Object> candidateMapData = new HashMap<>();
-//        candidateMapData.put(BIRTHDAY_KEY, candidate.getBirthday());
-//        candidateMapData.put(EMAIL_KEY, candidate.getEmail());
-//        candidateMapData.put(JOB_CATEGORY_KEY, candidate.getJobCategory());
-//        candidateMapData.put(JOB_LOCATION_KEY, candidate.getJobLocation());
-//        candidateMapData.put(LAST_NAME_KEY, candidate.getLastName());
-//        candidateMapData.put(MORE_INFO_KEY, candidate.getMoreInfo());
-//        candidateMapData.put(NAME_KEY, candidate.getName());
-//        candidateMapData.put(SCOPE_KEY, candidate.getScope());
-//        candidateMapData.put(SKILLS_KEY, candidate.getSkillsList());
-//        candidateMapData.put(EDUCATION_KEY, candidate.getEducation());
-
-        WriteBatch batch = db.batch();
-
-        DocumentReference candidateDocumentReference = candidatesCollection.document(candidate.getEmail());
-        batch.set(candidateDocumentReference, candidate);
-
-        Map<String, Object> userMapData = new HashMap<>();
-        userMapData.put(EMAIL_KEY, candidate.getEmail());
-
-        DocumentReference userDocumentReference = usersCollection.document(candidate.getEmail());
-        batch.set(userDocumentReference, userMapData);
-
-        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-
-            }
-        });
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dialog.dismiss();
     }
 }

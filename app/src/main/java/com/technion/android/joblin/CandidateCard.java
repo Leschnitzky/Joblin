@@ -266,7 +266,6 @@ public class CandidateCard {
                                 recrSuperLiked = false;
                             }
                         }
-
                         return isMatch;
                     }
                 }).addOnSuccessListener(new OnSuccessListener<Boolean>() {
