@@ -24,12 +24,15 @@ public class CurrentActivityReceiver extends BroadcastReceiver {
         String title = intent.getStringExtra("Title");
         String body = intent.getStringExtra("Body");
 
-        String[] splitted = title.split(" ");
+        String[] splitted = body.split(" ");
         //A new message
         if( splitted[splitted.length - 1].equals("message"))  {
             // Messages shouldn't recieve a pop-up
         } else {
-            Utils.newMatchPopUp(receivingActivity,title,splitted[0]);
+            if(RecMainActivity.recrSuperLiked || CanMainActivity.candSuperLiked){
+            } else {
+                Utils.newMatchPopUp(receivingActivity,title,splitted[0]);
+            }
         }
     }
 }

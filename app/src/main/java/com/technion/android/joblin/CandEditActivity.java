@@ -4,16 +4,21 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayout;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -66,7 +71,7 @@ public class CandEditActivity extends AppCompatActivity {
     ImageView mProfileBackButton;
     ImageView mProfileEditButton;
     Context mContext;
-
+    ImageView filter_spinner;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     @Override
@@ -77,12 +82,29 @@ public class CandEditActivity extends AppCompatActivity {
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
-        dialog = new ProgressDialog(CandEditActivity.this);
-        dialog.setMessage("Retrieving user information...");
-        dialog.setCancelable(false);
-        dialog.setInverseBackgroundForced(false);
-        dialog.show();
-
+        filter_spinner = findViewById(R.id.filter_spinner);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        PopupMenu popup = new PopupMenu(CandEditActivity.this, filter_spinner);
+        //Inflating the Popup using xml file
+        popup.getMenuInflater().inflate(R.menu.popup_menu_cand, popup.getMenu());
+        int filter_method = sharedPrefs.getInt(getResources().getString(R.string.saved_filtering_method), 0);
+        popup.getMenu().getItem(filter_method).setChecked(true);
+        //registering popup with OnMenuItemClickListener
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                item.setChecked(!item.isChecked());
+                SharedPreferences.Editor editor = sharedPrefs.edit();
+                editor.putInt(getString(R.string.saved_filtering_method),item.getOrder());
+                editor.apply();
+                return true;
+            }
+        });
+        filter_spinner.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popup.show();//showing popup menu
+            }
+        });
 
         can_profile = findViewById(R.id.can_cardprofile);
         can_card = findViewById(R.id.can_cardview);
@@ -196,7 +218,11 @@ public class CandEditActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
+        dialog = new ProgressDialog(CandEditActivity.this);
+        dialog.setMessage("Retrieving user information...");
+        dialog.setCancelable(false);
+        dialog.setInverseBackgroundForced(false);
+        dialog.show();
         getCandidate(mAuth.getCurrentUser().getEmail());
     }
 
@@ -215,6 +241,7 @@ public class CandEditActivity extends AppCompatActivity {
     protected void onPause() {
         LocalBroadcastManager.getInstance(this).
                 unregisterReceiver(currentActivityReceiver);
+        dialog.dismiss();
         currentActivityReceiver = null;
         super.onPause();
     }
