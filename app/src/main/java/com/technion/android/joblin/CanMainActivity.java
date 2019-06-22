@@ -1,5 +1,6 @@
 package com.technion.android.joblin;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -44,6 +45,7 @@ public class CanMainActivity extends AppCompatActivity {
 
     private SwipePlaceHolderView mSwipeView;
     private Context mContext;
+    private Activity mActivity = this;
     FirebaseFirestore db;
     CollectionReference candidatesCollection, recruitersCollection, usersCollection, jobCategoriesCollection;
     private FirebaseAuth mAuth;
@@ -52,6 +54,8 @@ public class CanMainActivity extends AppCompatActivity {
     private ImageButton mProfileButton;
     private ImageButton mMatchesButton;
     private TextView swipesLeftTxt;
+    public static Boolean candSuperLiked = false;
+
 
 
     void getRecruitersForSwipingScreen_MainFunction(final String candidateMail) {
@@ -250,6 +254,14 @@ public class CanMainActivity extends AppCompatActivity {
                 mSwipeView.doSwipe(true);
             }
         });
+        findViewById(R.id.starBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    candSuperLiked = true;
+                    mSwipeView.doSwipe(true);
+
+            }
+        });
 
         //initialization for display
         rl = findViewById(R.id.rotateloading);
@@ -308,6 +320,7 @@ public class CanMainActivity extends AppCompatActivity {
         currentActivityReceiver = null;
         super.onPause();
     }
+
 
 
 }

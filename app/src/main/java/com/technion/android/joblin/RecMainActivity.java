@@ -58,6 +58,7 @@ public class RecMainActivity extends AppCompatActivity {
     private ImageButton matchButton;
     private String email;
     private TextView swipesLeftTxt;
+    public static Boolean recrSuperLiked = false;
 
     void getCandidatesForSwipingScreen_MainFunction(final String recruiterMail) {
         getCandidatesForSwipingScreen_CollectDataAboutRecruiter(recruiterMail);
@@ -235,6 +236,14 @@ public class RecMainActivity extends AppCompatActivity {
         findViewById(R.id.acceptBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mSwipeView.doSwipe(true);
+            }
+        });
+
+        findViewById(R.id.starBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recrSuperLiked = true;
                 mSwipeView.doSwipe(true);
             }
         });

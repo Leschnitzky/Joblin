@@ -15,6 +15,7 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -35,6 +36,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
@@ -43,6 +45,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.EMAIL_KEY;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.TAG;
@@ -203,6 +206,11 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
+        //insert random Candidate
+//        Candidate cand = getRandomCandidate();
+//        Toast.makeText(context, "Category: "+ cand.getJobCategory()+ " , MAIL : " + cand.getEmail(), Toast.LENGTH_SHORT).show();
+//        insertCandidate(cand);
+
 
         if(currentUser != null) {
             initFCM();
@@ -305,5 +313,40 @@ public void addTokenData(String email, String token) {
                         addTokenData(mAuth.getCurrentUser().getEmail(),token);
                     }
                 });
+    }
+
+
+    // FOR TESTING
+
+    public void insertCandidate(Candidate candidate) {
+//        Map<String, Object> candidateMapData = new HashMap<>();
+//        candidateMapData.put(BIRTHDAY_KEY, candidate.getBirthday());
+//        candidateMapData.put(EMAIL_KEY, candidate.getEmail());
+//        candidateMapData.put(JOB_CATEGORY_KEY, candidate.getJobCategory());
+//        candidateMapData.put(JOB_LOCATION_KEY, candidate.getJobLocation());
+//        candidateMapData.put(LAST_NAME_KEY, candidate.getLastName());
+//        candidateMapData.put(MORE_INFO_KEY, candidate.getMoreInfo());
+//        candidateMapData.put(NAME_KEY, candidate.getName());
+//        candidateMapData.put(SCOPE_KEY, candidate.getScope());
+//        candidateMapData.put(SKILLS_KEY, candidate.getSkillsList());
+//        candidateMapData.put(EDUCATION_KEY, candidate.getEducation());
+
+        WriteBatch batch = db.batch();
+
+        DocumentReference candidateDocumentReference = candidatesCollection.document(candidate.getEmail());
+        batch.set(candidateDocumentReference, candidate);
+
+        Map<String, Object> userMapData = new HashMap<>();
+        userMapData.put(EMAIL_KEY, candidate.getEmail());
+
+        DocumentReference userDocumentReference = usersCollection.document(candidate.getEmail());
+        batch.set(userDocumentReference, userMapData);
+
+        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+            }
+        });
     }
 }
