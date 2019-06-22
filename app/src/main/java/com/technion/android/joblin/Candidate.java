@@ -7,7 +7,7 @@ import java.util.List;
 public class Candidate extends User {
     private Timestamp birthday;
     private String jobLocation;
-    private Integer jobRadius;
+    private Integer maxDistance;
     private String scope;
     private String education;
     private List<String> skillsList;
@@ -22,7 +22,7 @@ public class Candidate extends User {
                      String imageUrl,
                      Timestamp birthDate,
                      String jobLocation,
-                     Integer jobRadius,
+                     Integer maxDistance,
                      String scope,
                      String education,
                      List<String> skillsList,
@@ -32,7 +32,7 @@ public class Candidate extends User {
         super(email, name, lastName, imageUrl);
         this.birthday = birthDate;
         this.jobLocation = jobLocation;
-        this.jobRadius = jobRadius;
+        this.maxDistance = maxDistance;
         this.scope = scope;
         this.education = education;
         this.skillsList = skillsList;
@@ -44,7 +44,7 @@ public class Candidate extends User {
         super(other);
         this.birthday = other.birthday;
         this.jobLocation = other.jobLocation;
-        this.jobRadius = other.jobRadius;
+        this.maxDistance = other.maxDistance;
         this.scope = other.scope;
         this.education = other.education;
         this.skillsList = other.skillsList;
@@ -59,12 +59,12 @@ public class Candidate extends User {
         this.birthday = birthday;
     }
 
-    public Integer getJobRadius() {
-        return jobRadius;
+    public Integer getMaxDistance() {
+        return maxDistance;
     }
 
-    public void setJobRadius(Integer jobRadius) {
-        this.jobRadius = jobRadius;
+    public void setMaxDistance(Integer maxDistance) {
+        this.maxDistance = maxDistance;
     }
 
     public String getJobLocation() {

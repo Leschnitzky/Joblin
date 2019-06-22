@@ -116,7 +116,8 @@ public class CanMainActivity extends AppCompatActivity {
                         String candidateJobCategory = (String) document.get(JOB_CATEGORY_KEY);
                         List<Double> l = (List<Double>) document.get("l");
                         assert l != null;
-                        GeoPoint candidateJobLocation = (GeoPoint) new GeoPoint(l.get(0),l.get(1));
+                        GeoPoint candidateJobLocation = new GeoPoint(l.get(0),l.get(1));
+                        GeoPoint candidateCurrentLocation = new GeoPoint(myLocation.getLatitude(),myLocation.getLongitude());
                         String candidateJobScope = (String) document.get(SCOPE_KEY);
                         Long candidateJobRadius = (Long) document.get(JOB_RADIUS_KEY);
                         int filter_method = sharedPrefs.getInt(getResources().getString(R.string.saved_filtering_method),Filter.CATEGORY.ordinal());
@@ -124,7 +125,7 @@ public class CanMainActivity extends AppCompatActivity {
                             getRecruitersForSwipingScreen_FindRelevantRecruiters(candidateMail, candidateJobCategory);
                         else if(filter_method==Filter.DISTANCE.ordinal())
                             getRecruitersForSwipingScreen_FindRelevantRecruitersWithDistance(candidateMail, candidateJobCategory,
-                                    candidateJobLocation, candidateJobRadius);
+                                    candidateCurrentLocation, candidateJobRadius);
                         else if(filter_method==Filter.CITY.ordinal())
                             getRecruitersForSwipingScreen_FindRelevantRecruitersWithCity(candidateMail, candidateJobCategory,candidateJobLocation);
                         else

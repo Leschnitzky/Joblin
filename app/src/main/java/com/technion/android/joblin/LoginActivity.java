@@ -199,7 +199,6 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
-
         if(currentUser != null) {
             dialog.setMessage("Please wait...");
             dialog.setCancelable(false);

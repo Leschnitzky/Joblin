@@ -263,7 +263,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         elements.add(location);
 
         FormSliderElement slider = new FormSliderElement(Tag.Radius.ordinal());
-        slider.setValue(candidate.getJobRadius());
+        slider.setValue(candidate.getMaxDistance());
         slider.setTitle("Distance (KM)");
         slider.setMin(0);
         slider.setMax(100);

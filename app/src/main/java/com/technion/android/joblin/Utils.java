@@ -110,7 +110,21 @@ public class Utils {
             return new GeoPoint(address.getLatitude(), address.getLongitude());
         }
         catch (Exception e) {
-            return null;
+            try {
+                Address address = geocoder.getFromLocationName(cityName+",Israel", 1).get(0);
+                return new GeoPoint(address.getLatitude(), address.getLongitude());
+            }
+            catch (Exception e1)
+            {
+                try {
+                    Address address = geocoder.getFromLocationName(cityName+",Israel", 1).get(0);
+                    return new GeoPoint(address.getLatitude(), address.getLongitude());
+                }
+                catch (Exception e2)
+                {
+                    return null;
+                }
+            }
         }
     }
 }
