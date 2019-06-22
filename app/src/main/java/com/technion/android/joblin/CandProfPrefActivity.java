@@ -294,7 +294,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         BaseFormElement lastname = elements.get(Tag.LastName.ordinal());
         FormPickerDateElement birthdate = (FormPickerDateElement)elements.get(Tag.BirthDate.ordinal());
         BaseFormElement category = elements.get(Tag.Category.ordinal());
-        BaseFormElement scope = elements.get(Tag.Scope.ordinal());
+        FormCustomElement scope = (FormCustomElement) elements.get(Tag.Scope.ordinal());
         FormPlacesAutoCompleteElement location = (FormPlacesAutoCompleteElement) elements.get(Tag.Location.ordinal());
         BaseFormElement radius = elements.get(Tag.Radius.ordinal());
         BaseFormElement desc = elements.get(Tag.Desc.ordinal());
@@ -326,7 +326,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
                         birthday,
                         locationParts[0],
                         Integer.parseInt(radius.getValueAsString()),
-                        scope.getValueAsString(),
+                        scope.getFinalValue(),
                         education.getValueAsString(),
                         skills,
                         desc.getValueAsString(),
