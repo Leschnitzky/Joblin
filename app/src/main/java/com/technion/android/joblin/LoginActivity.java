@@ -159,8 +159,8 @@ public class LoginActivity extends AppCompatActivity {
 
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
 
-        DatabaseAPI dbAPI = new DatabaseAPI();
-        dbAPI.removeMaxDistanceFieldFromRecruiter();
+//        DatabaseAPI dbAPI = new DatabaseAPI();
+//        dbAPI.removeMaxDistanceFieldFromRecruiter();
 
     }
 
