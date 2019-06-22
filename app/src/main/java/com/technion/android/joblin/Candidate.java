@@ -50,6 +50,7 @@ public class Candidate extends User {
         this.skillsList = other.skillsList;
         this.moreInfo = other.moreInfo;
         this.jobCategory = other.jobCategory;
+        this.maxDistance = other.maxDistance;
     }
 
     public Timestamp getBirthday() { return birthday;

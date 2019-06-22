@@ -2,7 +2,7 @@ package com.technion.android.joblin;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
-
+import java.util.Calendar;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -289,6 +289,95 @@ class DatabaseAPI {
                 }
             }
         });
+    }
+
+    public void recruiterMakeSuperLike(String recruiterMail, String candidateMail) {
+        addSwipeDataBecauseSuperLike(recruitersCollection, candidatesCollection, recruiterMail, candidateMail);
+    }
+
+    public void candidateMakeSuperLike(String candidateMail, String recruiterMail) {
+        addSwipeDataBecauseSuperLike(candidatesCollection, recruitersCollection, candidateMail, recruiterMail);
+    }
+
+    public void swipeRightOnRecruiter(String recruiterMail, String candidateMail) {
+        addSwipeData(candidatesCollection, recruitersCollection, candidateMail, recruiterMail, Side.RIGHT);
+    }
+
+    public void swipeRightOnCandidate(String candidateMail, String recruiterMail) {
+        addSwipeData(recruitersCollection, candidatesCollection, recruiterMail, candidateMail, Side.RIGHT);
+    }
+
+    public void addSwipeDataBecauseSuperLike(CollectionReference firstCollection,
+                                             CollectionReference secondCollection,
+                                             String firstMail,
+                                             String secondMail) {
+
+        String sideString = "right";
+
+        final Map<String, Object> firstSwipesMapData = new HashMap<>();
+        firstSwipesMapData.put(EMAIL_KEY, secondMail);
+        firstSwipesMapData.put(SIDE_KEY, sideString);
+
+        final Map<String, Object> secondSwipesMapData = new HashMap<>();
+
+        final Map<String, Object> firstMatchesMapData = new HashMap<>();
+        firstMatchesMapData.put(EMAIL_KEY, firstMail);
+
+        final Map<String, Object> secondMatchesMapData = new HashMap<>();
+        secondMatchesMapData.put(EMAIL_KEY, secondMail);
+
+        final DocumentReference mainDocRefOfFirst = firstCollection.document(firstMail);
+        final DocumentReference swipeDocRefOfFirst = firstCollection.document(firstMail).collection(SWIPES_COLLECTION_NAME).document(secondMail);
+        final DocumentReference swipeDocRefOfSecond = secondCollection.document(secondMail).collection(SWIPES_COLLECTION_NAME).document(firstMail);
+        final DocumentReference matchDocRefOfFirst = firstCollection.document(firstMail).collection(MATCHES_COLLECTION_NAME).document(secondMail);
+        final DocumentReference matchDocRefOfSecond = secondCollection.document(secondMail).collection(MATCHES_COLLECTION_NAME).document(firstMail);
+        db.runTransaction(new Transaction.Function<Boolean>() {
+            @Override
+            public Boolean apply(Transaction transaction) throws FirebaseFirestoreException {
+                DocumentSnapshot snapshotMainFirst = transaction.get(mainDocRefOfFirst);
+                DocumentSnapshot snapshotSwipeSecond = transaction.get(swipeDocRefOfSecond);
+                DocumentSnapshot snapshotSwipeFirst = transaction.get(swipeDocRefOfFirst);
+                boolean isMatch = false;
+                if (snapshotSwipeSecond.exists()) {
+                    if (snapshotSwipeSecond.get(SIDE_KEY).equals("right")) {
+                        transaction.set(matchDocRefOfFirst, secondMatchesMapData);
+                        transaction.set(matchDocRefOfSecond, firstMatchesMapData);
+                        isMatch = true;
+                    }
+                    transaction.update(swipeDocRefOfSecond, secondSwipesMapData);
+                } else {
+                    transaction.set(swipeDocRefOfSecond, secondSwipesMapData);
+                    transaction.delete(swipeDocRefOfSecond);
+                }
+
+                if (snapshotSwipeFirst.exists()) {
+                    transaction.update(swipeDocRefOfFirst, firstSwipesMapData);
+                } else {
+                    transaction.set(swipeDocRefOfFirst, firstSwipesMapData);
+                }
+
+                if (snapshotMainFirst.exists()) {
+                    long numberOfSwipesLeft = snapshotMainFirst.getLong(NUMBER_OF_SWIPES_LEFT_KEY);
+                    transaction.update(mainDocRefOfFirst, NUMBER_OF_SWIPES_LEFT_KEY, numberOfSwipesLeft - 1);
+                }
+
+                return isMatch;
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Boolean>() {
+            @Override
+            public void onSuccess(Boolean isMatch) {
+                if (isMatch) {
+                }
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Transaction failure.", e);
+                        //TODO: add general toast for failure.
+                    }
+                });
+
     }
 
     public void addSwipeDataForRecruiter(String recruiterMail, String candidateMail, Side side) {
@@ -946,6 +1035,55 @@ class DatabaseAPI {
                     public void onFailure(@NonNull Exception e) {
                     }
                 });
+    }
+
+    public void addMaxDistanceFieldToAllUsersInDB() {
+
+        recruitersCollection
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            WriteBatch batch = db.batch();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                DocumentReference documentReference = document.getReference();
+                                batch.update(documentReference, "maxDistance", 12L);
+                            }
+
+                            batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+
+                                }
+                            });
+                        }
+                    }
+                });
+
+
+        candidatesCollection
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            WriteBatch batch = db.batch();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                DocumentReference documentReference = document.getReference();
+                                batch.update(documentReference, "maxDistance", 30L);
+                            }
+
+                            batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+
+                                }
+                            });
+                        }
+                    }
+                });
+
     }
 
 }

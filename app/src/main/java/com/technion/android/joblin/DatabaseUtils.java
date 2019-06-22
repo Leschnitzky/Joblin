@@ -17,6 +17,7 @@ class DatabaseUtils {
     static final String SKILLS_KEY = "skillList";
     static final String EDUCATION_KEY = "education";
     static final String NUMBER_OF_SWIPES_LEFT_KEY = "numberOfSwipesLeft";
+    static final String NUMBER_OF_SUPER_LIKES_LEFT_KEY = "numberOfSuperLikesLeft";
     static final String REQUIRED_EDUCATION = "requiredEducation";
     static final String REQUIRED_SCOPE_KEY = "requiredScope";
     static final String REQUIRED_SKILLS_KEY = "requiredSkillsList";
@@ -28,6 +29,7 @@ class DatabaseUtils {
     static final String CURRENT_TIME_KEY = "time";
     static final String SENDER_KEY = "sender";
     static final String RECEIVER_KEY = "receiver";
+    static final String MAX_DISTANCE_KEY = "maxDistance";
 
     static final String SWIPES_COLLECTION_NAME = "Swipes";
     static final String MATCHES_COLLECTION_NAME = "Matches";

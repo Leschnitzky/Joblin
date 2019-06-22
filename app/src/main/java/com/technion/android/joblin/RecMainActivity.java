@@ -73,6 +73,7 @@ public class RecMainActivity extends AppCompatActivity {
     {
         CATEGORY, CITY, SCOPE
     }
+    public static Boolean recrSuperLiked = false;
 
     void getCandidatesForSwipingScreen_MainFunction(final String recruiterMail) {
         getCandidatesForSwipingScreen_CollectDataAboutRecruiter(recruiterMail);
@@ -347,6 +348,23 @@ public class RecMainActivity extends AppCompatActivity {
                 mSwipeView.doSwipe(true);
             }
         });
+
+        findViewById(R.id.starBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recrSuperLiked = true;
+                mSwipeView.doSwipe(true);
+            }
+        });
+
+        //initialization for display
+        rl = findViewById(R.id.rotateloading);
+        rl.start();
+        TextView nothingNew = findViewById(R.id.nothingNewTxt);
+        nothingNew.setText(R.string.no_new_can_right_now);
+
+
+        getCandidatesForSwipingScreen_MainFunction(email);
     }
 
     @Override

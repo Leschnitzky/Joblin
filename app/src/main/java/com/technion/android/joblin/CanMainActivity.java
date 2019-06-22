@@ -1,6 +1,7 @@
 package com.technion.android.joblin;
 
 import android.Manifest.permission;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -53,23 +54,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORY_KEY;
-import static com.technion.android.joblin.DatabaseUtils.JOB_RADIUS_KEY;
-import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SWIPES_LEFT_KEY;
-import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.REQUIRED_SCOPE_KEY;
-import static com.technion.android.joblin.DatabaseUtils.SCOPE_KEY;
-import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.TAG;
-import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
-
+import static com.technion.android.joblin.DatabaseUtils.*;
 
 public class CanMainActivity extends AppCompatActivity {
 
     private SwipePlaceHolderView mSwipeView;
     private Context mContext;
+    private Activity mActivity = this;
     FirebaseFirestore db;
     CollectionReference candidatesCollection, recruitersCollection, usersCollection, jobCategoriesCollection;
     RotateLoading rl;
@@ -82,6 +73,7 @@ public class CanMainActivity extends AppCompatActivity {
     {
         CATEGORY, DISTANCE, CITY, SCOPE
     }
+    public static Boolean candSuperLiked = false;
 
     void getRecruitersForSwipingScreen_MainFunction(final String candidateMail) {
         getRecruitersForSwipingScreen_CollectDataAboutCandidate(candidateMail);
@@ -381,14 +373,14 @@ public class CanMainActivity extends AppCompatActivity {
         mProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CanMainActivity.this,CandEditActivity.class);
+                Intent intent = new Intent(CanMainActivity.this, CandEditActivity.class);
                 startActivity(intent);
             }
         });
         mMatchesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CanMainActivity.this,CanMatchesActivity.class);
+                Intent intent = new Intent(CanMainActivity.this, CanMatchesActivity.class);
                 startActivity(intent);
             }
         });
@@ -413,7 +405,7 @@ public class CanMainActivity extends AppCompatActivity {
         mSwipeView.addItemRemoveListener(new ItemRemovedListener() {
             @Override
             public void onItemRemoved(int count) {
-                if(mSwipeView.getAllResolvers().isEmpty()) {
+                if (mSwipeView.getAllResolvers().isEmpty()) {
                     rl.start();
                     findViewById(R.id.nothingNewTxt).animate().scaleY(1).start();
                 }
@@ -429,6 +421,14 @@ public class CanMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mSwipeView.doSwipe(true);
+            }
+        });
+        findViewById(R.id.starBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                candSuperLiked = true;
+                mSwipeView.doSwipe(true);
+
             }
         });
     }
@@ -492,6 +492,7 @@ public class CanMainActivity extends AppCompatActivity {
         currentActivityReceiver = null;
         super.onPause();
     }
+
 
 
 }

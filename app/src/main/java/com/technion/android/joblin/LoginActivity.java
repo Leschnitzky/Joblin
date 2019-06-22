@@ -15,6 +15,7 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -35,6 +36,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
@@ -43,12 +45,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.EMAIL_KEY;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.TAG;
 import static com.technion.android.joblin.DatabaseUtils.TOKENS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.TOKEN_KEY;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
+import static com.technion.android.joblin.Utils.getRandomCandidate;
+import static com.technion.android.joblin.Utils.getRandomRecruiter;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -115,9 +120,10 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.login_screen_layout);
 
 //        DatabaseAPI dbAPI = new DatabaseAPI();
-//        dbAPI.initializeDBWithSomeData();
+//        dbAPI.addMaxDistanceFieldToAllUsersInDB();
 
         dialog = new ProgressDialog(LoginActivity.this);
+
         FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
         activity = this;
@@ -154,6 +160,7 @@ public class LoginActivity extends AppCompatActivity {
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
 
 //        DatabaseAPI dbAPI = new DatabaseAPI();
+//        dbAPI.swipeRightOnRecruiter("baraflalo@gmail.com", "levi.weiss3@gmail.com");
 
     }
 
@@ -198,8 +205,8 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-
         if(currentUser != null) {
+            initFCM();
             dialog.setMessage("Please wait...");
             dialog.setCancelable(false);
             dialog.setInverseBackgroundForced(false);
@@ -207,7 +214,6 @@ public class LoginActivity extends AppCompatActivity {
             mUserFirstName = account.getDisplayName();
             mUserLastName = account.getFamilyName();
             mUserPhoto = currentUser.getPhotoUrl();
-            initFCM();
             isCandidateOrRecrInDB(currentUser.getEmail());
         }
     }
@@ -301,7 +307,6 @@ public void addTokenData(String email, String token) {
                     }
                 });
     }
-
     @Override
     protected void onPause() {
         super.onPause();

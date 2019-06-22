@@ -29,7 +29,10 @@ public class CurrentActivityReceiver extends BroadcastReceiver {
         if( splitted[splitted.length - 1].equals("message"))  {
             // Messages shouldn't recieve a pop-up
         } else {
-            Utils.newMatchPopUp(receivingActivity,title,splitted[0]);
+            if(RecMainActivity.recrSuperLiked || CanMainActivity.candSuperLiked){
+            } else {
+                Utils.newMatchPopUp(receivingActivity,title,splitted[0]);
+            }
         }
     }
 }
