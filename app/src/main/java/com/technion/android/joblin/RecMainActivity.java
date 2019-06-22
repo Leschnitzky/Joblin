@@ -39,7 +39,8 @@ import com.mindorks.placeholderview.listeners.ItemRemovedListener;
 import com.victor.loading.rotate.RotateLoading;
 
 import org.imperiumlabs.geofirestore.GeoFirestore;
-import org.imperiumlabs.geofirestore.GeoFirestore.CompletionListener;
+import org.imperiumlabs.geofirestore.callbacks.GeoQueryDataEventListener;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,6 @@ import java.util.Objects;
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORY_KEY;
-import static com.technion.android.joblin.DatabaseUtils.JOB_LOCATION_KEY;
 import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SWIPES_LEFT_KEY;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.REQUIRED_SCOPE_KEY;
@@ -74,21 +74,6 @@ public class RecMainActivity extends AppCompatActivity {
         CATEGORY, CITY, SCOPE
     }
 
-    void InitializeMissingAttributes(DocumentSnapshot document, final String recruiterMail)
-    {
-        if(document.get("g")==null)
-        {
-            GeoFirestore geoFirestore = new GeoFirestore(recruitersCollection);
-            GeoPoint location = Utils.getPoint(RecMainActivity.this,(String) document.get(JOB_LOCATION_KEY));
-            geoFirestore.setLocation(recruiterMail, Objects.requireNonNull(location), new CompletionListener() {
-                @Override
-                public void onComplete(@org.jetbrains.annotations.Nullable Exception e) {
-                    Utils.newAttributesPopup(RecMainActivity.this);
-                }
-            });
-        }
-    }
-
     void getCandidatesForSwipingScreen_MainFunction(final String recruiterMail) {
         getCandidatesForSwipingScreen_CollectDataAboutRecruiter(recruiterMail);
     }
@@ -101,7 +86,6 @@ public class RecMainActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (Objects.requireNonNull(document).exists()) {
-                        InitializeMissingAttributes(document, recruiterMail);
                         String recruiterJobCategory = (String) document.get(JOB_CATEGORY_KEY);
                         List<Double> l = (List<Double>) document.get("l");
                         assert l != null;
@@ -146,6 +130,7 @@ public class RecMainActivity extends AppCompatActivity {
     void getCandidatesForSwipingScreen_FindRelevantCandidatesWithCity(final String recruiterMail,
                                                                       final String recruiterJobCategory,
                                                                       final GeoPoint recruiterLocation) {
+        GeoFirestore geoFirestore = new GeoFirestore(candidatesCollection);
         candidatesCollection
                 .whereEqualTo(JOB_CATEGORY_KEY, recruiterJobCategory)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -156,14 +141,48 @@ public class RecMainActivity extends AppCompatActivity {
                             return;
                         }
                         List<Candidate> listOfCandidates = new ArrayList<>();
-                        for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()) {
-                            if(documentChange.getType().equals(Type.ADDED)) {
-                                Candidate candidate = documentChange.getDocument().toObject(Candidate.class);
-                                if (Utils.getPoint(RecMainActivity.this, candidate.getJobLocation()).equals(recruiterLocation))
-                                    listOfCandidates.add(candidate);
+                        List<DocumentSnapshot> documents = new ArrayList<>();
+                        geoFirestore.queryAtLocation(recruiterLocation,0).addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
+                            @Override
+                            public void onDocumentEntered(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
+                                documents.add(documentSnapshot);
                             }
-                        }
-                        getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped(recruiterMail, listOfCandidates);
+
+                            @Override
+                            public void onDocumentExited(@NotNull DocumentSnapshot documentSnapshot) {
+
+                            }
+
+                            @Override
+                            public void onDocumentMoved(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
+
+                            }
+
+                            @Override
+                            public void onDocumentChanged(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
+
+                            }
+
+                            @Override
+                            public void onGeoQueryReady() {
+                                for (QueryDocumentSnapshot document : Objects.requireNonNull(queryDocumentSnapshots)) {
+                                    for(DocumentSnapshot inDistanceDoc : documents)
+                                    {
+                                        if(inDistanceDoc.getId().equals(document.getId()))
+                                        {
+                                            Candidate candidate = document.toObject(Candidate.class);
+                                            listOfCandidates.add(candidate);
+                                        }
+                                    }
+                                }
+                                getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped(recruiterMail, listOfCandidates);
+                            }
+
+                            @Override
+                            public void onGeoQueryError(@NotNull Exception e) {
+
+                            }
+                        });
                     }
                 });
     }

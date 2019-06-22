@@ -373,14 +373,9 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
                     geoFirestore.setLocation(mAuth.getCurrentUser().getEmail(),
                             new GeoPoint(Double.parseDouble(locationParts[1]), Double.parseDouble(locationParts[2])));
                 }
-                else {
-                    GeoPoint point = Utils.getPoint(this,location.getValueAsString());
-                    if(point!=null)
-                        geoFirestore.setLocation(mAuth.getCurrentUser().getEmail(), point);
-                    else
-                        //shouldn't happen
-                        geoFirestore.setLocation(mAuth.getCurrentUser().getEmail(), new GeoPoint(1,1));
-                }
+                else
+                    geoFirestore.setLocation(mAuth.getCurrentUser().getEmail(),
+                            new GeoPoint(recruiter.getL().get(0),recruiter.getL().get(1)));
             }
             else
             {

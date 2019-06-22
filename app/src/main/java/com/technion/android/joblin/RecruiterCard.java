@@ -143,17 +143,13 @@ public class RecruiterCard {
         fullSkillsTxt.setText(getSkillsString(mProfile.getRequiredSkillsList(),20));
 
         float[] distance = new float[1];
+        /*
         GeoPoint jobPoint = Utils.getPoint(mContext,mProfile.getJobLocation());
-        if(jobPoint!=null)
-        {
-            Location.distanceBetween(swiper_loc.getLatitude(),swiper_loc.getLongitude(),
-                    jobPoint.getLatitude(),jobPoint.getLongitude(),distance);
-            distanceTxt.setText(Math.round(distance[0]/1000) + " km away");
-        }
-        else
-        {
-            distanceTxt.setText("");
-        }
+        */
+        GeoPoint jobPoint = new GeoPoint(mProfile.getL().get(0),mProfile.getL().get(1));
+        Location.distanceBetween(swiper_loc.getLatitude(),swiper_loc.getLongitude(),
+                jobPoint.getLatitude(),jobPoint.getLongitude(),distance);
+        distanceTxt.setText(Math.round(distance[0]/1000) + " km away");
         locationNameTxt.setText(mProfile.getJobLocation());
         descTxt.setText(mProfile.getJobDescription());
 

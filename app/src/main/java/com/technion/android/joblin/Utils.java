@@ -3,14 +3,10 @@ package com.technion.android.joblin;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Point;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
-
-import com.google.firebase.firestore.GeoPoint;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -100,31 +96,5 @@ public class Utils {
         int d2 = Integer.parseInt(formatter.format(currentDate));
         int age = (d2 - d1) / 10000;
         return age;
-    }
-
-    public static GeoPoint getPoint(Context context, String cityName)
-    {
-        Geocoder geocoder = new Geocoder(context);
-        try {
-            Address address = geocoder.getFromLocationName(cityName+",Israel", 1).get(0);
-            return new GeoPoint(address.getLatitude(), address.getLongitude());
-        }
-        catch (Exception e) {
-            try {
-                Address address = geocoder.getFromLocationName(cityName+",Israel", 1).get(0);
-                return new GeoPoint(address.getLatitude(), address.getLongitude());
-            }
-            catch (Exception e1)
-            {
-                try {
-                    Address address = geocoder.getFromLocationName(cityName+",Israel", 1).get(0);
-                    return new GeoPoint(address.getLatitude(), address.getLongitude());
-                }
-                catch (Exception e2)
-                {
-                    return null;
-                }
-            }
-        }
     }
 }

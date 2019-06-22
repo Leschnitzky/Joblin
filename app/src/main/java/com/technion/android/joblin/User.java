@@ -1,5 +1,7 @@
 package com.technion.android.joblin;
 
+import java.util.List;
+
 public class User {
 
     private String email;
@@ -8,6 +10,7 @@ public class User {
     private String imageUrl;
     static long totalNumberOfSwipes = 10;
     private long numberOfSwipesLeft = 10;
+    private List<Double> l;
 
     User() {}
 
@@ -24,6 +27,7 @@ public class User {
         this.lastName = other.lastName;
         this.numberOfSwipesLeft = other.numberOfSwipesLeft;
         this.imageUrl = other.imageUrl;
+        this.l = other.l;
     }
 
     public String getEmail() {
@@ -56,6 +60,14 @@ public class User {
         }
         numberOfSwipesLeft -= 1;
         return true;
+    }
+
+    public List<Double> getL() {
+        return l;
+    }
+
+    public void setL(List<Double> l) {
+        this.l = l;
     }
 
     public void restoreNumberOfSwipesLeft() {

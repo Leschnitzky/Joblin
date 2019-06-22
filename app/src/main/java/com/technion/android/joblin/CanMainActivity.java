@@ -46,7 +46,6 @@ import com.mindorks.placeholderview.listeners.ItemRemovedListener;
 import com.victor.loading.rotate.RotateLoading;
 
 import org.imperiumlabs.geofirestore.GeoFirestore;
-import org.imperiumlabs.geofirestore.GeoFirestore.CompletionListener;
 import org.imperiumlabs.geofirestore.callbacks.GeoQueryDataEventListener;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,7 +56,6 @@ import java.util.Objects;
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORY_KEY;
-import static com.technion.android.joblin.DatabaseUtils.JOB_LOCATION_KEY;
 import static com.technion.android.joblin.DatabaseUtils.JOB_RADIUS_KEY;
 import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SWIPES_LEFT_KEY;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
@@ -85,21 +83,6 @@ public class CanMainActivity extends AppCompatActivity {
         CATEGORY, DISTANCE, CITY, SCOPE
     }
 
-    void InitializeMissingAttributes(DocumentSnapshot document, final String candidateMail)
-    {
-        if(document.get("g")==null)
-        {
-            GeoFirestore geoFirestore = new GeoFirestore(candidatesCollection);
-            GeoPoint location = Utils.getPoint(CanMainActivity.this,(String) document.get(JOB_LOCATION_KEY));
-            geoFirestore.setLocation(candidateMail, Objects.requireNonNull(location), new CompletionListener() {
-                @Override
-                public void onComplete(@org.jetbrains.annotations.Nullable Exception e) {
-                    Utils.newAttributesPopup(CanMainActivity.this);
-                }
-            });
-        }
-    }
-
     void getRecruitersForSwipingScreen_MainFunction(final String candidateMail) {
         getRecruitersForSwipingScreen_CollectDataAboutCandidate(candidateMail);
     }
@@ -112,7 +95,6 @@ public class CanMainActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (Objects.requireNonNull(document).exists()) {
-                        InitializeMissingAttributes(document, candidateMail);
                         String candidateJobCategory = (String) document.get(JOB_CATEGORY_KEY);
                         List<Double> l = (List<Double>) document.get("l");
                         assert l != null;
@@ -175,14 +157,11 @@ public class CanMainActivity extends AppCompatActivity {
                             return;
                         }
                         List<Recruiter> listOfRecruiters = new ArrayList<>();
+                        List<DocumentSnapshot> documents = new ArrayList<>();
                         geoFirestore.queryAtLocation(candidateLocation,radius).addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
                             @Override
                             public void onDocumentEntered(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
-                                for (QueryDocumentSnapshot document : Objects.requireNonNull(queryDocumentSnapshots)) {
-                                    Recruiter recruiter = document.toObject(Recruiter.class);
-                                    if(Objects.requireNonNull(documentSnapshot.toObject(Recruiter.class)).getEmail().equals(recruiter.getEmail()))
-                                            listOfRecruiters.add(recruiter);
-                                }
+                                documents.add(documentSnapshot);
                             }
 
                             @Override
@@ -202,6 +181,16 @@ public class CanMainActivity extends AppCompatActivity {
 
                             @Override
                             public void onGeoQueryReady() {
+                                for (QueryDocumentSnapshot document : Objects.requireNonNull(queryDocumentSnapshots)) {
+                                    for(DocumentSnapshot inDistanceDoc : documents)
+                                    {
+                                        if(inDistanceDoc.getId().equals(document.getId()))
+                                        {
+                                            Recruiter recruiter = document.toObject(Recruiter.class);
+                                            listOfRecruiters.add(recruiter);
+                                        }
+                                    }
+                                }
                                 getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);
                             }
 
@@ -217,6 +206,7 @@ public class CanMainActivity extends AppCompatActivity {
     void getRecruitersForSwipingScreen_FindRelevantRecruitersWithCity(final String candidateMail,
                                                                       final String candidateJobCategory,
                                                                       final GeoPoint candidateLocation) {
+        GeoFirestore geoFirestore = new GeoFirestore(recruitersCollection);
         recruitersCollection
                 .whereEqualTo(JOB_CATEGORY_KEY, candidateJobCategory)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -227,14 +217,48 @@ public class CanMainActivity extends AppCompatActivity {
                             return;
                         }
                         List<Recruiter> listOfRecruiters = new ArrayList<>();
-                        for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()) {
-                            if(documentChange.getType().equals(Type.ADDED)) {
-                                Recruiter recruiter = documentChange.getDocument().toObject(Recruiter.class);
-                                if (Utils.getPoint(CanMainActivity.this, recruiter.getJobLocation()).equals(candidateLocation))
-                                    listOfRecruiters.add(recruiter);
+                        List<DocumentSnapshot> documents = new ArrayList<>();
+                        geoFirestore.queryAtLocation(candidateLocation,0).addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
+                            @Override
+                            public void onDocumentEntered(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
+                                documents.add(documentSnapshot);
                             }
-                        }
-                        getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);
+
+                            @Override
+                            public void onDocumentExited(@NotNull DocumentSnapshot documentSnapshot) {
+
+                            }
+
+                            @Override
+                            public void onDocumentMoved(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
+
+                            }
+
+                            @Override
+                            public void onDocumentChanged(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
+
+                            }
+
+                            @Override
+                            public void onGeoQueryReady() {
+                                for (QueryDocumentSnapshot document : Objects.requireNonNull(queryDocumentSnapshots)) {
+                                    for(DocumentSnapshot inDistanceDoc : documents)
+                                    {
+                                        if(inDistanceDoc.getId().equals(document.getId()))
+                                        {
+                                            Recruiter recruiter = document.toObject(Recruiter.class);
+                                            listOfRecruiters.add(recruiter);
+                                        }
+                                    }
+                                }
+                                getRecruitersForSwipingScreen_FindRelevantRecruitersWithoutAlreadySwiped(candidateMail, listOfRecruiters);
+                            }
+
+                            @Override
+                            public void onGeoQueryError(@NotNull Exception e) {
+
+                            }
+                        });
                     }
                 });
     }
