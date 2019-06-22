@@ -16,9 +16,5 @@
             android:id="@+id/menu_city"
             android:title="By City (and category)"
             android:orderInCategory="2"/>
-        <item
-            android:id="@+id/menu_scope"
-            android:title="By Scope (and category)"
-            android:orderInCategory="3"/>
         </group>
 </menu>
