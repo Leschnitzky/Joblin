@@ -279,7 +279,6 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
 
         // scope
         FormPickerDropDownElement<ListItem> scope = new FormPickerDropDownElement<>(Tag.Scope.ordinal());
-
         List<String> scopesList = new ArrayList<>();
         scopesList.add("20-30%");
         scopesList.add("40-50%");
