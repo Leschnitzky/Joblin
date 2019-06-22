@@ -229,20 +229,9 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
         elements.add(new FormHeader("Requirements"));
 
         // scope
-        FormPickerDropDownElement<ListItem> scope = new FormPickerDropDownElement<>(Tag.Scope.ordinal());
-
-        List<String> scopesList = new ArrayList<>();
-        scopesList.add("Full Time");
-        scopesList.add("20-30%");
-        scopesList.add("40-50%");
-        scopesList.add("60-70%");
-        scopesList.add("80-90%");
-
-        scope.setArrayAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item, scopesList));
-
+        FormCustomElement scope = new FormCustomElement(Tag.Scope.ordinal());
         scope.setTitle("Scope");
-        scope.setDialogTitle("Scope");
-        scope.setHint("Click here to choose");
+        scope.setHint("Enter here");
         scope.setCenterText(true);
         scope.setRequired(true);
         elements.add(scope);
@@ -302,7 +291,7 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
         submit.setValueTextColor(Color.WHITE);
         BaseFormElement placename = elements.get(Tag.JobName.ordinal());
         BaseFormElement category = elements.get(Tag.Category.ordinal());
-        BaseFormElement scope = elements.get(Tag.Scope.ordinal());
+        FormCustomElement scope = (FormCustomElement) elements.get(Tag.Scope.ordinal());
         BaseFormElement location = elements.get(Tag.Location.ordinal());
         BaseFormElement desc = elements.get(Tag.Desc.ordinal());
         BaseFormElement education = elements.get(Tag.Education.ordinal());
@@ -327,7 +316,7 @@ public class RecrProfPrefActivity extends AppCompatActivity implements OnFormEle
                         thisIntent.getStringExtra(LoginActivity.URI_KEY),
                         placename.getValueAsString(),
                         category.getValueAsString(),
-                        scope.getValueAsString(),
+                        scope.getFinalValue(),
                         locationParts[0],
                         desc.getValueAsString(),
                         education.getValueAsString(),

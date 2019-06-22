@@ -250,21 +250,27 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
         elements.add(new FormHeader("Requirements"));
 
         // scope
-        FormPickerDropDownElement<ListItem> scope = new FormPickerDropDownElement<>(Tag.Scope.ordinal());
-
-        List<String> scopesList = new ArrayList<>();
-        scopesList.add("Full Time");
-        scopesList.add("20-30%");
-        scopesList.add("40-50%");
-        scopesList.add("60-70%");
-        scopesList.add("80-90%");
-
-        scope.setArrayAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item, scopesList));
-
-        scope.setTitle("Scope");
-        scope.setDialogTitle("Scope");
-        scope.setHint("Click here to choose");
-        scope.setValue(recruiter.getRequiredScope());
+        Map<String,Integer> timesAweek = new HashMap<>();
+        timesAweek.put("Once a week",1);
+        timesAweek.put("Twice a week",2);
+        timesAweek.put("3 Times a week",3);
+        timesAweek.put("4 Times a week",4);
+        timesAweek.put("Full Time",5);
+        Map<String,Integer> precentage = new HashMap<>();
+        precentage.put("20-30%", 20);
+        precentage.put("40-50%", 40);
+        precentage.put("60-70%", 60);
+        precentage.put("80-90%", 80);
+        precentage.put("Full Time", 100);
+        FormCustomElement scope = new FormCustomElement(Tag.Scope.ordinal());
+        scope.setTitle("Required Scope");
+        scope.setHint("Enter here");
+        if(recruiter.getRequiredScope().contains("week"))
+            scope.setValue(timesAweek.get(recruiter.getRequiredScope()));
+        else {
+            scope.setUnit(1);
+            scope.setValue(precentage.get(recruiter.getRequiredScope()));
+        }
         scope.setCenterText(true);
         scope.setRequired(true);
         elements.add(scope);
@@ -336,7 +342,7 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
         BaseFormElement lastname = elements.get(Tag.LastName.ordinal());
         BaseFormElement placename = elements.get(Tag.JobName.ordinal());
         BaseFormElement category = elements.get(Tag.Category.ordinal());
-        BaseFormElement scope = elements.get(Tag.Scope.ordinal());
+        FormCustomElement scope = (FormCustomElement) elements.get(Tag.Scope.ordinal());
         BaseFormElement location = elements.get(Tag.Location.ordinal());
         BaseFormElement desc = elements.get(Tag.Desc.ordinal());
         BaseFormElement education = elements.get(Tag.Education.ordinal());
@@ -361,7 +367,7 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
                         mAuth.getCurrentUser().getPhotoUrl().toString(),
                         placename.getValueAsString(),
                         category.getValueAsString(),
-                        scope.getValueAsString(),
+                        scope.getFinalValue(),
                         locationParts!=null ? locationParts[0] : location.getValueAsString(),
                         desc.getValueAsString(),
                         education.getValueAsString(),

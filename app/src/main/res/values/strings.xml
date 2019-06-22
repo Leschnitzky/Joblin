@@ -47,5 +47,9 @@
     <string name="title_activity_match_alert_activty">MatchAlertActivty</string>
     <string name="type_a_message">Type a message</string>
 
+    <string-array name="scope_units">
+        <item>Days Per Week</item>
+        <item>Position Percentage</item>
+    </string-array>
 
 </resources>

@@ -36,6 +36,7 @@ import com.thejuki.kformmaster.model.FormPickerDateElement;
 import com.thejuki.kformmaster.model.FormPickerDropDownElement;
 import com.thejuki.kformmaster.model.FormSingleLineEditTextElement;
 import com.thejuki.kformmaster.model.FormSliderElement;
+
 import org.imperiumlabs.geofirestore.GeoFirestore;
 import org.jetbrains.annotations.NotNull;
 
@@ -260,23 +261,9 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         elements.add(dropDown);
 
         // scope
-        FormPickerDropDownElement<ListItem> scope = new FormPickerDropDownElement<>(Tag.Scope.ordinal());
-        List<String> scopesList = new ArrayList<>();
-        scopesList.add("20-30%");
-        scopesList.add("40-50%");
-        scopesList.add("60-70%");
-        scopesList.add("80-90%");
-        scopesList.add("Once a Week");
-        scopesList.add("Twice a Week");
-        scopesList.add("3 Times a Week");
-        scopesList.add("4 Times a Week");
-        scopesList.add("5 Times a Week");
-        scopesList.add("Full Time");
-
-        scope.setArrayAdapter(new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item, scopesList));
+        FormCustomElement scope = new FormCustomElement(Tag.Scope.ordinal());
         scope.setTitle("Scope");
-        scope.setDialogTitle("Scope");
-        scope.setHint("Click here to choose");
+        scope.setHint("Enter here");
         scope.setCenterText(true);
         scope.setRequired(true);
         elements.add(scope);
@@ -307,7 +294,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         BaseFormElement lastname = elements.get(Tag.LastName.ordinal());
         FormPickerDateElement birthdate = (FormPickerDateElement)elements.get(Tag.BirthDate.ordinal());
         BaseFormElement category = elements.get(Tag.Category.ordinal());
-        BaseFormElement scope = elements.get(Tag.Scope.ordinal());
+        FormCustomElement scope = (FormCustomElement) elements.get(Tag.Scope.ordinal());
         FormPlacesAutoCompleteElement location = (FormPlacesAutoCompleteElement) elements.get(Tag.Location.ordinal());
         BaseFormElement radius = elements.get(Tag.Radius.ordinal());
         BaseFormElement desc = elements.get(Tag.Desc.ordinal());
@@ -339,7 +326,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
                         birthday,
                         locationParts[0],
                         Integer.parseInt(radius.getValueAsString()),
-                        scope.getValueAsString(),
+                        scope.getFinalValue(),
                         education.getValueAsString(),
                         skills,
                         desc.getValueAsString(),

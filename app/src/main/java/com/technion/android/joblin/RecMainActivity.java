@@ -52,7 +52,6 @@ import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORY_KEY;
 import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SWIPES_LEFT_KEY;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.REQUIRED_SCOPE_KEY;
-import static com.technion.android.joblin.DatabaseUtils.SCOPE_KEY;
 import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.TAG;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
@@ -97,8 +96,6 @@ public class RecMainActivity extends AppCompatActivity {
                             getCandidatesForSwipingScreen_FindRelevantCandidates(recruiterMail, recruiterJobCategory);
                         else if(filter_method==Filter.CITY.ordinal())
                             getCandidatesForSwipingScreen_FindRelevantCandidatesWithCity(recruiterMail, recruiterJobCategory,recruiterJobLocation);
-                        else
-                            getCandidatesForSwipingScreen_FindRelevantCandidatesWithScope(recruiterMail, recruiterJobCategory,recruiterJobScope);
                     }
                 }
             }
@@ -184,31 +181,6 @@ public class RecMainActivity extends AppCompatActivity {
 
                             }
                         });
-                    }
-                });
-    }
-
-    void getCandidatesForSwipingScreen_FindRelevantCandidatesWithScope(final String recruiterMail,
-                                                                       final String recruiterJobCategory,
-                                                                       final String recruiterScope) {
-        candidatesCollection
-                .whereEqualTo(JOB_CATEGORY_KEY, recruiterJobCategory)
-                .whereEqualTo(SCOPE_KEY, recruiterScope)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                            Log.w(TAG, "Listen failed.", e);
-                            return;
-                        }
-                        List<Candidate> listOfCandidates = new ArrayList<>();
-                        for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()) {
-                            if(documentChange.getType().equals(Type.ADDED)) {
-                                Candidate candidate = documentChange.getDocument().toObject(Candidate.class);
-                                listOfCandidates.add(candidate);
-                            }
-                        }
-                        getCandidatesForSwipingScreen_FindRelevantCandidatesWithoutAlreadySwiped(recruiterMail, listOfCandidates);
                     }
                 });
     }
