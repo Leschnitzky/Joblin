@@ -163,12 +163,13 @@ public class RecMainActivity extends AppCompatActivity {
 
                             @Override
                             public void onGeoQueryReady() {
-                                for (QueryDocumentSnapshot document : Objects.requireNonNull(queryDocumentSnapshots)) {
+                                for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()) {
                                     for(DocumentSnapshot inDistanceDoc : documents)
                                     {
-                                        if(inDistanceDoc.getId().equals(document.getId()))
+                                        if (inDistanceDoc.getId().equals(documentChange.getDocument().getId())
+                                                && documentChange.getType().equals(Type.ADDED))
                                         {
-                                            Candidate candidate = document.toObject(Candidate.class);
+                                            Candidate candidate = documentChange.getDocument().toObject(Candidate.class);
                                             listOfCandidates.add(candidate);
                                         }
                                     }

@@ -182,15 +182,15 @@ public class CanMainActivity extends AppCompatActivity {
 
                             @Override
                             public void onDocumentChanged(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
-
                             }
 
                             @Override
                             public void onGeoQueryReady() {
-                                for (QueryDocumentSnapshot document : Objects.requireNonNull(queryDocumentSnapshots)) {
+                                for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()) {
                                     for (DocumentSnapshot inDistanceDoc : documents) {
-                                        if (inDistanceDoc.getId().equals(document.getId())) {
-                                            Recruiter recruiter = document.toObject(Recruiter.class);
+                                        if (inDistanceDoc.getId().equals(documentChange.getDocument().getId())
+                                            && documentChange.getType().equals(Type.ADDED)) {
+                                            Recruiter recruiter = documentChange.getDocument().toObject(Recruiter.class);
                                             listOfRecruiters.add(recruiter);
                                         }
                                     }
@@ -245,10 +245,11 @@ public class CanMainActivity extends AppCompatActivity {
 
                             @Override
                             public void onGeoQueryReady() {
-                                for (QueryDocumentSnapshot document : Objects.requireNonNull(queryDocumentSnapshots)) {
+                                for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()) {
                                     for (DocumentSnapshot inDistanceDoc : documents) {
-                                        if (inDistanceDoc.getId().equals(document.getId())) {
-                                            Recruiter recruiter = document.toObject(Recruiter.class);
+                                        if (inDistanceDoc.getId().equals(documentChange.getDocument().getId())
+                                                && documentChange.getType().equals(Type.ADDED)) {
+                                            Recruiter recruiter = documentChange.getDocument().toObject(Recruiter.class);
                                             listOfRecruiters.add(recruiter);
                                         }
                                     }
