@@ -54,10 +54,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.technion.android.joblin.DatabaseUtils.*;
+import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORY_KEY;
+import static com.technion.android.joblin.DatabaseUtils.JOB_RADIUS_KEY;
+import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SWIPES_LEFT_KEY;
+import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.TAG;
+import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
 public class CanMainActivity extends AppCompatActivity {
 
+    private static final int PERMISSION_REQUEST_LOCATION = 1;
     private SwipePlaceHolderView mSwipeView;
     private Context mContext;
     private Activity mActivity = this;
@@ -68,11 +77,12 @@ public class CanMainActivity extends AppCompatActivity {
     private TextView swipesLeftTxt;
     private Location myLocation;
     private SharedPreferences sharedPrefs;
+    FusedLocationProviderClient fusedLocationClient;
 
-    private enum Filter
-    {
+    private enum Filter {
         CATEGORY, DISTANCE, CITY, SCOPE
     }
+
     public static Boolean candSuperLiked = false;
 
     void getRecruitersForSwipingScreen_MainFunction(final String candidateMail) {
@@ -90,17 +100,22 @@ public class CanMainActivity extends AppCompatActivity {
                         String candidateJobCategory = (String) document.get(JOB_CATEGORY_KEY);
                         List<Double> l = (List<Double>) document.get("l");
                         assert l != null;
-                        GeoPoint candidateJobLocation = new GeoPoint(l.get(0),l.get(1));
-                        GeoPoint candidateCurrentLocation = new GeoPoint(myLocation.getLatitude(),myLocation.getLongitude());
+                        GeoPoint candidateJobLocation = new GeoPoint(l.get(0), l.get(1));
+                        GeoPoint candidateCurrentLocation = (myLocation!=null) ?
+                            new GeoPoint(myLocation.getLatitude(), myLocation.getLongitude()) : null;
                         Long candidateJobRadius = (Long) document.get(JOB_RADIUS_KEY);
-                        int filter_method = sharedPrefs.getInt(getResources().getString(R.string.saved_filtering_method),Filter.CATEGORY.ordinal());
-                        if(filter_method==Filter.CATEGORY.ordinal())
+                        int filter_method = sharedPrefs.getInt(getResources().getString(R.string.saved_filtering_method), Filter.CATEGORY.ordinal());
+                        if (filter_method == Filter.CATEGORY.ordinal())
                             getRecruitersForSwipingScreen_FindRelevantRecruiters(candidateMail, candidateJobCategory);
-                        else if(filter_method==Filter.DISTANCE.ordinal())
+                        else if (filter_method == Filter.DISTANCE.ordinal()) {
+                            if(candidateCurrentLocation!=null)
                             getRecruitersForSwipingScreen_FindRelevantRecruitersWithDistance(candidateMail, candidateJobCategory,
                                     candidateCurrentLocation, candidateJobRadius);
-                        else if(filter_method==Filter.CITY.ordinal())
-                            getRecruitersForSwipingScreen_FindRelevantRecruitersWithCity(candidateMail, candidateJobCategory,candidateJobLocation);
+                            else
+                                getRecruitersForSwipingScreen_FindRelevantRecruitersWithCity(candidateMail, candidateJobCategory, candidateJobLocation);
+                        }
+                        else if (filter_method == Filter.CITY.ordinal())
+                            getRecruitersForSwipingScreen_FindRelevantRecruitersWithCity(candidateMail, candidateJobCategory, candidateJobLocation);
                     }
                 }
             }
@@ -120,8 +135,7 @@ public class CanMainActivity extends AppCompatActivity {
                         }
                         List<Recruiter> listOfRecruiters = new ArrayList<>();
                         for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()) {
-                            if(documentChange.getType().equals(Type.ADDED))
-                            {
+                            if (documentChange.getType().equals(Type.ADDED)) {
                                 Recruiter recruiter = documentChange.getDocument().toObject(Recruiter.class);
                                 listOfRecruiters.add(recruiter);
                             }
@@ -132,8 +146,8 @@ public class CanMainActivity extends AppCompatActivity {
     }
 
     void getRecruitersForSwipingScreen_FindRelevantRecruitersWithDistance(final String candidateMail,
-                                                                      final String candidateJobCategory,
-                                                                      final GeoPoint candidateLocation,
+                                                                          final String candidateJobCategory,
+                                                                          final GeoPoint candidateLocation,
                                                                           final Long radius) {
         GeoFirestore geoFirestore = new GeoFirestore(recruitersCollection);
         recruitersCollection
@@ -147,7 +161,7 @@ public class CanMainActivity extends AppCompatActivity {
                         }
                         List<Recruiter> listOfRecruiters = new ArrayList<>();
                         List<DocumentSnapshot> documents = new ArrayList<>();
-                        geoFirestore.queryAtLocation(candidateLocation,radius).addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
+                        geoFirestore.queryAtLocation(candidateLocation, radius).addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
                             @Override
                             public void onDocumentEntered(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
                                 documents.add(documentSnapshot);
@@ -171,10 +185,8 @@ public class CanMainActivity extends AppCompatActivity {
                             @Override
                             public void onGeoQueryReady() {
                                 for (QueryDocumentSnapshot document : Objects.requireNonNull(queryDocumentSnapshots)) {
-                                    for(DocumentSnapshot inDistanceDoc : documents)
-                                    {
-                                        if(inDistanceDoc.getId().equals(document.getId()))
-                                        {
+                                    for (DocumentSnapshot inDistanceDoc : documents) {
+                                        if (inDistanceDoc.getId().equals(document.getId())) {
                                             Recruiter recruiter = document.toObject(Recruiter.class);
                                             listOfRecruiters.add(recruiter);
                                         }
@@ -207,7 +219,7 @@ public class CanMainActivity extends AppCompatActivity {
                         }
                         List<Recruiter> listOfRecruiters = new ArrayList<>();
                         List<DocumentSnapshot> documents = new ArrayList<>();
-                        geoFirestore.queryAtLocation(candidateLocation,0).addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
+                        geoFirestore.queryAtLocation(candidateLocation, 0).addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
                             @Override
                             public void onDocumentEntered(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
                                 documents.add(documentSnapshot);
@@ -231,10 +243,8 @@ public class CanMainActivity extends AppCompatActivity {
                             @Override
                             public void onGeoQueryReady() {
                                 for (QueryDocumentSnapshot document : Objects.requireNonNull(queryDocumentSnapshots)) {
-                                    for(DocumentSnapshot inDistanceDoc : documents)
-                                    {
-                                        if(inDistanceDoc.getId().equals(document.getId()))
-                                        {
+                                    for (DocumentSnapshot inDistanceDoc : documents) {
+                                        if (inDistanceDoc.getId().equals(document.getId())) {
                                             Recruiter recruiter = document.toObject(Recruiter.class);
                                             listOfRecruiters.add(recruiter);
                                         }
@@ -324,23 +334,24 @@ public class CanMainActivity extends AppCompatActivity {
         jobCategoriesCollection = db.collection(JOB_CATEGORIES_COLLECTION_NAME);
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         email = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
-        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         if (ActivityCompat.checkSelfPermission(this, permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            myLocation = location;
+            ActivityCompat.requestPermissions(CanMainActivity.this,
+                    new String[]{permission.ACCESS_COARSE_LOCATION, permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_LOCATION);
+        } else {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                myLocation = location;
+                            }
                         }
-                    }
-                });
-
+                    });
+        }
         //swipeView initialization
         mProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -418,6 +429,28 @@ public class CanMainActivity extends AppCompatActivity {
         findViewById(R.id.nothingNewTxt).animate().scaleY(1).start();
         mSwipeView.removeAllViews();
         getRecruitersForSwipingScreen_MainFunction(email);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_LOCATION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    fusedLocationClient.getLastLocation()
+                            .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                                @Override
+                                public void onSuccess(Location location) {
+                                    // Got last known location. In some rare situations this can be null.
+                                    if (location != null) {
+                                        myLocation = location;
+                                    }
+                                }
+                            });
+                }
+                else
+                    myLocation = null;
+            }
+        }
     }
 
     @Override

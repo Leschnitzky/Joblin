@@ -49,7 +49,6 @@ import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.Side;
 import static com.technion.android.joblin.DatabaseUtils.TAG;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
-import static com.technion.android.joblin.RecMainActivity.recrSuperLiked;
 
 @Layout(R.layout.reccard_view)
 public class RecruiterCard {
@@ -151,9 +150,11 @@ public class RecruiterCard {
         GeoPoint jobPoint = Utils.getPoint(mContext,mProfile.getJobLocation());
         */
         GeoPoint jobPoint = new GeoPoint(mProfile.getL().get(0),mProfile.getL().get(1));
-        Location.distanceBetween(swiper_loc.getLatitude(),swiper_loc.getLongitude(),
-                jobPoint.getLatitude(),jobPoint.getLongitude(),distance);
-        distanceTxt.setText(Math.round(distance[0]/1000) + " km away");
+        if(swiper_loc!=null) {
+            Location.distanceBetween(swiper_loc.getLatitude(), swiper_loc.getLongitude(),
+                    jobPoint.getLatitude(), jobPoint.getLongitude(), distance);
+            distanceTxt.setText(Math.round(distance[0] / 1000) + " km away");
+        }
         locationNameTxt.setText(mProfile.getJobLocation());
         descTxt.setText(mProfile.getJobDescription());
 
