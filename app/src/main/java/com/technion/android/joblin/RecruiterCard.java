@@ -291,9 +291,9 @@ public class RecruiterCard {
                 }).addOnSuccessListener(new OnSuccessListener<Boolean>() {
                     @Override
                     public void onSuccess(Boolean isMatch) {
-//                    if(isMatch && !candSuperLiked) {
-//                        Utils.matchPopUp(mSwipeView.getContext(),"recruiter");
-//                    }
+                        if(isMatch && !candSuperLiked) {
+                            Utils.matchPopUp(mSwipeView.getContext(),"recruiter");
+                    }
                     }
                 })
                         .addOnFailureListener(new OnFailureListener() {
