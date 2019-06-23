@@ -126,8 +126,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(String s) {
         super.onNewToken(s);
-
-        addTokenData(mAuth.getCurrentUser().getEmail(),s);
+        if(mAuth.getCurrentUser()!= null) {
+            addTokenData(mAuth.getCurrentUser().getEmail(),s);
+        }
     }
 
     public void addTokenData(String email, String token) {
