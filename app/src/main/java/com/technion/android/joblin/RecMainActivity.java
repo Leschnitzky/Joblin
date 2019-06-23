@@ -396,6 +396,7 @@ public class RecMainActivity extends AppCompatActivity {
         TextView nothingNew = findViewById(R.id.nothingNewTxt);
         nothingNew.setText(R.string.no_new_rec_right_now);
         findViewById(R.id.nothingNewTxt).animate().scaleY(1).start();
+        mSwipeView = findViewById(R.id.swipeView);
         mSwipeView.removeAllViews();
         getCandidatesForSwipingScreen_MainFunction(email);
     }

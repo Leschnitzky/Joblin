@@ -157,7 +157,9 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
         addDescription(elements);
         addButtons(elements);
         FormPlacesAutoCompleteViewBinder vb = new FormPlacesAutoCompleteViewBinder(this,formBuilder,null,null);
+        CustomViewBinder vc = new CustomViewBinder(this,formBuilder,null);
         formBuilder.registerCustomViewBinder(vb.getViewBinder());
+        formBuilder.registerCustomViewBinder(vc.getViewBinder());
         formBuilder.addFormElements(elements);
     }
 

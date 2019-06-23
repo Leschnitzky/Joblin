@@ -11,7 +11,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -38,7 +37,8 @@ public class MyReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        Utils.resetSwipesPopUp(context);
+        if(context.getApplicationInfo().packageName.equals("com.technion.android.joblin"))
+            Utils.resetSwipesPopUp(context);
 
         recruitersCollection.get()
             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

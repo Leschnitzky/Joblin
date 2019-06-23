@@ -412,6 +412,7 @@ public class CanMainActivity extends AppCompatActivity {
         rl = findViewById(R.id.rotateloading);
         rl.start();
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        mSwipeView = findViewById(R.id.swipeView);
         TextView nothingNew = findViewById(R.id.nothingNewTxt);
         nothingNew.setText(R.string.no_new_rec_right_now);
         findViewById(R.id.nothingNewTxt).animate().scaleY(1).start();
