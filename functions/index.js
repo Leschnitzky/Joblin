@@ -21,7 +21,7 @@ exports.sendFollowerNotificationCand = functions.firestore.document('/Recruiters
       const db = admin.firestore();
 
       var tokens = []; 
-      return Promise.all([db.collection("Users").doc(recrEmail).collection("Tokens").get(),
+      return Promise.all([db.collection("Users").doc(candEmail).collection("Tokens").get(),
       		 db.collection('Recruiters').doc(recrEmail).get()]
       	).then(values => {
       		console.log(values);
@@ -41,7 +41,7 @@ exports.sendFollowerNotificationCand = functions.firestore.document('/Recruiters
         //   body: `${candEmail} is now matched with you.`,
         // },
         data: {
-          title: 'recruiter match',
+          title: 'A recruiter just matched you!',
           body: `${name} is now matched with you!`,
         }
       };
@@ -91,7 +91,7 @@ exports.sendFollowerNotificationRecr = functions.firestore.document('/Candidates
         //   body: `${candEmail} is now matched with you.`,
         // },
         data: {
-          title: 'candidate match',
+          title: 'A candidate just matched you!',
           body: `${name} is now matched with you!`,
         }
       };
@@ -149,7 +149,7 @@ exports.sendMessageToUser = functions.firestore.document('/Chats/{addedChat}')
         // },
         data: {
           title: 'You have a new message!',
-          body: `${name} sent your a message`,
+          body: `${name} sent you a message`,
         }
       };
 

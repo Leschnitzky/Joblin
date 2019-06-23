@@ -330,8 +330,8 @@ public class RecruiterCard {
     @SwipeIn
     public void onSwipeIn(){
         if(candSuperLiked) {
-            swipeRightOnCandidate(swiper,mProfile.getEmail());
             candidateDoSwipe(swiper,mProfile.getEmail(),Side.RIGHT);
+            swipeRightOnCandidate(swiper,mProfile.getEmail());
         } else {
             candidateDoSwipe(swiper,mProfile.getEmail(),Side.RIGHT);
         }

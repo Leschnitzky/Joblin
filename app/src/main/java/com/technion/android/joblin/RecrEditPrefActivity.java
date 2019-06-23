@@ -3,10 +3,13 @@ package com.technion.android.joblin;
 
 import android.app.LauncherActivity.ListItem;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
@@ -65,6 +68,7 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     Recruiter recruiter;
     String[] locationParts;
+    Context mContext;
 
     @Override
 
@@ -72,6 +76,7 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        mContext = this;
         dialog = new ProgressDialog(RecrEditPrefActivity.this);
         thisIntent = getIntent();
         getRecruiter(mAuth.getCurrentUser().getEmail());
@@ -140,6 +145,10 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 dialog.hide();
+                LocalBroadcastManager.getInstance(mContext).
+                        unregisterReceiver(currentActivityReceiver);
+                currentActivityReceiver = null;
+
 
                 finish();
             }
@@ -418,6 +427,9 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
                 .setConfirmClickListener(new OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        LocalBroadcastManager.getInstance(mContext).
+                                unregisterReceiver(currentActivityReceiver);
+                        currentActivityReceiver = null;
                         finish();
                     }
                 })
@@ -441,5 +453,24 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
             FormPlacesAutoCompleteElement placesElement = formBuilder.getFormElement(Tag.Location.ordinal());
             placesElement.handleActivityResult(formBuilder, resultCode, data);
         }
+    }
+
+    private BroadcastReceiver currentActivityReceiver;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        currentActivityReceiver = new CurrentActivityReceiver(this);
+        LocalBroadcastManager.getInstance(this).
+                registerReceiver(currentActivityReceiver, CurrentActivityReceiver.CURRENT_ACTIVITY_RECEIVER_FILTER);
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).
+                unregisterReceiver(currentActivityReceiver);
+        currentActivityReceiver = null;
+        super.onPause();
     }
 }

@@ -312,7 +312,7 @@ public class CanMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe);
-        LoginActivity.getInstance().finish();
+//        LoginActivity.getInstance().finish();
 
         //Database initialization
         db = FirebaseFirestore.getInstance();

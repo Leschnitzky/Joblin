@@ -140,8 +140,13 @@ public class RecrEditActivity extends AppCompatActivity {
         mProfileBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(RecrEditActivity.this,RecMainActivity.class);
-                startActivity(intent);
+
+                LocalBroadcastManager.getInstance(mContext).
+                        unregisterReceiver(currentActivityReceiver);
+                dialog.dismiss();
+                currentActivityReceiver = null;
+
+                finish();
             }
         });
 

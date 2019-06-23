@@ -1,6 +1,7 @@
 package com.technion.android.joblin;
 
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -24,6 +25,7 @@ public class RecMatchesActivity extends AppCompatActivity {
     RecMatchesItemsListAdapter adapter;
     private FirebaseAuth mAuth;
     RecyclerView recyclerViewList;
+    Context mContext;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
@@ -39,10 +41,15 @@ public class RecMatchesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_rec_matches);
 
         mAuth = FirebaseAuth.getInstance();
+        mContext = this;
         toProfileButton = findViewById(R.id.profile_back_button);
         toProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                LocalBroadcastManager.getInstance(mContext).
+                        unregisterReceiver(currentActivityReceiver);
+                currentActivityReceiver = null;
                 finish();
             }
         });

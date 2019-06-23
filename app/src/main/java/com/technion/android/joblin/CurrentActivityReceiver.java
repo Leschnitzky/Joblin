@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
+
 public class CurrentActivityReceiver extends BroadcastReceiver {
     private static final String TAG = CurrentActivityReceiver.class.getSimpleName();
     public static final String CURRENT_ACTIVITY_ACTION = "current.activity.action";
@@ -29,10 +30,7 @@ public class CurrentActivityReceiver extends BroadcastReceiver {
         if( splitted[splitted.length - 1].equals("message"))  {
             // Messages shouldn't recieve a pop-up
         } else {
-            if(RecMainActivity.recrSuperLiked || CanMainActivity.candSuperLiked){
-            } else {
-                Utils.newMatchPopUp(receivingActivity,title,splitted[0]);
-            }
+            Utils.matchPopUp(receivingActivity,splitted[0]);
+        }
         }
     }
-}

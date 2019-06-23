@@ -134,6 +134,10 @@ public class CandEditActivity extends AppCompatActivity {
         mProfileBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                LocalBroadcastManager.getInstance(mContext).
+                        unregisterReceiver(currentActivityReceiver);
+                dialog.dismiss();
+                currentActivityReceiver = null;
                 finish();
             }
         });
