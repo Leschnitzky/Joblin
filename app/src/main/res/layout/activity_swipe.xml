@@ -48,6 +48,7 @@
     </LinearLayout>
 
     <FrameLayout
+        android:id="@+id/SwipeLayoutMiddle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/topPanel"
@@ -55,41 +56,7 @@
         android:orientation="vertical">
 
         <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </android.support.constraint.ConstraintLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center">
-
-            <TextView
-                android:id="@+id/nothingNewTxt"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="@string/no_new_rec_right_now"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="30sp"
-                android:textStyle="bold" />
-
-            <com.victor.loading.rotate.RotateLoading
-                android:id="@+id/rotateloading"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_below="@id/nothingNewTxt"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center"
-                android:layout_marginTop="20dp"
-                app:loading_color="@color/colorPrimary"
-                app:loading_width="5dp" />
-
-        </RelativeLayout>
-
-        <android.support.constraint.ConstraintLayout
+            android:id="@+id/bottomSwipeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
@@ -145,9 +112,45 @@
 
         </android.support.constraint.ConstraintLayout>
 
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </android.support.constraint.ConstraintLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <TextView
+                android:id="@+id/nothingNewTxt"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/no_new_rec_right_now"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <com.victor.loading.rotate.RotateLoading
+                android:id="@+id/rotateloading"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_below="@id/nothingNewTxt"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                app:loading_color="@color/colorPrimary"
+                app:loading_width="5dp" />
+
+        </RelativeLayout>
+
         <com.mindorks.placeholderview.SwipePlaceHolderView
             android:id="@+id/swipeView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </FrameLayout>
+
 </RelativeLayout>

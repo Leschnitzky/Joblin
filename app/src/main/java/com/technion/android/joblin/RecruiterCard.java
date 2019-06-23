@@ -49,7 +49,6 @@ import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.Side;
 import static com.technion.android.joblin.DatabaseUtils.TAG;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
-import static com.technion.android.joblin.RecMainActivity.recrSuperLiked;
 
 @Layout(R.layout.reccard_view)
 public class RecruiterCard {
@@ -137,7 +136,7 @@ public class RecruiterCard {
 
     @Resolve
     public void onResolved(){
-        GlideApp.with(mContext).load(mProfile.getImageUrl()).into(profileImageView);
+        GlideApp.with(mContext).load(mProfile.getImageUrl()).thumbnail(0.25f).into(profileImageView);
         nameTxt.setText(String.format("%s %s", mProfile.getName(), mProfile.getLastName()));
         placeTxt.setText(mProfile.getWorkPlace());
         positionScopeTxt.setText(mProfile.getRequiredScope());
@@ -151,9 +150,13 @@ public class RecruiterCard {
         GeoPoint jobPoint = Utils.getPoint(mContext,mProfile.getJobLocation());
         */
         GeoPoint jobPoint = new GeoPoint(mProfile.getL().get(0),mProfile.getL().get(1));
-        Location.distanceBetween(swiper_loc.getLatitude(),swiper_loc.getLongitude(),
-                jobPoint.getLatitude(),jobPoint.getLongitude(),distance);
-        distanceTxt.setText(Math.round(distance[0]/1000) + " km away");
+        if(swiper_loc!=null) {
+            Location.distanceBetween(swiper_loc.getLatitude(), swiper_loc.getLongitude(),
+                    jobPoint.getLatitude(), jobPoint.getLongitude(), distance);
+            distanceTxt.setText(Math.round(distance[0] / 1000) + " km away");
+        }
+        else
+            distanceTxt.setText("");
         locationNameTxt.setText(mProfile.getJobLocation());
         descTxt.setText(mProfile.getJobDescription());
 
@@ -193,7 +196,6 @@ public class RecruiterCard {
                         if((side == Side.RIGHT) && (candidate.getNumberOfSuperLikesLeft() == 0) && candSuperLiked) {
                             noMoreSuperLikes = true;
                             Utils.noMoreSuperLikesPopUp(mSwipeView.getContext());
-                            mSwipeView.undoLastSwipe();
                         } else if((side == Side.RIGHT) && (candidate.getNumberOfSwipesLeft() == 0)) {
                             Utils.noMoreSwipesPopUp(mSwipeView.getContext());
                             mSwipeView.undoLastSwipe();
@@ -221,7 +223,6 @@ public class RecruiterCard {
                       Side side) {
 
         if(noMoreSuperLikes){
-            noMoreSuperLikes = false;
             return;
         } else {
 
@@ -332,6 +333,7 @@ public class RecruiterCard {
         if(candSuperLiked) {
             candidateDoSwipe(swiper,mProfile.getEmail(),Side.RIGHT);
             swipeRightOnCandidate(swiper,mProfile.getEmail());
+            noMoreSuperLikes=false;
         } else {
             candidateDoSwipe(swiper,mProfile.getEmail(),Side.RIGHT);
         }

@@ -36,6 +36,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
 import com.mindorks.placeholderview.listeners.ItemRemovedListener;
+import com.technion.android.joblin.DatabaseUtils.Side;
 import com.victor.loading.rotate.RotateLoading;
 
 import org.imperiumlabs.geofirestore.GeoFirestore;
@@ -163,12 +164,13 @@ public class RecMainActivity extends AppCompatActivity {
 
                             @Override
                             public void onGeoQueryReady() {
-                                for (QueryDocumentSnapshot document : Objects.requireNonNull(queryDocumentSnapshots)) {
+                                for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()) {
                                     for(DocumentSnapshot inDistanceDoc : documents)
                                     {
-                                        if(inDistanceDoc.getId().equals(document.getId()))
+                                        if (inDistanceDoc.getId().equals(documentChange.getDocument().getId())
+                                                && documentChange.getType().equals(Type.ADDED))
                                         {
-                                            Candidate candidate = document.toObject(Candidate.class);
+                                            Candidate candidate = documentChange.getDocument().toObject(Candidate.class);
                                             listOfCandidates.add(candidate);
                                         }
                                     }
@@ -246,6 +248,33 @@ public class RecMainActivity extends AppCompatActivity {
                 });
     }
 
+    void recruiterCheckCanSwipe(final String recruiterMail, final Side side, final boolean superLike) {
+
+        DocumentReference docRef = recruitersCollection.document(recruiterMail);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Recruiter recruiter = document.toObject(Recruiter.class);
+                        if((superLike) && (recruiter.getNumberOfSuperLikesLeft() == 0)) {
+                            Utils.noMoreSuperLikesPopUp(mSwipeView.getContext());
+                        } else if((side == Side.RIGHT) && (recruiter.getNumberOfSwipesLeft() == 0)) {
+                            Utils.noMoreSwipesPopUp(mSwipeView.getContext());
+                        } else {
+                            mSwipeView.doSwipe(side == Side.RIGHT);
+                        }
+                    } else {
+                        Utils.errorPopUp(mSwipeView.getContext(),"");
+                    }
+                } else {
+                    Utils.errorPopUp(mSwipeView.getContext(),"");
+                }
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -311,13 +340,13 @@ public class RecMainActivity extends AppCompatActivity {
         findViewById(R.id.rejectBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSwipeView.doSwipe(false);
+                recruiterCheckCanSwipe(email,Side.LEFT,false);
             }
         });
         findViewById(R.id.acceptBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSwipeView.doSwipe(true);
+                recruiterCheckCanSwipe(email,Side.RIGHT,false);
             }
         });
 
@@ -325,7 +354,7 @@ public class RecMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 recrSuperLiked = true;
-                mSwipeView.doSwipe(true);
+                recruiterCheckCanSwipe(email,Side.RIGHT,true);
             }
         });
 

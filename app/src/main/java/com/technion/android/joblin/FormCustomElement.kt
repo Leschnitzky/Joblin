@@ -27,7 +27,11 @@ class FormCustomElement(tag: Int = -1) : BaseFormElement<String>(tag) {
     }
 
     override val isValid: Boolean
-        get() = ((unit == 0) && (value?.toInt()!! <7) && (value?.toInt()!! >0))
-                ||
-                ((unit == 1) && (value?.toInt()!! <=100) && (value?.toInt()!! >=20))
+        get() = validityCheck()
+
+    var validityCheck: () -> Boolean = {
+        ((unit == 0) && (value.toString().toInt() <7) && (value.toString().toInt() >0))
+        ||
+        ((unit == 1) && (value.toString().toInt() <=100) && (value.toString().toInt() >=20))
+    }
 }
