@@ -11,14 +11,14 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -35,7 +35,14 @@ import java.util.Random;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-import static com.technion.android.joblin.DatabaseUtils.*;
+import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.CURRENT_TIME_KEY;
+import static com.technion.android.joblin.DatabaseUtils.EMAIL_KEY;
+import static com.technion.android.joblin.DatabaseUtils.ERRORS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.ERROR_KEY;
+import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
 public class Utils {
 

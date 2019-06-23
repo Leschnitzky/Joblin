@@ -136,7 +136,7 @@ public class RecruiterCard {
 
     @Resolve
     public void onResolved(){
-        GlideApp.with(mContext).load(mProfile.getImageUrl()).into(profileImageView);
+        GlideApp.with(mContext).load(mProfile.getImageUrl()).thumbnail(0.25f).into(profileImageView);
         nameTxt.setText(String.format("%s %s", mProfile.getName(), mProfile.getLastName()));
         placeTxt.setText(mProfile.getWorkPlace());
         positionScopeTxt.setText(mProfile.getRequiredScope());
@@ -155,6 +155,8 @@ public class RecruiterCard {
                     jobPoint.getLatitude(), jobPoint.getLongitude(), distance);
             distanceTxt.setText(Math.round(distance[0] / 1000) + " km away");
         }
+        else
+            distanceTxt.setText("");
         locationNameTxt.setText(mProfile.getJobLocation());
         descTxt.setText(mProfile.getJobDescription());
 

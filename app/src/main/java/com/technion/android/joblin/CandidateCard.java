@@ -1,9 +1,7 @@
 package com.technion.android.joblin;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayout;
 import android.util.Log;
 import android.widget.ImageView;
@@ -16,7 +14,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -34,7 +31,6 @@ import com.mindorks.placeholderview.annotations.swipe.SwipeOut;
 import com.mindorks.placeholderview.annotations.swipe.SwipeOutState;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,9 +44,9 @@ import static com.technion.android.joblin.DatabaseUtils.NUMBER_OF_SWIPES_LEFT_KE
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.SIDE_KEY;
 import static com.technion.android.joblin.DatabaseUtils.SWIPES_COLLECTION_NAME;
+import static com.technion.android.joblin.DatabaseUtils.Side;
 import static com.technion.android.joblin.DatabaseUtils.TAG;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.Side;
 import static com.technion.android.joblin.RecMainActivity.recrSuperLiked;
 
 @Layout(R.layout.cancard_view)
@@ -130,7 +126,7 @@ public class CandidateCard {
 
     @Resolve
     public void onResolved(){
-        GlideApp.with(mContext).load(mProfile.getImageUrl()).into(profileImageView);
+        GlideApp.with(mContext).load(mProfile.getImageUrl()).thumbnail(0.25f).into(profileImageView);
         Integer age = Utils.getAge(mProfile.getBirthday().toDate(), Timestamp.now().toDate());
         nameTxt.setText(String.format("%s %s, %s", mProfile.getName(), mProfile.getLastName(), age.toString()));
         positionScopeTxt.setText(mProfile.getScope());

@@ -54,6 +54,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import cn.pedant.SweetAlert.SweetAlertDialog.OnSweetClickListener;
+
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORY_KEY;
@@ -112,7 +115,7 @@ public class CanMainActivity extends AppCompatActivity {
                             getRecruitersForSwipingScreen_FindRelevantRecruitersWithDistance(candidateMail, candidateJobCategory,
                                     candidateCurrentLocation, candidateJobRadius);
                             else
-                                getRecruitersForSwipingScreen_FindRelevantRecruitersWithCity(candidateMail, candidateJobCategory, candidateJobLocation);
+                                LocationDeniedPopUp();
                         }
                         else if (filter_method == Filter.CITY.ordinal())
                             getRecruitersForSwipingScreen_FindRelevantRecruitersWithCity(candidateMail, candidateJobCategory, candidateJobLocation);
@@ -322,7 +325,6 @@ public class CanMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe);
-//        LoginActivity.getInstance().finish();
 
         //Database initialization
         db = FirebaseFirestore.getInstance();
@@ -336,23 +338,8 @@ public class CanMainActivity extends AppCompatActivity {
         email = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        if (ActivityCompat.checkSelfPermission(this, permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(CanMainActivity.this,
-                    new String[]{permission.ACCESS_COARSE_LOCATION, permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_LOCATION);
-        } else {
-            fusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            // Got last known location. In some rare situations this can be null.
-                            if (location != null) {
-                                myLocation = location;
-                            }
-                        }
-                    });
-        }
         //swipeView initialization
+        mSwipeView = findViewById(R.id.swipeView);
         mProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -367,7 +354,6 @@ public class CanMainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        mSwipeView = findViewById(R.id.swipeView);
         swipesLeftTxt = findViewById(R.id.leftSwipedTxt);
         SwipesLeftUpdate(email);
         mContext = getApplicationContext();
@@ -427,8 +413,28 @@ public class CanMainActivity extends AppCompatActivity {
         TextView nothingNew = findViewById(R.id.nothingNewTxt);
         nothingNew.setText(R.string.no_new_rec_right_now);
         findViewById(R.id.nothingNewTxt).animate().scaleY(1).start();
-        mSwipeView.removeAllViews();
-        getRecruitersForSwipingScreen_MainFunction(email);
+        if (ActivityCompat.checkSelfPermission(this, permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            {
+
+                ActivityCompat.requestPermissions(CanMainActivity.this,
+                        new String[]{permission.ACCESS_COARSE_LOCATION, permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_LOCATION);
+            }
+        } else {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                myLocation = location;
+                            }
+                            mSwipeView.removeAllViews();
+                            getRecruitersForSwipingScreen_MainFunction(email);
+                        }
+                    });
+        }
+
     }
 
     @Override
@@ -444,11 +450,13 @@ public class CanMainActivity extends AppCompatActivity {
                                     if (location != null) {
                                         myLocation = location;
                                     }
+                                    mSwipeView.removeAllViews();
+                                    getRecruitersForSwipingScreen_MainFunction(email);
                                 }
                             });
                 }
                 else
-                    myLocation = null;
+                    LocationDeniedPopUp();
             }
         }
     }
@@ -499,6 +507,29 @@ public class CanMainActivity extends AppCompatActivity {
         super.onPause();
     }
 
-
-
+    private void LocationDeniedPopUp()
+    {
+        new SweetAlertDialog(CanMainActivity.this,SweetAlertDialog.ERROR_TYPE)
+                .setTitleText("Location Permission Denied")
+                .setContentText("Can't filter by distance or show distance to jobs")
+                .setConfirmText("Ask again")
+                .setConfirmClickListener(new OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        ActivityCompat.requestPermissions(CanMainActivity.this,
+                                new String[]{permission.ACCESS_COARSE_LOCATION, permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_LOCATION);
+                        sweetAlertDialog.dismiss();
+                    }
+                })
+                .setCancelClickListener(new OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        mSwipeView.removeAllViews();
+                        getRecruitersForSwipingScreen_MainFunction(email);
+                        sweetAlertDialog.dismiss();
+                    }
+                })
+                .setCancelText("Continue")
+                .show();
+    }
 }
