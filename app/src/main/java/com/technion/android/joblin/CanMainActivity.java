@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
@@ -386,7 +387,7 @@ public class CanMainActivity extends AppCompatActivity {
         swipesLeftTxt = findViewById(R.id.leftSwipedTxt);
         SwipesLeftUpdate(email);
         mContext = getApplicationContext();
-        int bottomMargin = getResources().getDimensionPixelSize(R.dimen._130sdp);
+        int bottomMargin = Utils.dpToPx(180);
         Point windowSize = Utils.getDisplaySize(getWindowManager());
         int padding = getResources().getDimensionPixelSize(R.dimen._7sdp);
         mSwipeView.getBuilder()
@@ -394,7 +395,7 @@ public class CanMainActivity extends AppCompatActivity {
                 .setDisplayViewCount(3)
                 .setSwipeDecor(new SwipeDecor()
                         .setViewWidth(windowSize.x)
-                        .setViewHeight(windowSize.y - bottomMargin)
+                        .setViewHeight(windowSize.y-bottomMargin)
                         .setViewGravity(Gravity.TOP)
                         .setPaddingTop(padding)
                         .setRelativeScale(0.01f)
