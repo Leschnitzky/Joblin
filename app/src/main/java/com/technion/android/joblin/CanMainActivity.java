@@ -44,6 +44,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.mindorks.placeholderview.SwipeDecor;
 import com.mindorks.placeholderview.SwipePlaceHolderView;
 import com.mindorks.placeholderview.listeners.ItemRemovedListener;
+import com.technion.android.joblin.DatabaseUtils.Side;
 import com.victor.loading.rotate.RotateLoading;
 
 import org.imperiumlabs.geofirestore.GeoFirestore;
@@ -322,6 +323,33 @@ public class CanMainActivity extends AppCompatActivity {
                 });
     }
 
+    void candidateCheckCanSwipe(final String candidateMail, final Side side, final boolean superLike) {
+
+        DocumentReference docRef = candidatesCollection.document(candidateMail);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Candidate candidate = document.toObject(Candidate.class);
+                        if((superLike) && (candidate.getNumberOfSuperLikesLeft() == 0)) {
+                            Utils.noMoreSuperLikesPopUp(mSwipeView.getContext());
+                        } else if((side == Side.RIGHT) && (candidate.getNumberOfSwipesLeft() == 0)) {
+                            Utils.noMoreSwipesPopUp(mSwipeView.getContext());
+                        } else {
+                            mSwipeView.doSwipe(side == Side.RIGHT);
+                        }
+                    } else {
+                        Utils.errorPopUp(mSwipeView.getContext(),"");
+                    }
+                } else {
+                    Utils.errorPopUp(mSwipeView.getContext(),"");
+                }
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -384,21 +412,20 @@ public class CanMainActivity extends AppCompatActivity {
         findViewById(R.id.rejectBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSwipeView.doSwipe(false);
+                candidateCheckCanSwipe(email,Side.LEFT,false);
             }
         });
         findViewById(R.id.acceptBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSwipeView.doSwipe(true);
+                candidateCheckCanSwipe(email,Side.RIGHT,false);
             }
         });
         findViewById(R.id.starBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 candSuperLiked = true;
-                mSwipeView.doSwipe(true);
-
+                candidateCheckCanSwipe(email,Side.RIGHT,true);
             }
         });
     }

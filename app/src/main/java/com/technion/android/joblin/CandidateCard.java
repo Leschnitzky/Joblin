@@ -171,11 +171,11 @@ public class CandidateCard {
                         Recruiter recruiter = document.toObject(Recruiter.class);
                         if((side == Side.RIGHT) && (recruiter.getNumberOfSuperLikesLeft() == 0) && recrSuperLiked) {
                             noMoreSuperLikes = true;
+                            mSwipeView.activatePutBack();
                             Utils.noMoreSuperLikesPopUp(mSwipeView.getContext());
-                            mSwipeView.undoLastSwipe();
                         }else if((side == Side.RIGHT) && (recruiter.getNumberOfSwipesLeft() == 0)) {
+                            mSwipeView.activatePutBack();
                             Utils.noMoreSwipesPopUp(mSwipeView.getContext());
-                            mSwipeView.undoLastSwipe();
                         }
                         else {
                             addSwipeDataForRecruiter(recruiterMail, candidateMail, side);
@@ -303,8 +303,10 @@ public class CandidateCard {
         if(recrSuperLiked) {
             recruiterDoSwipe(swiper,mProfile.getEmail(),Side.RIGHT);
             swipeRightOnRecruiter(swiper,mProfile.getEmail());
+            mSwipeView.deactivatePutBack();
         } else {
             recruiterDoSwipe(swiper,mProfile.getEmail(),Side.RIGHT);
+            mSwipeView.deactivatePutBack();
         }
     }
 
