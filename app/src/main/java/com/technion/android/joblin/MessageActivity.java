@@ -122,7 +122,7 @@ public class MessageActivity extends AppCompatActivity {
                     if (document.exists()) {
                         Candidate mProfile = document.toObject(Candidate.class);
                         profileName.setText(String.format("%s %s", mProfile.getName(), mProfile.getLastName()));
-                        GlideApp.with(profileImage.getContext()).load(mProfile.getImageUrl()).into(profileImage);
+                        GlideApp.with(profileImage.getContext()).load(mProfile.getImageUrl()).thumbnail(0.25f).into(profileImage);
                     }
                 }
             }
@@ -138,7 +138,7 @@ public class MessageActivity extends AppCompatActivity {
                     if (document.exists()) {
                         Recruiter mProfile = document.toObject(Recruiter.class);
                         profileName.setText(String.format("%s %s", mProfile.getName(), mProfile.getLastName()));
-                        GlideApp.with(profileImage.getContext()).load(mProfile.getImageUrl()).into(profileImage);
+                        GlideApp.with(profileImage.getContext()).load(mProfile.getImageUrl()).thumbnail(0.25f).into(profileImage);
                     }
                 }
             }
