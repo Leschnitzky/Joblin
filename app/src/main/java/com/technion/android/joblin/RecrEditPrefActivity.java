@@ -408,7 +408,7 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
                 if(!category.isValid())
                     category.setError("Category is required");
                 if(!scope.isValid())
-                    scope.setError("Scope is required");
+                    scope.setError("Scope is required.\n Please check its 20-100% or 1-5 days a week.");
                 if(!skill1.isValid())
                     skill1.setError("At least one skill");
             }
@@ -471,6 +471,7 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
         LocalBroadcastManager.getInstance(this).
                 unregisterReceiver(currentActivityReceiver);
         currentActivityReceiver = null;
+        dialog.dismiss();
         super.onPause();
     }
 }

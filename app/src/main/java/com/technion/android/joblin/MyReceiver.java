@@ -37,62 +37,60 @@ public class MyReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        if (intent.getAction().matches("android.intent.action.BOOT_COMPLETED")) {
-            recruitersCollection.get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    Map<String, Object> updates = new HashMap<>();
-                                    updates.put(NUMBER_OF_SWIPES_LEFT_KEY, User.totalNumberOfSwipes);
-                                    updates.put(NUMBER_OF_SUPER_LIKES_LEFT_KEY, User.totalNumberOfSuperLikes);
+        recruitersCollection.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Map<String, Object> updates = new HashMap<>();
+                                updates.put(NUMBER_OF_SWIPES_LEFT_KEY, User.totalNumberOfSwipes);
+                                updates.put(NUMBER_OF_SUPER_LIKES_LEFT_KEY, User.totalNumberOfSuperLikes);
 
-                                    document.getReference().update(updates)
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                }
-                                            });
-                                }
-                            } else {
+                                document.getReference().update(updates)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                            }
+                                        });
                             }
+                        } else {
                         }
-                    });
+                    }
+                });
 
-            candidatesCollection.get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    Log.d(TAG, document.getId() + " => " + document.getData());
-                                    Map<String, Object> updates = new HashMap<>();
-                                    updates.put(NUMBER_OF_SWIPES_LEFT_KEY, User.totalNumberOfSwipes);
-                                    updates.put(NUMBER_OF_SUPER_LIKES_LEFT_KEY, User.totalNumberOfSuperLikes);
+        candidatesCollection.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                Map<String, Object> updates = new HashMap<>();
+                                updates.put(NUMBER_OF_SWIPES_LEFT_KEY, User.totalNumberOfSwipes);
+                                updates.put(NUMBER_OF_SUPER_LIKES_LEFT_KEY, User.totalNumberOfSuperLikes);
 
-                                    document.getReference().update(updates)
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                }
-                                            });
+                                document.getReference().update(updates)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                            }
+                                        });
 
-                                }
-                            } else {
                             }
+                        } else {
                         }
-                    });
-        }
+                    }
+                });
     }
 }

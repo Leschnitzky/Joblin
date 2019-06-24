@@ -492,29 +492,26 @@ public class CanMainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle("Exit Application?");
-        alertDialogBuilder
-                .setMessage("This will exit the application, are you sure?")
-                .setCancelable(false)
-                .setPositiveButton("Yes",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                moveTaskToBack(true);
-                                android.os.Process.killProcess(android.os.Process.myPid());
-                                System.exit(0);
-                            }
-                        })
-
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                        dialog.cancel();
+        new SweetAlertDialog(this,SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Exit Application?")
+                .setContentText("This will exit the application, are you sure?")
+                .setConfirmText("Yes")
+                .setCancelText("No")
+                .setConfirmClickListener(new OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        moveTaskToBack(true);
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                        System.exit(0);
                     }
-                });
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
+                })
+                .setCancelClickListener(new OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.cancel();
+                    }
+                })
+                .show();
     }
 
     private BroadcastReceiver currentActivityReceiver;

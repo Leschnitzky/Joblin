@@ -142,7 +142,9 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
         addDescription(elements);
         addButtons(elements);
         FormPlacesAutoCompleteViewBinder vb = new FormPlacesAutoCompleteViewBinder(this,formBuilder,null,null);
+        CustomViewBinder vc = new CustomViewBinder(this,formBuilder,null);
         formBuilder.registerCustomViewBinder(vb.getViewBinder());
+        formBuilder.registerCustomViewBinder(vc.getViewBinder());
         formBuilder.addFormElements(elements);
     }
 
@@ -355,7 +357,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
                 if(!location.isValid())
                     location.setError("Location is required");
                 if(!scope.isValid())
-                    scope.setError("Scope is required");
+                    scope.setError("Scope is required.\n Please check its 20-100% or 1-5 days a week.");
                 if(!skill1.isValid())
                     skill1.setError("At least one skill");
             }

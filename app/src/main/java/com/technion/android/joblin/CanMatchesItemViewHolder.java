@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,7 +20,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.TAG;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
 public class CanMatchesItemViewHolder extends RecyclerView.ViewHolder {
@@ -76,7 +74,7 @@ public class CanMatchesItemViewHolder extends RecyclerView.ViewHolder {
 
                         String imageUrl = recruiter.getImageUrl();
                         recImage.setMaxHeight(50);
-                        GlideApp.with(mContext).load(imageUrl).into(recImage);
+                        GlideApp.with(mContext).load(imageUrl).thumbnail(0.25f).into(recImage);
 //                        new DownLoadImageTask(recImage).execute(imageUrl);
 
                     } else {

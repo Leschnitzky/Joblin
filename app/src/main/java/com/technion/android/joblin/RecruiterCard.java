@@ -292,7 +292,7 @@ public class RecruiterCard {
                     @Override
                     public void onSuccess(Boolean isMatch) {
                         if(isMatch && !candSuperLiked) {
-                            Utils.matchPopUp(mSwipeView.getContext(),"recruiter");
+                            Utils.matchPopUp(mSwipeView.getContext(),mProfile.getName());
                     }
                     }
                 })

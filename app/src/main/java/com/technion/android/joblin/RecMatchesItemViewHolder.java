@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,7 +26,6 @@ import java.net.URL;
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.TAG;
 import static com.technion.android.joblin.DatabaseUtils.USERS_COLLECTION_NAME;
 
 public class RecMatchesItemViewHolder extends RecyclerView.ViewHolder {
@@ -82,7 +80,7 @@ public class RecMatchesItemViewHolder extends RecyclerView.ViewHolder {
 
                         String imageUrl = candidate.getImageUrl();
                         canImage.setMaxHeight(50);
-                        GlideApp.with(mContext).load(imageUrl).into(canImage);
+                        GlideApp.with(mContext).load(imageUrl).thumbnail(0.25f).into(canImage);
 
                     } else {
                     }
