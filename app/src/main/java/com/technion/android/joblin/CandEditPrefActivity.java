@@ -477,6 +477,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
         LocalBroadcastManager.getInstance(this).
                 unregisterReceiver(currentActivityReceiver);
         currentActivityReceiver = null;
+        dialog.dismiss();
         super.onPause();
     }
 
