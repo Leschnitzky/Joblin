@@ -37,7 +37,7 @@
                     android:id="@+id/profileImageView"
                     android:layout_width="@dimen/_50sdp"
                     android:layout_height="match_parent"
-                    android:scaleType="centerCrop" />
+                    android:scaleType="center" />
 
                 <TextView
                     android:id="@+id/nameTxt"
