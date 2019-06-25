@@ -397,6 +397,7 @@ public class RecrEditPrefActivity extends AppCompatActivity implements OnFormEle
             }
             else
             {
+                Utils.badDetailsPopup(RecrEditPrefActivity.this);
                 if(!placename.isValid())
                     placename.setError("workplace name is required");
                 if(!education.isValid())

@@ -340,6 +340,7 @@ public class CandProfPrefActivity extends AppCompatActivity implements OnFormEle
             }
             else
             {
+                Utils.badDetailsPopup(CandProfPrefActivity.this);
                 if(!name.isValid())
                     name.setError("Name is required");
                 if(!lastname.isValid())

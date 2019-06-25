@@ -15,7 +15,6 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -36,7 +35,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
@@ -45,7 +43,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.technion.android.joblin.DatabaseUtils.CANDIDATES_COLLECTION_NAME;
-import static com.technion.android.joblin.DatabaseUtils.EMAIL_KEY;
 import static com.technion.android.joblin.DatabaseUtils.JOB_CATEGORIES_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.RECRUITERS_COLLECTION_NAME;
 import static com.technion.android.joblin.DatabaseUtils.TAG;
@@ -226,7 +223,16 @@ public class LoginActivity extends AppCompatActivity {
                     if (document.exists()) {
                         // Already a candidate
                         dialog.hide();
-                        Intent intent = new Intent(LoginActivity.this, CanMainActivity.class);
+                        Intent i = getIntent();
+                        Intent intent;
+                        if(i.getBooleanExtra("isNotif",false))
+                        {
+                            intent = new Intent(LoginActivity.this,MessageActivity.class);
+                            intent.putExtra("email",i.getStringExtra("mail"));
+                            intent.putExtra("type","rec");
+                        }
+                        else
+                            intent = new Intent(LoginActivity.this, CanMainActivity.class);
                         startActivity(intent);
                     } else {
                         // Not a Cand, check if recruiter
@@ -248,7 +254,16 @@ public class LoginActivity extends AppCompatActivity {
                     if (document.exists()) {
                         // Tis a recruiter
                         dialog.hide();
-                        Intent intent = new Intent(LoginActivity.this, RecMainActivity.class);
+                        Intent i = getIntent();
+                        Intent intent;
+                        if(i.getBooleanExtra("isNotif",false))
+                        {
+                            intent = new Intent(LoginActivity.this,MessageActivity.class);
+                            intent.putExtra("email",i.getStringExtra("mail"));
+                            intent.putExtra("type","cand");
+                        }
+                        else
+                            intent = new Intent(LoginActivity.this, RecMainActivity.class);
                         startActivity(intent);
                     } else {
                         // Not a Cand nor Recr

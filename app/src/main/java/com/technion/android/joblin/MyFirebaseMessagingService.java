@@ -86,6 +86,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(getApplicationContext(), "default");
         Intent ii = new Intent(getApplicationContext(), LoginActivity.class);
+        ii.putExtra("isNotif",true);
+        ii.putExtra("mail", title);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, ii, 0);
 
         notificationBuilder

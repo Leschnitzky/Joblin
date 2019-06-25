@@ -398,6 +398,7 @@ public class CandEditPrefActivity extends AppCompatActivity implements OnFormEle
             }
             else
             {
+                Utils.badDetailsPopup(CandEditPrefActivity.this);
                 if(!name.isValid())
                     name.setError("Name is required");
                 if(!lastname.isValid())

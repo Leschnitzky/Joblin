@@ -96,6 +96,15 @@ public class Utils {
                 .show();
     }
 
+    public static void badDetailsPopup(Context context)
+    {
+        new SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
+                .setTitleText("Attention")
+                .setContentText("some details you filled are invalid, please check.")
+                .setConfirmText("OK")
+                .show();
+    }
+
     public static void errorPopUp(Context context, String error)
     {
         new SweetAlertDialog(context,SweetAlertDialog.ERROR_TYPE)
