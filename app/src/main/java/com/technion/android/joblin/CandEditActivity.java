@@ -70,6 +70,7 @@ public class CandEditActivity extends AppCompatActivity {
     SlidingUpPanelLayout slidingPanel;
     ImageView mProfileBackButton;
     ImageView mProfileEditButton;
+    ImageView mProfileLogoffButton;
     Context mContext;
     ImageView filter_spinner;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -128,6 +129,7 @@ public class CandEditActivity extends AppCompatActivity {
         slidingPanel = child.findViewById(R.id.slidingpanel);
         mProfileBackButton = findViewById(R.id.profile_back_button);
         mProfileEditButton = findViewById(R.id.bottom_background_cand);
+        mProfileLogoffButton = findViewById(R.id.cand_logoff_button);
 
         Log.d("FIRST_BUTTON",mProfileBackButton.toString());
 
@@ -149,6 +151,13 @@ public class CandEditActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(CandEditActivity.this,CandEditPrefActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        mProfileLogoffButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utils.logoutPopUp(mContext);
             }
         });
 

@@ -41,7 +41,7 @@ exports.sendFollowerNotificationCand = functions.firestore.document('/Recruiters
         //   body: `${candEmail} is now matched with you.`,
         // },
         data: {
-          title: recrEmail,
+          title: `${recrEmail}`,
           body: `${name} is now matched with you!`,
         }
       };
@@ -91,7 +91,7 @@ exports.sendFollowerNotificationRecr = functions.firestore.document('/Candidates
         //   body: `${candEmail} is now matched with you.`,
         // },
         data: {
-          title: candEmail,
+          title: `${candEmail}`,
           body: `${name} is now matched with you!`,
         }
       };
@@ -148,7 +148,7 @@ exports.sendMessageToUser = functions.firestore.document('/Chats/{addedChat}')
         //   body: `${candEmail} is now matched with you.`,
         // },
         data: {
-          title: senderMail,
+          title: `${senderMail}`,
           body: `${name} sent you a message`,
         }
       };

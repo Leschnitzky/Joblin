@@ -106,20 +106,19 @@ public class CanMainActivity extends AppCompatActivity {
                         List<Double> l = (List<Double>) document.get("l");
                         assert l != null;
                         GeoPoint candidateJobLocation = new GeoPoint(l.get(0), l.get(1));
-                        GeoPoint candidateCurrentLocation = (myLocation!=null) ?
-                            new GeoPoint(myLocation.getLatitude(), myLocation.getLongitude()) : null;
+                        GeoPoint candidateCurrentLocation = (myLocation != null) ?
+                                new GeoPoint(myLocation.getLatitude(), myLocation.getLongitude()) : null;
                         Long candidateJobRadius = (Long) document.get(JOB_RADIUS_KEY);
                         int filter_method = sharedPrefs.getInt(getResources().getString(R.string.saved_filtering_method), Filter.CATEGORY.ordinal());
                         if (filter_method == Filter.CATEGORY.ordinal())
                             getRecruitersForSwipingScreen_FindRelevantRecruiters(candidateMail, candidateJobCategory);
                         else if (filter_method == Filter.DISTANCE.ordinal()) {
-                            if(candidateCurrentLocation!=null)
-                            getRecruitersForSwipingScreen_FindRelevantRecruitersWithDistance(candidateMail, candidateJobCategory,
-                                    candidateCurrentLocation, candidateJobRadius);
+                            if (candidateCurrentLocation != null)
+                                getRecruitersForSwipingScreen_FindRelevantRecruitersWithDistance(candidateMail, candidateJobCategory,
+                                        candidateCurrentLocation, candidateJobRadius);
                             else
                                 LocationDeniedPopUp();
-                        }
-                        else if (filter_method == Filter.CITY.ordinal())
+                        } else if (filter_method == Filter.CITY.ordinal())
                             getRecruitersForSwipingScreen_FindRelevantRecruitersWithCity(candidateMail, candidateJobCategory, candidateJobLocation);
                     }
                 }
@@ -191,7 +190,7 @@ public class CanMainActivity extends AppCompatActivity {
                                 for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()) {
                                     for (DocumentSnapshot inDistanceDoc : documents) {
                                         if (inDistanceDoc.getId().equals(documentChange.getDocument().getId())
-                                            && documentChange.getType().equals(Type.ADDED)) {
+                                                && documentChange.getType().equals(Type.ADDED)) {
                                             Recruiter recruiter = documentChange.getDocument().toObject(Recruiter.class);
                                             listOfRecruiters.add(recruiter);
                                         }
@@ -334,18 +333,18 @@ public class CanMainActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         Candidate candidate = document.toObject(Candidate.class);
-                        if((superLike) && (candidate.getNumberOfSuperLikesLeft() == 0)) {
+                        if ((superLike) && (candidate.getNumberOfSuperLikesLeft() == 0)) {
                             Utils.noMoreSuperLikesPopUp(mSwipeView.getContext());
-                        } else if((side == Side.RIGHT) && (candidate.getNumberOfSwipesLeft() == 0)) {
+                        } else if ((side == Side.RIGHT) && (candidate.getNumberOfSwipesLeft() == 0)) {
                             Utils.noMoreSwipesPopUp(mSwipeView.getContext());
                         } else {
                             mSwipeView.doSwipe(side == Side.RIGHT);
                         }
                     } else {
-                        Utils.errorPopUp(mSwipeView.getContext(),"");
+                        Utils.errorPopUp(mSwipeView.getContext(), "");
                     }
                 } else {
-                    Utils.errorPopUp(mSwipeView.getContext(),"");
+                    Utils.errorPopUp(mSwipeView.getContext(), "");
                 }
             }
         });
@@ -395,7 +394,7 @@ public class CanMainActivity extends AppCompatActivity {
                 .setDisplayViewCount(3)
                 .setSwipeDecor(new SwipeDecor()
                         .setViewWidth(windowSize.x)
-                        .setViewHeight(windowSize.y-bottomMargin)
+                        .setViewHeight(windowSize.y - bottomMargin)
                         .setViewGravity(Gravity.TOP)
                         .setPaddingTop(padding)
                         .setRelativeScale(0.01f)
@@ -413,20 +412,20 @@ public class CanMainActivity extends AppCompatActivity {
         findViewById(R.id.rejectBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                candidateCheckCanSwipe(email,Side.LEFT,false);
+                candidateCheckCanSwipe(email, Side.LEFT, false);
             }
         });
         findViewById(R.id.acceptBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                candidateCheckCanSwipe(email,Side.RIGHT,false);
+                candidateCheckCanSwipe(email, Side.RIGHT, false);
             }
         });
         findViewById(R.id.starBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 candSuperLiked = true;
-                candidateCheckCanSwipe(email,Side.RIGHT,true);
+                candidateCheckCanSwipe(email, Side.RIGHT, true);
             }
         });
     }
@@ -471,6 +470,16 @@ public class CanMainActivity extends AppCompatActivity {
         switch (requestCode) {
             case PERMISSION_REQUEST_LOCATION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(this, permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
                     fusedLocationClient.getLastLocation()
                             .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                                 @Override

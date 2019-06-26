@@ -47,6 +47,12 @@
 
 
     <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/recr_logoff_button"
+        android:src="@drawable/baseline_settings_green_48"
+        android:background="@color/colorPrimary"/>
+    <ImageView
         android:id="@+id/bottom_background_recr"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_60sdp"

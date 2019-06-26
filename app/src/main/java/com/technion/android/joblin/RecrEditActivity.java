@@ -70,6 +70,7 @@ public class RecrEditActivity extends AppCompatActivity {
     Context mContext;
     ImageView filter_spinner;
     ImageView mProfileBackButton;
+    ImageView mProfileLogoffButton;
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -135,6 +136,7 @@ public class RecrEditActivity extends AppCompatActivity {
         slidingPanel = child.findViewById(R.id.slidingpanel);
         mProfileBackButton = findViewById(R.id.recr_edit_back_button);
         mProfileEditButton = findViewById(R.id.bottom_background_recr);
+        mProfileLogoffButton = findViewById(R.id.recr_logoff_button);
 
 
         mProfileBackButton.setOnClickListener(new View.OnClickListener() {
@@ -154,8 +156,17 @@ public class RecrEditActivity extends AppCompatActivity {
         mProfileEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialog.hide();
                 Intent intent = new Intent(RecrEditActivity.this,RecrEditPrefActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        mProfileLogoffButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.hide();
+                Utils.logoutPopUp(mContext);
             }
         });
 
