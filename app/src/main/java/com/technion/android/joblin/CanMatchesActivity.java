@@ -31,6 +31,7 @@ public class CanMatchesActivity extends AppCompatActivity {
     RecyclerView recyclerViewList;
     String currentUserMail;
     Context mContext;
+    Intent intent;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
@@ -48,6 +49,7 @@ public class CanMatchesActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUserMail = mAuth.getCurrentUser().getEmail();
         mContext = this;
+        intent = getIntent();
 
         toProfileButton = findViewById(R.id.profile_back_button);
         toProfileButton.setOnClickListener(new View.OnClickListener() {
@@ -56,7 +58,10 @@ public class CanMatchesActivity extends AppCompatActivity {
                 LocalBroadcastManager.getInstance(mContext).
                         unregisterReceiver(currentActivityReceiver);
                 currentActivityReceiver = null;
-
+                if(intent.getBooleanExtra("isNotif",false)) {
+                    Intent i = new Intent(CanMatchesActivity.this, CanMainActivity.class);
+                    startActivity(i);
+                }
                 finish();
             }
         });

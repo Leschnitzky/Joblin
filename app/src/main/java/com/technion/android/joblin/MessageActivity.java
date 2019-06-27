@@ -82,11 +82,17 @@ public class MessageActivity extends AppCompatActivity {
         backButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if(intent.getBooleanExtra("isNotif",false)) {
+                    Class toTransfer = (intent.getStringExtra("type").equals("rec")) ?
+                            RecMatchesActivity.class : CanMatchesActivity.class;
+                    Intent i = new Intent(MessageActivity.this, toTransfer);
+                    i.putExtra("isNotif", true);
+                    startActivity(i);
+                }
+                finish();
                 LocalBroadcastManager.getInstance(mContext).
                         unregisterReceiver(currentActivityReceiver);
                 currentActivityReceiver = null;
-                finish();
             }
         });
         otherEmail = intent.getStringExtra("email");
@@ -151,11 +157,11 @@ public class MessageActivity extends AppCompatActivity {
 
         DocumentReference chatDocumentReference = chatsCollection.document();
         batch.set(chatDocumentReference, message);
-
+        messageTxt.setText("");
         batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                messageTxt.setText("");
+
             }
         });
     }

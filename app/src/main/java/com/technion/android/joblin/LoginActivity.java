@@ -228,12 +228,14 @@ public class LoginActivity extends AppCompatActivity {
                         if(i.getBooleanExtra("isNotif",false))
                         {
                             intent = new Intent(LoginActivity.this,MessageActivity.class);
+                            intent.putExtra("isNotif", true);
                             intent.putExtra("email",i.getStringExtra("mail"));
                             intent.putExtra("type","rec");
                         }
                         else
                             intent = new Intent(LoginActivity.this, CanMainActivity.class);
                         startActivity(intent);
+                        finish();
                     } else {
                         // Not a Cand, check if recruiter
                         isRecruiterInDB(email);
@@ -265,6 +267,7 @@ public class LoginActivity extends AppCompatActivity {
                         else
                             intent = new Intent(LoginActivity.this, RecMainActivity.class);
                         startActivity(intent);
+                        finish();
                     } else {
                         // Not a Cand nor Recr
                         // Logged in with google, just need to choose
@@ -274,6 +277,7 @@ public class LoginActivity extends AppCompatActivity {
                         intent.putExtra(LAST_NAME_KEY,mUserLastName);
                         intent.putExtra(URI_KEY,mUserPhoto.toString());
                         startActivity(intent);
+                        finish();
                         dialog.hide();
                     }
                 }

@@ -26,6 +26,7 @@ public class RecMatchesActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     RecyclerView recyclerViewList;
     Context mContext;
+    Intent intent;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference candidatesCollection = db.collection(CANDIDATES_COLLECTION_NAME);
@@ -42,14 +43,18 @@ public class RecMatchesActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         mContext = this;
+        intent = getIntent();
         toProfileButton = findViewById(R.id.profile_back_button);
         toProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 LocalBroadcastManager.getInstance(mContext).
                         unregisterReceiver(currentActivityReceiver);
                 currentActivityReceiver = null;
+                if(intent.getBooleanExtra("isNotif",false)) {
+                    Intent i = new Intent(RecMatchesActivity.this, RecMainActivity.class);
+                    startActivity(i);
+                }
                 finish();
             }
         });
